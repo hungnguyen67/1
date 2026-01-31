@@ -9,9 +9,7 @@ import { PasswordChecklistComponent } from '../../shared/components/password-che
 
 @Component({
   selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordInputComponent, PasswordChecklistComponent]
+  templateUrl: './reset-password.component.html'
 })
 export class ResetPasswordComponent implements OnInit {
   resetForm: FormGroup;
@@ -91,7 +89,7 @@ export class ResetPasswordComponent implements OnInit {
         this.loading = false;
         this.success = true;
         setTimeout(() => {
-          this.router.navigate(['/login'], { queryParams: { message: response?.message} });
+          this.router.navigate(['/login'], { queryParams: { message: response?.message } });
         }, 1000);
       },
       error: (error) => {

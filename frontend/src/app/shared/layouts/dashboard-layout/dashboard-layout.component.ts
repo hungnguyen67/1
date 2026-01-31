@@ -6,28 +6,26 @@ import { AuthService } from '../../../auth.service';
 
 @Component({
   selector: 'app-dashboard-layout',
-  templateUrl: './dashboard-layout.component.html',
-  standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive]
+  templateUrl: './dashboard-layout.component.html'
 })
 export class DashboardLayoutComponent implements OnInit {
   title = 'Tổng quan';
   isUserDropdownOpen = false;
   isSidebarOpen = true;
-  openMenuName: string | null = null; 
-  
+  openMenuName: string | null = null;
+
   currentUser: any = null;
   isAdmin: boolean = false;
 
   constructor(
     private auth: AuthService,
-    public router: Router, 
+    public router: Router,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadUserData();
-    
+
     // Khởi tạo menu dựa trên URL hiện tại khi load trang
     this.autoOpenMenuBasedOnUrl(this.router.url);
 
@@ -48,20 +46,20 @@ export class DashboardLayoutComponent implements OnInit {
 
   autoOpenMenuBasedOnUrl(url: string) {
     if (!this.isSidebarOpen) return;
-    
+
     const path = url.split('?')[0];
     // Nhóm Hệ thống
     if (path.includes('/dashboard/users') || path.includes('/dashboard/roles')) {
       this.openMenuName = 'users';
-    } 
+    }
     // Nhóm Đào tạo
     else if (path.match(/\/(faculties|programs|classes|semesters-list)/)) {
       this.openMenuName = 'academic';
-    } 
+    }
     // Nhóm Chuyên môn
     else if (path.match(/\/(lecturers|student|subjects)/)) {
       this.openMenuName = 'courses';
-    } 
+    }
     // Nhóm Giảng dạy
     else if (path.match(/\/(sections|Schedules|grades)/)) {
       this.openMenuName = 'results';
@@ -80,8 +78,8 @@ export class DashboardLayoutComponent implements OnInit {
       const name = this.currentUser?.first_name || 'Admin';
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
     }
-    return this.currentUser.avatar.startsWith('http') 
-      ? this.currentUser.avatar 
+    return this.currentUser.avatar.startsWith('http')
+      ? this.currentUser.avatar
       : `http://localhost:8001${this.currentUser.avatar}`;
   }
 
@@ -124,10 +122,10 @@ export class DashboardLayoutComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear(); 
+    localStorage.clear();
     this.currentUser = null;
-    this.router.navigate(['/login'], { 
-      queryParams: { message: 'Đăng xuất thành công!' } 
+    this.router.navigate(['/login'], {
+      queryParams: { message: 'Đăng xuất thành công!' }
     });
   }
 }

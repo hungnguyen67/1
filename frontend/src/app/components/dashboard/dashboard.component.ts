@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  standalone: true,
-  imports: [CommonModule]
+  templateUrl: './dashboard.component.html'
 })
-export class DashboardComponent {}
+export class DashboardComponent { }

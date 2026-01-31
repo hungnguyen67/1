@@ -5,15 +5,13 @@ import { FlashMessage, FlashMessageService } from '../../services/flash-message.
 
 @Component({
   selector: 'app-flash-message',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './flash-message.component.html',
 })
 export class FlashMessageComponent implements OnInit, OnDestroy {
   messages: FlashMessage[] = [];
   private subscription: Subscription = new Subscription();
 
-  constructor(private flashMessageService: FlashMessageService, private cdr: ChangeDetectorRef) {}
+  constructor(private flashMessageService: FlashMessageService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.subscription = this.flashMessageService.messages$.subscribe(

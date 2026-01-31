@@ -62,8 +62,15 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    public enum UserStatus {
+        ACTIVE, INACTIVE, LOCKED
+    }
+
     public enum Gender {
-        Nam, Nữ, Khác
+        Male, Female, Other
     }
 
     public User() {}
@@ -124,4 +131,7 @@ public class User {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
 }

@@ -8,9 +8,7 @@ import { PasswordInputComponent } from '../../shared/components/password-input/p
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordInputComponent]
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
   form!: FormGroup;

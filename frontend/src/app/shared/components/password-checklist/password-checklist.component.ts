@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-password-checklist',
-  templateUrl: './password-checklist.component.html',
-  standalone: true,
-  imports: [CommonModule]
+  templateUrl: './password-checklist.component.html'
 })
 export class PasswordChecklistComponent implements OnChanges {
   @Input() password: string = '';

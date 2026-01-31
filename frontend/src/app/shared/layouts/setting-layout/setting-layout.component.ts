@@ -5,9 +5,7 @@ import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
-  templateUrl: './setting-layout.component.html',
-  standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive]
+  templateUrl: './setting-layout.component.html'
 })
 export class SettingsComponent implements OnInit {
   title = 'Cài đặt hệ thống';
@@ -15,7 +13,7 @@ export class SettingsComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.router.events.pipe(

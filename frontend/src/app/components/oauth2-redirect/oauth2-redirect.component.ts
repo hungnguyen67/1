@@ -6,12 +6,10 @@ import { FlashMessageService } from '../../shared/services/flash-message.service
 
 @Component({
   selector: 'app-oauth2-redirect',
-  template: `<div class="p-6">Đang chuyển hướng...</div>`,
-  standalone: true,
-  imports: [CommonModule]
+  template: `<div class="p-6">Đang chuyển hướng...</div>`
 })
 export class OAuth2RedirectComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router, private flashMessage: FlashMessageService) {}
+  constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router, private flashMessage: FlashMessageService) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {

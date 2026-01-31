@@ -4,12 +4,10 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-password-input',
-  templateUrl: './password-input.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  templateUrl: './password-input.component.html'
 })
 export class PasswordInputComponent {
-  @Input() control: any; 
+  @Input() control: any;
   @Input() placeholder: string = '';
   showPassword = false;
 

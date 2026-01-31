@@ -19,6 +19,8 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { FlashMessageComponent } from './shared/components/flash-message/flash-message.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { PasswordChecklistComponent } from './shared/components/password-checklist/password-checklist.component';
+import { ScheduleComponent } from './components/schedule/schedule.component';
+import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-calendar.component';
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -33,7 +35,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: '', component: HomeComponent },
-      { path: 'grades', component: HomeComponent }
+      { path: 'grades', component: HomeComponent },
+      { path: 'schedule', component: ScheduleComponent }
     ]
   },
   {
@@ -43,7 +46,19 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'faculties', component: DashboardComponent },
       { path: 'semesters-list', component: DashboardComponent },
+      { path: 'programs', component: DashboardComponent },
+      { path: 'classes', component: DashboardComponent },
+      { path: 'lecturers', component: DashboardComponent },
+      { path: 'student', component: DashboardComponent },
+      { path: 'subjects', component: DashboardComponent },
+      { path: 'sections', component: DashboardComponent },
+      { path: 'schedules', component: ScheduleComponent },
+      { path: 'exams', component: DashboardComponent },
+      { path: 'grades', component: DashboardComponent },
+      { path: 'reports', component: DashboardComponent },
+      { path: 'notifications', component: DashboardComponent },
       {
         path: 'settings',
         component: SettingsComponent,
@@ -53,25 +68,41 @@ const routes: Routes = [
           { path: 'change-password', component: ChangePasswordComponent },
           { path: 'notifications', component: ProfileComponent }
         ]
-      },
-      { path: 'profile', component: ProfileComponent },
-      { path: 'programs', component: DashboardComponent },
-      { path: 'students', component: DashboardComponent },
-      { path: 'subjects', component: DashboardComponent },
-      { path: 'class-sections', component: DashboardComponent },
-      { path: 'enrollments', component: DashboardComponent },
-      { path: 'grades', component: DashboardComponent }
+      }
     ]
   },
   { path: 'oauth2/redirect', component: OAuth2RedirectComponent },
   { path: '**', redirectTo: '' }
 ];
 
+import { FormsModule } from '@angular/forms';
+import { PasswordInputComponent } from './shared/components/password-input/password-input.component';
+
 @NgModule({
-  declarations: [],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    LoginComponent,
+    DashboardComponent,
+    DashboardLayoutComponent,
+    UserLayoutComponent,
+    OAuth2RedirectComponent,
+    UsersComponent,
+    SettingsComponent,
+    ProfileComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    ChangePasswordComponent,
+    ScheduleComponent,
+    MiniCalendarComponent,
+    FlashMessageComponent,
+    PasswordChecklistComponent,
+    PasswordInputComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
+    FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes)
   ],

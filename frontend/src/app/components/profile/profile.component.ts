@@ -8,22 +8,20 @@ import { FlashMessageComponent } from '../../shared/components/flash-message/fla
 
 @Component({
   selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FlashMessageComponent]
+  templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
   user: any = {};
   editForm!: FormGroup;
   showEditModal = false;
-  updating = false; 
+  updating = false;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private auth: AuthService,
     private flashMessage: FlashMessageService
-  ) {}
+  ) { }
 
   get isFormUnchanged(): boolean {
     const formValue = this.editForm.value;
@@ -95,7 +93,7 @@ export class ProfileComponent implements OnInit {
       this.http.put('http://localhost:8001/api/profile', updates, this.auth.getAuthHeaders()).subscribe({
         next: (response: any) => {
           this.flashMessage.success('Cập nhật thông tin thành công!');
-          this.loadUserProfile(); 
+          this.loadUserProfile();
           this.closeEditModal();
         },
         error: (err) => {

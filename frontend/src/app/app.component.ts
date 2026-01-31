@@ -4,10 +4,8 @@ import { FlashMessageComponent } from './shared/components/flash-message/flash-m
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  standalone: true,
-  imports: [RouterModule, FlashMessageComponent]
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
-  title = 'QLSV';
+  title = 'SmartUni';
 }

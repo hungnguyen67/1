@@ -7,9 +7,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
-  templateUrl: './users.component.html',
-  standalone: true,
-  imports: [CommonModule, FormsModule]
+  templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit {
   users: any[] = [];
@@ -56,7 +54,7 @@ export class UsersComponent implements OnInit {
     this.http.get('http://localhost:8001/api/admin/roles', this.auth.getAuthHeaders()).subscribe({
       next: (res: any) => this.availableRoles = res.roles || [],
       error: () => this.availableRoles = [
-        { name: 'STUDENT', description: 'Sinh viên' }, 
+        { name: 'STUDENT', description: 'Sinh viên' },
         { name: 'LECTURER', description: 'Giảng viên' }
       ]
     });

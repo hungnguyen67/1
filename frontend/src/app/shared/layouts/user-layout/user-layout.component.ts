@@ -6,13 +6,11 @@ import { FlashMessageService } from '../../services/flash-message.service';
 
 @Component({
   selector: 'app-user-layout',
-  templateUrl: './user-layout.component.html',
-  standalone: true,
-  imports: [CommonModule, RouterModule]
+  templateUrl: './user-layout.component.html'
 })
 export class UserLayoutComponent implements OnInit {
   isUserDropdownOpen = false;
-  openMenuId: string | null = null; 
+  openMenuId: string | null = null;
   isSidebarCollapsed = false;
   currentUser: any = null;
 
@@ -20,7 +18,7 @@ export class UserLayoutComponent implements OnInit {
     private auth: AuthService,
     private router: Router,
     private flashMessage: FlashMessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadUserData();
@@ -49,7 +47,7 @@ export class UserLayoutComponent implements OnInit {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
     if (this.isSidebarCollapsed) this.openMenuId = null;
   }
-  
+
   toggleMenu(menuId: string, event: Event) {
     event.stopPropagation();
     if (this.isSidebarCollapsed) {
@@ -70,8 +68,8 @@ export class UserLayoutComponent implements OnInit {
       const name = this.currentUser?.name || 'User';
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff&size=80`;
     }
-    return this.currentUser.avatar.startsWith('http') 
-      ? this.currentUser.avatar 
+    return this.currentUser.avatar.startsWith('http')
+      ? this.currentUser.avatar
       : 'http://localhost:8001' + this.currentUser.avatar;
   }
 
@@ -86,10 +84,10 @@ export class UserLayoutComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear(); 
+    localStorage.clear();
     this.currentUser = null;
-    this.router.navigate(['/login'], { 
-      queryParams: { message: 'Đăng xuất thành công!' } 
+    this.router.navigate(['/login'], {
+      queryParams: { message: 'Đăng xuất thành công!' }
     });
   }
 }

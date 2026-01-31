@@ -7,9 +7,7 @@ import { FlashMessageService } from '../../shared/services/flash-message.service
 
 @Component({
   selector: 'app-forgot-password',
-  templateUrl: './forgot-password.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink]
+  templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent {
   forgotForm: FormGroup;
@@ -31,7 +29,7 @@ export class ForgotPasswordComponent {
     // 1. Kiểm tra Form và hiện thông báo lỗi cụ thể
     if (this.forgotForm.invalid) {
       const emailControl = this.forgotForm.get('email');
-      
+
       if (emailControl?.hasError('required')) {
         this.flashMessage.warning('Vui lòng nhập địa chỉ Email để tiếp tục!');
       } else if (emailControl?.hasError('email')) {

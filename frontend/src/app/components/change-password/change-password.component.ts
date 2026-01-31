@@ -10,9 +10,7 @@ import { FlashMessageService } from '../../shared/services/flash-message.service
 
 @Component({
   selector: 'app-change-password',
-  templateUrl: './change-password.component.html',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PasswordInputComponent, PasswordChecklistComponent]
+  templateUrl: './change-password.component.html'
 })
 export class ChangePasswordComponent {
   form: FormGroup;
@@ -68,7 +66,7 @@ export class ChangePasswordComponent {
       next: (res: any) => {
         this.loading = false;
         this.flashMessage.success(res.message || 'Thay đổi mật khẩu thành công!');
-        
+
         // Sau khi đổi pass thành công, chuyển về profile
         this.router.navigate(['/dashboard/settings/profile']);
       },
