@@ -86,16 +86,6 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  onSort(column: string) {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-    this.sortData();
-  }
-
   get paginatedUsers(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredUsers.slice(start, start + this.itemsPerPage);
@@ -219,7 +209,6 @@ export class UsersComponent implements OnInit {
 
   getRoleName(role: string): string {
     switch (role) {
-      case 'ADMIN': return 'Quản trị viên';
       case 'STUDENT': return 'Sinh viên';
       case 'LECTURER': return 'Giảng viên';
       default: return role;
