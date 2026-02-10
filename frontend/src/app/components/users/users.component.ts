@@ -28,12 +28,37 @@ export class UsersComponent implements OnInit {
   showDeleteModal = false;
   userToDelete: any = null;
   deletingUser = false;
+  activeDropdown: string = '';
 
   constructor(
     private http: HttpClient,
     private auth: AuthService,
     private flashMessage: FlashMessageService
   ) { }
+
+  toggleDropdown(type: string) {
+    this.activeDropdown = this.activeDropdown === type ? '' : type;
+  }
+
+  selectRole(value: string) {
+    this.filterRole = value;
+    this.onSearch();
+  }
+
+  getStatusLabel() {
+    const statuses: any = { 'ACTIVE': 'Hoạt động', 'LOCKED': 'Đã khóa', 'DISABLED': 'Vô hiệu hóa' };
+    return statuses[this.filterStatus] || 'Tất cả Trạng thái';
+  }
+
+  getVerifyLabel() {
+    const verifies: any = { 'true': 'Đã xác thực', 'false': 'Chưa xác thực' };
+    return verifies[this.filterVerified] || 'Tất cả Xác thực';
+  }
+
+  getRoleLabel() {
+    const roles: any = { 'LECTURER': 'Giảng viên', 'STUDENT': 'Sinh viên' };
+    return roles[this.filterRole] || 'Tất cả Vai trò';
+  }
 
   ngOnInit() {
     this.loadUsers();

@@ -19,57 +19,73 @@
       <!-- Search Input -->
       <div class="flex-1 relative group">
         <span
-          class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+          class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors">
           <i class="fas fa-search text-sm"></i>
         </span>
         <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Tìm kiếm theo tên, email, SĐT..."
-          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm placeholder:text-slate-400">
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
       </div>
 
       <!-- Filters Row -->
-      <div class="flex gap-3 overflow-x-auto pb-2 md:pb-0 items-center no-scrollbar">
-        <!-- Role Filter -->
-        <div class="relative min-w-[140px] group">
-          <select [(ngModel)]="filterRole" (change)="onSearch()"
-            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700">
-            <option value="">Tất cả Vai trò</option>
-            <option value="LECTURER">Giảng viên</option>
-            <option value="STUDENT">Sinh viên</option>
-          </select>
-          <span
-            class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-180 group-focus-within:text-blue-500 transition-transform duration-300">
-            <i class="fas fa-chevron-down text-[10px]"></i>
-          </span>
+      <div class="flex flex-wrap md:flex-nowrap gap-3 items-center no-scrollbar">
+
+        <div class="relative min-w-[140px]">
+          <button (click)="activeDropdown = activeDropdown === 'role' ? '' : 'role'"
+            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
+            <span>{{ getRoleLabel() }}</span>
+            <i class="fas fa-chevron-down absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-90 group-focus-within:text-blue-400 transition-transform duration-300 ease-in-out"
+              [class.rotate-180]="activeDropdown === 'role'"></i>
+          </button>
+
+          <div *ngIf="activeDropdown === 'role'"
+            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div (click)="filterRole=''; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Tất cả Vai trò</div>
+            <div (click)="filterRole='LECTURER'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Giảng viên</div>
+            <div (click)="filterRole='STUDENT'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Sinh viên</div>
+          </div>
         </div>
 
-        <!-- Status Filter -->
-        <div class="relative min-w-[140px] group">
-          <select [(ngModel)]="filterStatus" (change)="onSearch()"
-            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700">
-            <option value="">Tất cả Trạng thái</option>
-            <option value="ACTIVE">Hoạt động</option>
-            <option value="LOCKED">Đã khóa</option>
-            <option value="DISABLED">Vô hiệu hóa</option>
-          </select>
-          <span
-            class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-180 group-focus-within:text-blue-500 transition-transform duration-300">
-            <i class="fas fa-chevron-down text-[10px]"></i>
-          </span>
+        <div class="relative min-w-[140px]">
+          <button (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'"
+            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
+            <span>{{ getStatusLabel() }}</span>
+            <i class="fas fa-chevron-down absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-90 group-focus-within:text-blue-400 transition-transform duration-300 ease-in-out"
+              [class.rotate-180]="activeDropdown === 'status'"></i>
+          </button>
+          <div *ngIf="activeDropdown === 'status'"
+            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div (click)="filterStatus=''; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Tất cả Trạng thái</div>
+            <div (click)="filterStatus='ACTIVE'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Hoạt động</div>
+            <div (click)="filterStatus='LOCKED'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Đã khóa</div>
+            <div (click)="filterStatus='DISABLED'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Vô hiệu hóa</div>
+          </div>
         </div>
 
-        <!-- Verification Filter -->
-        <div class="relative min-w-[150px] group">
-          <select [(ngModel)]="filterVerified" (change)="onSearch()"
-            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700">
-            <option value="">Tất cả Xác thực</option>
-            <option value="true">Đã xác thực</option>
-            <option value="false">Chưa xác thực</option>
-          </select>
-          <span
-            class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-180 group-focus-within:text-blue-500 transition-transform duration-300">
-            <i class="fas fa-chevron-down text-[10px]"></i>
-          </span>
+        <div class="relative min-w-[150px]">
+          <button (click)="activeDropdown = activeDropdown === 'verify' ? '' : 'verify'"
+            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
+            <span>{{ getVerifyLabel() }}</span>
+            <i class="fas fa-chevron-down absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:rotate-90 group-focus-within:text-blue-400 transition-transform duration-300 ease-in-out"
+              [class.rotate-180]="activeDropdown === 'verify'"></i>
+          </button>
+          <div *ngIf="activeDropdown === 'verify'"
+            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div (click)="filterVerified=''; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Tất cả Xác thực</div>
+            <div (click)="filterVerified='true'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Đã xác thực</div>
+            <div (click)="filterVerified='false'; onSearch(); activeDropdown=''"
+              class="px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer">Chưa xác thực</div>
+          </div>
         </div>
+
       </div>
     </div>
 
