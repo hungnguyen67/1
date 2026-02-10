@@ -1,0 +1,417 @@
+<div class="bg-slate-50 min-h-screen p-6">
+    <!-- Top Management Header -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="flex flex-wrap items-center gap-6">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-[#2d3a82] tracking-tight uppercase">Thời khóa biểu lớp học
+                        phần</h1>
+                    <p class="text-slate-500 text-sm font-medium mt-1">Hệ thống quản lý và điều phối lịch học tập trung
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+                    <div class="flex flex-col px-3">
+                        <span
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Học
+                            kỳ</span>
+                        <select [(ngModel)]="selectedSemesterId" (ngModelChange)="onSemesterChange()"
+                            class="bg-transparent border-none outline-none text-sm font-bold text-slate-700 cursor-pointer min-w-[150px] p-0 focus:ring-0">
+                            <option *ngFor="let s of semesters" [ngValue]="s.id">{{ s.name }} ({{ s.academicYear }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="w-px h-8 bg-slate-200"></div>
+
+                    <div class="flex flex-col px-3">
+                        <span
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Lớp
+                            học phần</span>
+                        <div class="flex items-center gap-2">
+                            <select [(ngModel)]="selectedClassId" (ngModelChange)="onClassChange()"
+                                class="bg-transparent border-none outline-none text-sm font-bold text-slate-700 cursor-pointer min-w-[200px] p-0 focus:ring-0">
+                                <option [ngValue]="null">Chọn lớp học phần...</option>
+                                <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.classCode }} – {{ c.subjectName
+                                    }}
+                                </option>
+                            </select>
+                            <span *ngIf="classes.length === 0 && selectedSemesterId"
+                                class="text-[10px] text-amber-500 font-bold italic shrink-0">(Chưa có lớp)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <button (click)="openPatternModal()"
+                    class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95 shadow-sm">
+                    <i class="fas fa-plus text-blue-500"></i> Tạo lịch mẫu
+                </button>
+                <button (click)="generateSchedule()" [disabled]="!selectedClassId"
+                    class="flex items-center gap-2 px-4 py-2.5 bg-[#2d3a82] text-white rounded-xl text-sm font-bold hover:bg-[#1e2a6a] transition-all active:scale-95 shadow-md shadow-blue-100 disabled:opacity-50">
+                    <i class="fas fa-cog"></i> Sinh buổi học
+                </button>
+                <button (click)="checkConflicts()" [disabled]="!selectedClassId"
+                    class="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 transition-all active:scale-95 shadow-md shadow-amber-100 disabled:opacity-50">
+                    <i class="fas fa-search"></i> Kiểm tra xung đột
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Center Content -->
+        <div class="flex-grow space-y-6">
+            <!-- Conflicts Warning if any -->
+            <div *ngIf="conflicts.length > 0"
+                class="bg-red-50 border border-red-200 rounded-2xl p-4 flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-red-700 font-bold text-sm">
+                    <i class="fas fa-exclamation-triangle"></i> Cảnh báo xung đột lịch học
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div *ngFor="let c of conflicts"
+                        class="bg-white/80 p-3 rounded-xl border border-red-100 shadow-sm text-xs">
+                        <span class="font-bold text-red-600 block uppercase mb-1">{{ c.type }}</span>
+                        <span class="text-slate-700">{{ c.content }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <!-- View Toggle & Week Control -->
+                <div
+                    class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white sticky top-0 z-20">
+                    <div class="flex items-center bg-slate-100 p-1 rounded-xl">
+                        <button (click)="viewMode = 'GRID'"
+                            [ngClass]="viewMode === 'GRID' ? 'bg-white text-[#2d3a82] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all">Dạng lưới</button>
+                        <button (click)="viewMode = 'LIST'"
+                            [ngClass]="viewMode === 'LIST' ? 'bg-white text-[#2d3a82] shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all">Danh sách buổi học</button>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="px-4 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-600">
+                            {{ currentDate | date: 'MMMM yyyy' }}
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button (click)="previousWeek()"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50">
+                                <i class="fas fa-chevron-left text-[10px]"></i>
+                            </button>
+                            <button (click)="goToToday()"
+                                class="px-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700">Hôm
+                                nay</button>
+                            <button (click)="nextWeek()"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50">
+                                <i class="fas fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- GRID VIEW -->
+                    <div *ngIf="viewMode === 'GRID'" class="overflow-x-auto">
+                        <div class="min-w-[1000px]">
+                            <!-- Header Row -->
+                            <div class="grid grid-cols-8 border-b border-slate-100 bg-slate-50/50 rounded-t-2xl">
+                                <div class="p-4 border-r border-slate-100 flex items-center justify-center">
+                                    <i class="fas fa-clock text-slate-300"></i>
+                                </div>
+                                <div *ngFor="let day of weekDays"
+                                    class="p-4 border-r border-slate-100 text-center transition-all"
+                                    [ngClass]="{'bg-[#2d3a82] !text-white shadow-lg relative z-10': isSelectedDay(day.name)}">
+                                    <div class="text-sm font-extrabold uppercase tracking-tight">{{ day.label }}</div>
+                                    <div class="text-[10px] font-bold opacity-60 mt-0.5">{{ day.date }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Time Grid -->
+                            <div class="relative">
+                                <div *ngFor="let slot of timeSlots"
+                                    class="grid grid-cols-8 border-b border-slate-50 group min-h-[100px]">
+                                    <div
+                                        class="p-4 border-r border-slate-100 flex flex-col items-center justify-start bg-slate-50/20 group-hover:bg-slate-50 transition-colors">
+                                        <span class="text-sm font-bold text-slate-400 group-hover:text-slate-700">{{
+                                            slot }}</span>
+                                    </div>
+
+                                    <div *ngFor="let day of weekDays"
+                                        class="border-r border-slate-50 p-1 relative min-h-[100px] transition-colors"
+                                        [ngClass]="{'bg-blue-50/40': isSelectedDay(day.name)}">
+                                        <!-- Schedule Items -->
+                                        <div *ngFor="let item of getItemsForDayAndTime(day.isoDate, slot); let i = index"
+                                            class="absolute left-1 right-1 p-2 rounded-xl shadow-md border-l-4 transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer z-10 overflow-hidden group/item"
+                                            [ngClass]="[item.color, item.textColor, 'border-white/30']"
+                                            [style.height.px]="calculateHeight(item.durationMinutes) - 4"
+                                            [style.top.px]="calculateTopOffset(item.startTime, slot) + 2">
+
+                                            <div class="relative h-full flex flex-col justify-between">
+                                                <div>
+                                                    <div
+                                                        class="text-[10px] font-extrabold line-clamp-2 leading-tight uppercase">
+                                                        {{ item.title }}</div>
+                                                    <div
+                                                        class="flex items-center gap-1 mt-1 text-[9px] font-bold opacity-80">
+                                                        <i class="far fa-clock"></i> {{ item.time }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center justify-between">
+                                                    <span
+                                                        class="text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded">{{
+                                                        item.room }}</span>
+                                                    <span
+                                                        class="text-[8px] font-extrabold px-1.5 py-0.5 bg-black/10 rounded uppercase tracking-tighter">{{
+                                                        item.type }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIST VIEW -->
+                    <div *ngIf="viewMode === 'LIST'" class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr
+                                    class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold text-left border-b border-slate-200">
+                                    <th class="px-4 py-3">Ngày</th>
+                                    <th class="px-4 py-3">Thứ</th>
+                                    <th class="px-4 py-3">Thời gian</th>
+                                    <th class="px-4 py-3">Phòng</th>
+                                    <th class="px-4 py-3">Loại</th>
+                                    <th class="px-4 py-3">Trạng thái</th>
+                                    <th class="px-4 py-3 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr *ngFor="let inst of allInstances" class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-4 py-3 font-bold text-slate-700">{{ inst.scheduleDate | date:'dd/MM'
+                                        }}</td>
+                                    <td class="px-4 py-3 text-slate-500 font-medium">Thứ {{ (inst.scheduleDate |
+                                        date:'e') }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-[#2d3a82]">{{ inst.startTime }} - {{
+                                                inst.endTime }}</span>
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase">Tiết {{
+                                                inst.startPeriod }}-{{ inst.endPeriod }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 font-bold text-slate-600">{{ inst.roomName }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                                            [ngClass]="{
+                          'bg-green-100 text-green-700': inst.type === 'THEORY',
+                          'bg-amber-100 text-amber-700': inst.type === 'PRACTICE',
+                          'bg-blue-100 text-blue-700': inst.type === 'ONLINE',
+                          'bg-purple-100 text-purple-700': inst.type === 'EXAM'
+                        }">{{ inst.type }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-tight ring-1 ring-inset"
+                                            [ngClass]="{
+                          'bg-green-50 text-green-700 ring-green-100': inst.status === 'PLANNED' || inst.status === 'COMPLETED',
+                          'bg-red-50 text-red-700 ring-red-100': inst.status === 'CANCELLED',
+                          'bg-amber-50 text-amber-700 ring-amber-100': inst.status === 'MOVED'
+                        }">
+                                            <span class="w-1.5 h-1.5 rounded-full"
+                                                [ngClass]="inst.status === 'PLANNED' ? 'bg-green-500' : 'bg-red-500'"></span>
+                                            {{ inst.status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <button
+                                            class="w-8 h-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white transition-all shadow-sm"><i
+                                                class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="p-6 bg-slate-50/50 border-t border-slate-100 flex flex-wrap gap-6">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">THUYẾT TRÌNH / LÝ
+                            THUYẾT (THEORY)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">THỰC HÀNH
+                            (PRACTICE)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">TRỰC TUYẾN
+                            (ONLINE)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">ĐÃ HỦY
+                            (CANCELLED)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-purple-600"></span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">THI CỬ
+                            (EXAM)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="lg:w-[320px] flex-shrink-0 space-y-6">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 bg-slate-50/30">
+                    <h3 class="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-calendar-alt text-[#2d3a82]"></i> Lịch tháng
+                    </h3>
+                </div>
+                <div class="p-2">
+                    <app-mini-calendar (dateSelected)="onDateSelected($event)"></app-mini-calendar>
+                </div>
+            </div>
+
+            <!-- Selected Date Info -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-xs font-extrabold text-[#2d3a82] uppercase tracking-widest">{{ currentDate |
+                        date:'dd/MM/yyyy' }}</h3>
+                    <span class="text-[10px] font-bold text-slate-400">CHI TIẾT NGÀY</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div *ngIf="getInstancesForSelectedDate().length === 0" class="text-center py-8">
+                        <i class="fas fa-calendar-times text-slate-200 text-3xl mb-2"></i>
+                        <p class="text-xs font-bold text-slate-400">Không có tiết học nào trong ngày này</p>
+                    </div>
+
+                    <div *ngFor="let inst of getInstancesForSelectedDate()"
+                        class="flex items-start gap-3 p-3 rounded-2xl border border-slate-100 hover:border-blue-100 transition-all cursor-pointer group">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 flex flex-col items-center justify-center text-[#2d3a82] group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <span class="text-[10px] font-extrabold leading-none">{{ inst.startTime.split(':')[0]
+                                }}</span>
+                            <span class="text-[8px] font-bold opacity-60">HH</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="text-[11px] font-extrabold text-slate-800 leading-tight uppercase">{{
+                                inst.courseClass?.classCode }}</div>
+                            <div class="text-[10px] font-bold text-slate-500 mt-1 flex items-center justify-between">
+                                <span>{{ inst.startTime }} - {{ inst.endTime }}</span>
+                                <span class="text-blue-600 uppercase">{{ inst.roomName }}</span>
+                            </div>
+                            <div class="mt-2 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full inline-block"
+                                [ngClass]="inst.status === 'PLANNED' ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'">
+                                {{ inst.status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Pattern Modal -->
+<div *ngIf="showPatternModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+    <div
+        class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h2 class="text-xl font-extrabold text-[#2d3a82] uppercase tracking-tight">Tạo lịch học mẫu</h2>
+            <button (click)="closePatternModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Thứ trong
+                        tuần</label>
+                    <select [(ngModel)]="newPattern.dayOfWeek"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                        <option [ngValue]="1">Thứ Hai</option>
+                        <option [ngValue]="2">Thứ Ba</option>
+                        <option [ngValue]="3">Thứ Tư</option>
+                        <option [ngValue]="4">Thứ Năm</option>
+                        <option [ngValue]="5">Thứ Sáu</option>
+                        <option [ngValue]="6">Thứ Bảy</option>
+                        <option [ngValue]="7">Chủ Nhật</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Phòng
+                        học</label>
+                    <input type="text" [(ngModel)]="newPattern.roomName" placeholder="Ví dụ: A1-101"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Tiết bắt
+                        đầu</label>
+                    <select [(ngModel)]="newPattern.startPeriod"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                        <option *ngFor="let p of [1,2,3,4,5,6,7,8,9,10]" [ngValue]="p">Tiết {{p}}</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Tiết kết
+                        thúc</label>
+                    <select [(ngModel)]="newPattern.endPeriod"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                        <option *ngFor="let p of [1,2,3,4,5,6,7,8,9,10]" [ngValue]="p">Tiết {{p}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Từ
+                        tuần</label>
+                    <input type="number" [(ngModel)]="newPattern.fromWeek"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Đến
+                        tuần</label>
+                    <input type="number" [(ngModel)]="newPattern.toWeek"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Loại buổi
+                    học</label>
+                <select [(ngModel)]="newPattern.type"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    <option value="THEORY">Thuyết trình / Lý thuyết (THEORY)</option>
+                    <option value="PRACTICE">Thực hành (PRACTICE)</option>
+                    <option value="ONLINE">Trực tuyến (ONLINE)</option>
+                    <option value="EXAM">Thi cử (EXAM)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="p-6 bg-slate-50/50 border-t border-slate-100 flex gap-3">
+            <button (click)="closePatternModal()"
+                class="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">Hủy</button>
+            <button (click)="savePattern()"
+                class="flex-[2] px-4 py-2.5 bg-[#2d3a82] text-white rounded-xl text-sm font-bold hover:bg-[#1e2a6a] transition-all shadow-md shadow-blue-100">Lưu
+                lịch mẫu</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="min-h-screen bg-[#334f9f] flex font-sans text-slate-900 overflow-hidden">
+  <aside [class.w-[240px]]="!isSidebarCollapsed" [class.w-[60px]]="isSidebarCollapsed"
+    class="flex flex-col pl-4 h-screen shrink-0 transition-all duration-300 z-50 bg-[#334f9f]">
+
+    <div class="flex items-center h-20 transition-all duration-300">
+      <div class="w-[60px] shrink-0 flex items-center justify-center">
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+          <i class="fas fa-graduation-cap text-white text-xl"></i>
+        </div>
+      </div>
+      <div class="flex flex-col transition-all duration-300 overflow-hidden" [class.opacity-0]="isSidebarCollapsed"
+        [class.w-0]="isSidebarCollapsed">
+        <span class="text-white font-bold text-lg tracking-tight whitespace-nowrap">SMART<span
+            class="text-blue-400">UNI</span></span>
+        <span class="text-white/40 text-[8px] uppercase tracking-widest whitespace-nowrap">Aspire to inspire</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1 flex flex-col overflow-y-auto">
+
+      <a routerLink="/home" routerLinkActive="!text-orange-500" [routerLinkActiveOptions]="{exact: true}"
+        class="w-full flex items-center  py-4 transition-all group text-slate-200 hover:text-white">
+        <div class="w-[60px] shrink-0 flex items-center justify-center pt-0.5">
+          <i class="fas fa-home text-2xl"></i>
+        </div>
+        <span class="text-[16px] flex-1 text-left font-semibold break-words leading-tight pr-2"
+          [class.hidden]="isSidebarCollapsed">
+          Trang chủ
+        </span>
+      </a>
+
+      <a routerLink="/news" routerLinkActive="!text-orange-500"
+        class="w-full flex items-center  py-4 transition-all group text-slate-200 hover:text-white cursor-pointer">
+        <div class="w-[60px] shrink-0 flex items-center justify-center pt-0.5">
+          <i class="fas fa-newspaper text-2xl"></i>
+        </div>
+        <span class="text-[16px] flex-1 text-left font-semibold break-words leading-tight pr-2"
+          [class.hidden]="isSidebarCollapsed">
+          Tin tức
+        </span>
+      </a>
+
+      <div class="w-full">
+        <button (click)="toggleMenu('profile', $event)"
+          class="w-full flex items-center  py-4 transition-all outline-none group"
+          [ngClass]="isParentActive(['/profile-setup']) ? '!text-orange-500' : 'text-slate-200 hover:text-white'">
+          <div class="w-[60px] shrink-0 flex items-center justify-center pt-0.5">
+            <i class="fas fa-user-circle text-2xl"></i>
+          </div>
+          <span class="text-[16px] flex-1 text-left font-semibold break-words leading-tight pr-2"
+            [class.hidden]="isSidebarCollapsed">
+            Profile
+          </span>
+          <div class="pr-3 pt-1.5" *ngIf="!isSidebarCollapsed">
+            <i class="fas fa-chevron-right text-sm transition-transform duration-300"
+              [class.rotate-90]="openMenuId === 'profile'"></i>
+          </div>
+        </button>
+        <div class="grid transition-all duration-300 ease-in-out"
+          [class.grid-rows-[1fr]]="openMenuId === 'profile' && !isSidebarCollapsed"
+          [class.grid-rows-[0fr]]="openMenuId !== 'profile' || isSidebarCollapsed">
+          <div class="overflow-hidden">
+            <div class="ml-[30px] space-y-4 mt-2 mb-4 border-l border-white/20 pl-6">
+              <a routerLink="/profile-setup" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Khai báo hồ sơ</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full">
+        <button (click)="toggleMenu('learning', $event)"
+          class="w-full flex items-center  py-4 transition-all outline-none group"
+          [ngClass]="isParentActive(['/home/grades', '/points', '/curriculum']) ? '!text-orange-500' : 'text-slate-200 hover:text-white'">
+          <div class="w-[60px] shrink-0 flex items-center justify-center pt-0.5">
+            <i class="fas fa-cubes text-2xl"></i>
+          </div>
+          <span class="text-[16px] flex-1 text-left font-semibold break-words leading-tight pr-2"
+            [class.hidden]="isSidebarCollapsed">
+            Góc học tập
+          </span>
+          <div class="pr-3 pt-1.5" *ngIf="!isSidebarCollapsed">
+            <i class="fas fa-chevron-right text-sm transition-transform duration-300"
+              [class.rotate-90]="openMenuId === 'learning'"></i>
+          </div>
+        </button>
+        <div class="grid transition-all duration-300 ease-in-out"
+          [class.grid-rows-[1fr]]="openMenuId === 'learning' && !isSidebarCollapsed"
+          [class.grid-rows-[0fr]]="openMenuId !== 'learning' || isSidebarCollapsed">
+          <div class="overflow-hidden">
+            <div class="ml-[30px] space-y-4 mt-2 mb-4 border-l border-white/20 pl-6">
+              <a routerLink="/home/schedule" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Thời khóa biểu</a>
+              <a routerLink="/home/grades" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Tra cứu điểm</a>
+              <a routerLink="/points" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Điểm rèn luyện</a>
+              <a routerLink="/curriculum" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Chương trình học</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full">
+        <button (click)="toggleMenu('registration', $event)"
+          class="w-full flex items-center  py-4 transition-all outline-none group"
+          [ngClass]="isParentActive(['/register-course', '/wishes', '/results']) ? '!text-orange-500' : 'text-slate-200 hover:text-white'">
+          <div class="w-[60px] shrink-0 flex items-center justify-center pt-0.5">
+            <i class="fas fa-edit text-2xl"></i>
+          </div>
+          <span class="text-[16px] flex-1 text-left font-semibold break-words leading-tight pr-2"
+            [class.hidden]="isSidebarCollapsed">
+            Đăng ký trực tuyến
+          </span>
+          <div class="pr-3 pt-1.5" *ngIf="!isSidebarCollapsed">
+            <i class="fas fa-chevron-right text-sm transition-transform duration-300"
+              [class.rotate-90]="openMenuId === 'registration'"></i>
+          </div>
+        </button>
+        <div class="grid transition-all duration-300 ease-in-out"
+          [class.grid-rows-[1fr]]="openMenuId === 'registration' && !isSidebarCollapsed"
+          [class.grid-rows-[0fr]]="openMenuId !== 'registration' || isSidebarCollapsed">
+          <div class="overflow-hidden">
+            <div class="ml-[30px] space-y-4 mt-2 mb-4 border-l border-white/20 pl-6">
+              <a routerLink="/register-course" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Đăng ký học</a>
+              <a routerLink="/wishes" routerLinkActive="!text-orange-400 !font-bold"
+                class="block text-[15px] text-slate-300 hover:text-white transition-colors">Đăng ký nguyện vọng</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </nav>
+  </aside>
+
+  <div class="flex-1 flex flex-col h-screen">
+    <header class="h-20 flex items-center justify-between px-10 shrink-0">
+      <button (click)="toggleSidebar()"
+        class="w-10 h-10 text-white/70 transition-colors flex items-center justify-center">
+        <i class="fas text-xl" [class.fa-bars]="isSidebarCollapsed" [class.fa-outdent]="!isSidebarCollapsed"></i>
+      </button>
+
+      <div (click)="toggleUserDropdown($event)" class="flex items-center gap-4 cursor-pointer relative group">
+        <div
+          class="w-9 h-9 rounded-full border-2 border-white shadow-sm overflow-hidden ring-2 ring-slate-100 group-hover:ring-blue-100 transition-all">
+          <img [src]="getAvatarUrl()" class="w-full h-full object-cover" alt="User Avatar">
+        </div>
+        <div class="text-right pr-3 leading-tight hidden sm:block">
+          <p
+            class="text-[16px] font-medium text-slate-300 group-hover:text-orange-400 transition-colors uppercase tracking-tight">
+            {{ currentUser?.name }}
+          </p>
+        </div>
+        <i class="fas fa-chevron-right text-[12px] text-slate-400 transition-transform duration-300"
+          [class.rotate-90]="isUserDropdownOpen"></i>
+
+        <div *ngIf="isUserDropdownOpen"
+          class="absolute right-0 top-full mt-6 w-60 bg-white rounded-md shadow-2xl border border-slate-100 py-2 z-[100] animate-in fade-in slide-in-from-top-2">
+          <div class="px-4 py-2 border-b border-slate-50 mb-1">
+            <p class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Tài khoản cá nhân</p>
+          </div>
+          <a routerLink="/profile/change-password"
+            class="flex items-center px-4 py-3 text-[13px] text-slate-800 hover:bg-slate-50 transition-colors">
+            <i class="fas fa-key w-5 mr-3"></i> Thay đổi mật khẩu
+          </a>
+          <div class="my-1 border-t border-slate-50"></div>
+          <button (click)="logout()"
+            class="w-full flex items-center px-4 py-3 text-[13px] text-red-500 hover:bg-red-50 transition-colors font-medium">
+            <i class="fas fa-sign-out-alt w-5 mr-3"></i> Đăng xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 pl-10 pb-4 overflow-hidden relative">
+      <div
+        class="bg-white rounded-l-[2rem] shadow-2xl h-full flex flex-col border border-white/50 overflow-hidden relative">
+        <div class="flex-1 overflow-y-auto p-10 custom-scrollbar">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
