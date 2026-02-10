@@ -1,10 +1,10 @@
 // import { Component, OnInit } from '@angular/core';
-// import { ScheduleService } from '../../services/schedule.service';
-// import { SemesterService, Semester } from '../../services/semester.service';
-// import { SectionService, CourseClassDTO } from '../../services/section.service';
+// import { ScheduleService } from '../../../services/schedule.service';
+// import { SemesterService, Semester } from '../../../services/semester.service';
+// import { SectionService, CourseClassDTO } from '../../../services/section.service';
 // import { CommonModule } from '@angular/common';
 // import { FormsModule } from '@angular/forms';
-// import { MiniCalendarComponent } from '../../shared/components/mini-calendar/mini-calendar.component';
+// import { MiniCalendarComponent } from '../../../shared/components/mini-calendar/mini-calendar.component';
 
 // @Component({
 //     selector: 'app-schedule',

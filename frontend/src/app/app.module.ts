@@ -7,11 +7,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './shared/layouts/dashboard-layout/dashboard-layout.component';
 import { UserLayoutComponent } from './shared/layouts/user-layout/user-layout.component';
 import { OAuth2RedirectComponent } from './components/oauth2-redirect/oauth2-redirect.component';
-import { UsersComponent } from './components/users/users.component';
+import { UsersComponent } from './components/admin/users/users.component';
 import { SettingsComponent } from './shared/layouts/setting-layout/setting-layout.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -19,9 +19,9 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { FlashMessageComponent } from './shared/components/flash-message/flash-message.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { PasswordChecklistComponent } from './shared/components/password-checklist/password-checklist.component';
-// import { ScheduleComponent } from './components/schedule/schedule.component';
+// import { ScheduleComponent } from './components/admin/schedule/schedule.component';
 import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-calendar.component';
-import { ProgramsComponent } from './components/programs/programs.component';
+import { ProgramsComponent } from './components/admin/programs/programs.component';
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 

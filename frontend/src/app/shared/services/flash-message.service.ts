@@ -28,14 +28,14 @@ export class FlashMessageService {
   showMessage(type: 'success' | 'error' | 'warning' | 'info', message: string, duration: number = 1000): void {
     const newMessage: FlashMessage = {
       type,
-      title: this.labels[type], // Lấy title tương ứng từ labels
+      title: this.labels[type],
       message,
       duration,
       timestamp: Date.now()
     };
 
     const currentMessages = this.messagesSubject.value;
-    
+
     // Thêm thông báo mới vào danh sách
     this.messagesSubject.next([...currentMessages, newMessage]);
 
@@ -63,11 +63,11 @@ export class FlashMessageService {
   info(msg: string) { this.showMessage('info', msg, 2000); }
 
   // Xử lý phản hồi từ API
-  handleSuccess(res: any) { 
-    this.success(res?.message || 'Thao tác thành công!'); 
+  handleSuccess(res: any) {
+    this.success(res?.message || 'Thao tác thành công!');
   }
-  
-  handleError(err: any) { 
-    this.error(err?.error?.message || err?.message || 'Có lỗi xảy ra!'); 
+
+  handleError(err: any) {
+    this.error(err?.error?.message || err?.message || 'Có lỗi xảy ra!');
   }
 }

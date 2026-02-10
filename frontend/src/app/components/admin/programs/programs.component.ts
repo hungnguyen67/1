@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MajorService, MajorDTO } from '../../services/major.service';
+import { MajorService, MajorDTO } from '../../../services/major.service';
 
 @Component({
   selector: 'app-programs',
@@ -53,16 +53,6 @@ export class ProgramsComponent implements OnInit {
         return 0;
       });
     }
-  }
-
-  onSort(column: string): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-    this.sortData();
   }
 
   get paginatedMajors(): MajorDTO[] {

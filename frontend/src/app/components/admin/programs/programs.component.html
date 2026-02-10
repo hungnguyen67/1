@@ -7,12 +7,18 @@
 
   <div class="p-6">
     <!-- Search -->
-    <div class="mb-4">
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
-        placeholder="Tìm kiếm theo mã ngành, tên ngành, khoa..."
-        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+    <div class="flex flex-col md:flex-row gap-4 mb-8">
+      <!-- Search Input -->
+      <div class="flex-1 relative group">
+        <span
+          class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors">
+          <i class="fas fa-search text-sm"></i>
+        </span>
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+          placeholder="Tìm kiếm theo mã ngành, tên ngành, khoa..."
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
+      </div>
     </div>
-
     <!-- Table -->
     <div class="overflow-x-auto">
       <table class="w-full table-auto border-collapse">
@@ -21,28 +27,23 @@
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               STT
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider cursor-pointer"
-              (click)="onSort('majorCode')">
-              Mã ngành <i class="fas fa-sort ml-1"></i>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Mã ngành
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider cursor-pointer"
-              (click)="onSort('majorName')">
-              Tên ngành <i class="fas fa-sort ml-1"></i>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Tên ngành
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider cursor-pointer"
-              (click)="onSort('facultyName')">
-              Khoa <i class="fas fa-sort ml-1"></i>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Khoa
             </th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Mô tả
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider cursor-pointer"
-              (click)="onSort('numberOfKnowledgeBlocks')">
-              Số khối KT <i class="fas fa-sort ml-1"></i>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Số khối KT
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider cursor-pointer"
-              (click)="onSort('totalCreditsRequired')">
-              Tổng TC yêu cầu <i class="fas fa-sort ml-1"></i>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Tổng TC yêu cầu
             </th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Trạng thái

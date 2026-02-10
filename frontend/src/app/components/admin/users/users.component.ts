@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../../auth.service';
 import { HttpClient } from '@angular/common/http';
-import { FlashMessageService } from '../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../../shared/services/flash-message.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
