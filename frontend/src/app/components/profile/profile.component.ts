@@ -72,14 +72,12 @@ export class ProfileComponent implements OnInit {
     this.showEditModal = true;
   }
 
-  // HÀM QUAN TRỌNG: Đóng và Reset lại form về dữ liệu gốc từ server
   closeEditModal() {
     this.showEditModal = false;
     this.updating = false;
-    this.initEditForm(); // Xóa các thay đổi chưa lưu
+    this.initEditForm();
   }
 
-  // Chống lỗi trượt chuột khi kéo thanh cuộn
   handleBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       this.closeEditModal();

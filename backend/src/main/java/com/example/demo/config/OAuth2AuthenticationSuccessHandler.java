@@ -75,7 +75,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     user.setUpdatedAt(LocalDateTime.now());
                     System.out.println("Updated existing user with GoogleId: " + user.getEmail());
                 } else {
-                    // Tài khoản chưa có trong hệ thống, không cho đăng nhập
                     String message = "Tài khoản chưa được kích hoạt";
                     String redirectUrl = "http://localhost:4200/login?error=" + java.net.URLEncoder.encode(message, "UTF-8");
                     getRedirectStrategy().sendRedirect(request, response, redirectUrl);

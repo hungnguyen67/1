@@ -5,7 +5,9 @@
   </div>
 
   <div class="bg-white rounded-md border border-slate-200 shadow-sm mb-6 transition-all flex-shrink-0">
-    <div class="p-6"> <div class="flex items-center gap-6"> <div class="relative">
+    <div class="p-6">
+      <div class="flex items-center gap-6">
+        <div class="relative">
           <div class="w-16 h-16 rounded-full overflow-hidden ring-4 ring-slate-50 border border-slate-200 shadow-inner">
             <img [src]="getAvatarUrl()" alt="Avatar" class="w-full h-full object-cover" />
           </div>
@@ -34,7 +36,9 @@
       </button>
     </div>
 
-    <div class="p-8 h-auto"> <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-16 h-auto"> <div class="space-y-2">
+    <div class="p-8 h-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-16 h-auto">
+        <div class="space-y-2">
           <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Họ và tên</p>
           <p class="text-sm font-semibold text-slate-700 leading-relaxed">{{ user?.name || '---' }}</p>
         </div>
@@ -60,14 +64,13 @@
   </div>
 </div>
 
-<!-- Edit Modal -->
 <div *ngIf="showEditModal"
   class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300"
   (mousedown)="handleBackdropClick($event)">
-  
+
   <div class="bg-white rounded-md shadow-2xl max-w-md w-full mx-4 transform transition-all max-h-[90vh] flex flex-col"
     (mousedown)="$event.stopPropagation()">
-    
+
     <div class="flex px-6 pt-6 pb-4 items-center justify-between border-b border-slate-200 flex-shrink-0">
       <h3 class="font-bold text-slate-900">Chỉnh sửa thông tin cá nhân</h3>
       <button (click)="closeEditModal()" class="text-gray-400 hover:text-gray-600">
@@ -79,7 +82,7 @@
 
     <div class="px-6 py-6 overflow-y-auto flex-1">
       <form [formGroup]="editForm" (ngSubmit)="updateProfile()" class="space-y-4 sm:space-y-6">
-        
+
         <div class="space-y-2">
           <label class="block text-sm font-semibold text-gray-700">Họ và tên</label>
           <input type="text" formControlName="name"
@@ -104,8 +107,7 @@
               class="rounded-md border border-slate-300 px-4 py-2.5 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition font-semibold">
               Hủy bỏ
             </button>
-            <button type="submit" 
-              [disabled]="editForm.invalid || isFormUnchanged"
+            <button type="submit" [disabled]="editForm.invalid || isFormUnchanged"
               class="px-5 py-2.5 bg-blue-600 text-xs rounded-md hover:bg-blue-700 font-semibold text-white shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all">
               Cập nhật
             </button>
