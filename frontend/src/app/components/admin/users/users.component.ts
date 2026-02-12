@@ -17,9 +17,9 @@ export class UsersComponent implements OnInit {
   itemsPerPage = 10;
   sortColumn = '';
   sortDirection: 'asc' | 'desc' = 'asc';
-  filterRole = 'LECTURER';
-  filterStatus = 'ACTIVE';
-  filterVerified = 'true';
+  filterRole = '';
+  filterStatus = '';
+  filterVerified = '';
   showInviteForm = false;
   inviteEmail = '';
   inviteRole = 'STUDENT';
