@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.ForgotPasswordRequest;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.ResetPasswordRequest;
+
 import com.example.demo.model.PasswordResetToken;
 import com.example.demo.model.User;
 import com.example.demo.repository.PasswordResetTokenRepository;
@@ -60,18 +58,18 @@ public class AuthController {
     private final long jwtExpirationMs = 86400000;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
+                            loginRequest.get("email"),
+                            loginRequest.get("password")
                     )
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            User user = userRepository.findByEmail(loginRequest.getEmail())
+            User user = userRepository.findByEmail(loginRequest.get("email"))
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
             user.setLastLogin(LocalDateTime.now());
@@ -100,9 +98,9 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         try {
-            Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+            Optional<User> userOpt = userRepository.findByEmail(request.get("email"));
             if (userOpt.isEmpty()) {
                 return ResponseEntity.ok(Map.of("message", "Nếu email tồn tại, mã sẽ được gửi."));
             }
@@ -125,19 +123,19 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         try {
-            User user = userRepository.findByEmail(request.getEmail())
+            User user = userRepository.findByEmail(request.get("email"))
                     .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
-            PasswordResetToken prt = passwordResetTokenRepository.findByUserAndToken(user, request.getCode())
+            PasswordResetToken prt = passwordResetTokenRepository.findByUserAndToken(user, request.get("code"))
                     .orElseThrow(() -> new RuntimeException("Mã xác nhận không đúng hoặc không tồn tại"));
 
             if (prt.getExpiryDate().isBefore(LocalDateTime.now())) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Mã xác nhận đã hết hạn"));
             }
 
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(passwordEncoder.encode(request.get("password")));
             userRepository.save(user);
 
             passwordResetTokenRepository.delete(prt);
