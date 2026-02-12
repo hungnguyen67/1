@@ -1,7 +1,10 @@
 <div class="bg-white rounded-lg shadow-sm border border-slate-200">
   <div class="p-6 border-b border-slate-200">
     <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-slate-800">Quản lý Chuyên ngành</h1>
+      <div>
+        <h1 class="text-xl font-bold text-slate-800">Quản lý Chuyên ngành</h1>
+        <p class="text-sm text-slate-500">Danh sách chuyên ngành</p>
+      </div>
     </div>
   </div>
 
@@ -16,7 +19,7 @@
         </span>
         <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
           placeholder="Tìm kiếm theo mã ngành, tên ngành, khoa..."
-          class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-md  focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
       </div>
     </div>
     <!-- Table -->
