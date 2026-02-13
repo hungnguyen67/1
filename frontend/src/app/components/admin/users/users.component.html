@@ -36,13 +36,13 @@
           <div *ngIf="activeDropdown === 'role'"
             class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div (click)="filterRole=''; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterRole === ''">Tất cả Vai trò</div>
             <div (click)="filterRole='LECTURER'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterRole === 'LECTURER'">Giảng viên</div>
             <div (click)="filterRole='STUDENT'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterRole === 'STUDENT'">Sinh viên</div>
           </div>
         </div>
@@ -60,16 +60,16 @@
           <div *ngIf="activeDropdown === 'status'"
             class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div (click)="filterStatus=''; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterStatus === ''">Tất cả</div>
             <div (click)="filterStatus='ACTIVE'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterStatus === 'ACTIVE'">Hoạt động</div>
             <div (click)="filterStatus='LOCKED'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterStatus === 'LOCKED'">Đã khóa</div>
             <div (click)="filterStatus='DISABLED'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterStatus === 'DISABLED'">Vô hiệu hóa</div>
           </div>
         </div>
@@ -87,13 +87,13 @@
           <div *ngIf="activeDropdown === 'verify'"
             class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div (click)="filterVerified=''; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterVerified === ''">Tất cả</div>
             <div (click)="filterVerified='true'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterVerified === 'true'">Đã xác thực</div>
             <div (click)="filterVerified='false'; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterVerified === 'false'">Chưa xác thực</div>
           </div>
         </div>

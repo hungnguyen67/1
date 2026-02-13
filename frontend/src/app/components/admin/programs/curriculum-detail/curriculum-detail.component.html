@@ -142,9 +142,10 @@
                                 Tương đương</th>
                         </tr>
                     </thead>
-                    <tbody *ngFor="let block of blocks" class="border-b border-slate-200 last:border-0 font-medium">
+                    <tbody *ngFor="let block of blocks" class="font-medium">
                         <tr *ngFor="let subject of block.subjects; let i = index"
-                            class="hover:bg-slate-50/50 transition-colors">
+                            class="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-slate-200">
+
                             <td class="px-4 py-3 bg-slate-50/30 border-r border-slate-200 align-top w-48"
                                 *ngIf="i === 0" [attr.rowspan]="block.subjects.length">
                                 <div class="font-bold text-slate-800">{{ block.blockName }}</div>
@@ -152,16 +153,17 @@
                                     Min: {{ block.creditsRequired }} TC
                                 </div>
                             </td>
+
                             <td class="px-4 py-3 text-sm text-slate-600 text-center">{{ subject.subjectCode }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ subject.subjectName }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-600 text-center">{{ subject.credits }}
-                            </td>
+                            <td class="px-4 py-3 text-sm text-slate-600 text-center">{{ subject.credits }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600 text-center">{{ subject.semester }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600 text-center">
                                 <span *ngIf="subject.isRequired" class="text-emerald-500">
                                     <i class="fas fa-check-circle"></i>
                                 </span>
                             </td>
+
                             <td class="px-4 py-3 text-sm text-center">
                                 <div class="flex flex-wrap justify-center gap-1">
                                     <div *ngFor="let pre of subject.prerequisites"
@@ -169,7 +171,6 @@
                                         title="Môn tiên quyết">
                                         <i class="fas fa-lock mr-1 text-[9px]"></i>{{ pre }}
                                     </div>
-
                                     <div *ngFor="let co of subject.corequisites"
                                         class="group relative text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 font-medium cursor-help"
                                         title="Môn đồng học">

@@ -38,12 +38,12 @@
           <div *ngIf="activeDropdown === 'faculty'"
             class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <div (click)="filterFaculty=''; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterFaculty === ''">
               Tất cả các khoa
             </div>
             <div *ngFor="let faculty of faculties" (click)="filterFaculty=faculty; onSearch(); activeDropdown=''"
-              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
               [class.text-blue-600]="filterFaculty === faculty">
               {{ faculty }}
             </div>

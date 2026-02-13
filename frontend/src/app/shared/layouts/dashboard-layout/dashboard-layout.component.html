@@ -48,27 +48,35 @@
 
         <div class="relative">
           <div (click)="toggleAdminMenu('academic', $event)"
-            [class.bg-blue-50]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums'])"
-            [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums'])"
+            [class.bg-blue-50]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])"
+            [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])"
             class="w-full flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all font-semibold cursor-pointer rounded-lg group">
+
             <div class="flex items-center gap-2 flex-1">
               <i class="fas fa-graduation-cap text-lg w-7 pt-0.5 transition-colors"
-                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums'])"></i>
+                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])"></i>
 
               <span *ngIf="isSidebarOpen" class="text-[14px] flex-1 transition-colors"
-                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums'])">
+                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/tcdt'])">
                 Quản lý Đào tạo
               </span>
             </div>
+
             <i *ngIf="isSidebarOpen" class="fas fa-chevron-right text-[10px] transition-all ml-2"
               [class.rotate-90]="openMenuName === 'academic'"
-              [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums'])"></i>
+              [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/tcdt'])"></i>
           </div>
+
           <div *ngIf="isMenuOpen('academic')" class="ml-[23px] mt-1 border-l-2 border-slate-200 space-y-1">
             <a routerLink="/dashboard/programs"
               [ngClass]="isGroupActive(['/dashboard/programs', '/dashboard/curriculums']) ? '!text-blue-700 bg-blue-50/50 !border-blue-500' : ''"
               class="flex items-center pl-6 py-2 text-[13px] text-slate-600 font-semibold hover:text-blue-600 transition-all relative -ml-[2px] border-l-2 border-transparent">
               Quản lý Chuyên ngành
+            </a>
+            <a routerLink="/dashboard/training-programs"
+              routerLinkActive="!text-blue-700 bg-blue-50/50 !border-blue-500"
+              class="flex items-center pl-6 py-2 text-[13px] text-slate-600 font-semibold hover:text-blue-600 transition-all relative -ml-[2px] border-l-2 border-transparent">
+              Quản lý CT Đào tạo
             </a>
             <a routerLink="/dashboard/knowledge-blocks" routerLinkActive="!text-blue-700 bg-blue-50/50 !border-blue-500"
               class="flex items-center pl-6 py-2 text-[13px] text-slate-600 font-semibold hover:text-blue-600 transition-all relative -ml-[2px] border-l-2 border-transparent">

@@ -80,16 +80,6 @@ export class MajorDetailComponent implements OnInit {
         console.log('Edit curriculum', curriculum);
     }
 
-    deleteCurriculum(curriculum: CurriculumDTO): void {
-        if (confirm('Bạn có chắc chắn muốn xóa chương trình đào tạo này?')) {
-            this.curriculumService.deleteCurriculum(curriculum.id).subscribe(() => {
-                if (this.major) {
-                    this.loadCurriculums(this.major.id);
-                }
-            });
-        }
-    }
-
     deleteMajor(major: MajorDTO | null): void {
         if (!major) return;
         if (confirm('Bạn có chắc chắn muốn xóa ngành này?')) {
