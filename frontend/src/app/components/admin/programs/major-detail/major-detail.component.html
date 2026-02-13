@@ -176,6 +176,12 @@
                             </div>
                         </div>
                     </div>
+
+                    <button (click)="searchTerm=''; filterYear=null; filterStatus=''; onSearch()"
+                        class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                        title="Đặt lại bộ lọc">
+                        <i class="fas fa-sync-alt text-sm"></i>
+                    </button>
                 </div>
             </div>
             <div class="overflow-x-auto">
