@@ -20,7 +20,6 @@ public class CurriculumSubjectKey implements Serializable {
         this.subjectId = subjectId;
     }
 
-    // Getters, Setters, hashCode, equals
     public Long getCurriculumId() { return curriculumId; }
     public void setCurriculumId(Long curriculumId) { this.curriculumId = curriculumId; }
 

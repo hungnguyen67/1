@@ -20,7 +20,6 @@ public class SubjectPrerequisiteKey implements Serializable {
         this.prerequisiteSubjectId = prerequisiteSubjectId;
     }
 
-    // Getters, Setters, hashCode, equals
     public Long getSubjectId() { return subjectId; }
     public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
 

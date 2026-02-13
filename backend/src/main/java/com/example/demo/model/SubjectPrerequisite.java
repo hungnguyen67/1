@@ -26,8 +26,6 @@ public class SubjectPrerequisite {
     private Boolean isCorequisite = false;
 
     public SubjectPrerequisite() {}
-
-    // Getters and Setters
     public SubjectPrerequisiteKey getId() { return id; }
     public void setId(SubjectPrerequisiteKey id) { this.id = id; }
 
