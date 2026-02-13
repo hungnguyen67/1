@@ -33,19 +33,51 @@ export class MajorDetailComponent implements OnInit {
         });
     }
 
-    loadCurriculums(majorId: number): void {
-        this.curriculumService.getCurriculumsByMajorId(majorId).subscribe(data => {
-            this.curriculums = data;
-        });
-    }
-
     viewCurriculumDetail(curriculum: CurriculumDTO): void {
         this.router.navigate(['/dashboard/curriculums', curriculum.id]);
     }
 
+    searchTerm: string = '';
+    filterYear: number | null = null;
+    filterStatus: string = '';
+    filteredCurriculums: CurriculumDTO[] = [];
+    years: number[] = [];
+    activeDropdown: string = '';
+
+    loadCurriculums(majorId: number): void {
+        this.curriculumService.getCurriculumsByMajorId(majorId).subscribe(data => {
+            this.curriculums = data;
+            this.filteredCurriculums = data;
+            this.extractYears();
+            this.onSearch();
+        });
+    }
+
+    extractYears(): void {
+        const uniqueYears = new Set(this.curriculums.map(c => c.appliedYear));
+        this.years = Array.from(uniqueYears).sort((a, b) => b - a);
+    }
+
+    onSearch(): void {
+        this.filteredCurriculums = this.curriculums.filter(c => {
+            const matchesSearch = !this.searchTerm ||
+                c.curriculumName.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+            const matchesYear = !this.filterYear || c.appliedYear === this.filterYear;
+
+            const matchesStatus = !this.filterStatus || c.status === this.filterStatus;
+
+            return matchesSearch && matchesYear && matchesStatus;
+        });
+        this.currentPage = 1;
+    }
+
+    addCurriculum(): void {
+        console.log('Add new curriculum');
+    }
+
     editCurriculum(curriculum: CurriculumDTO): void {
         console.log('Edit curriculum', curriculum);
-        // Implement navigation to edit page if exists
     }
 
     deleteCurriculum(curriculum: CurriculumDTO): void {
@@ -71,16 +103,16 @@ export class MajorDetailComponent implements OnInit {
     itemsPerPage: number = 10;
 
     get totalPages(): number {
-        return Math.ceil(this.curriculums.length / this.itemsPerPage);
+        return Math.ceil(this.filteredCurriculums.length / this.itemsPerPage);
     }
 
     get paginatedCurriculums(): CurriculumDTO[] {
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        return this.curriculums.slice(startIndex, startIndex + this.itemsPerPage);
+        return this.filteredCurriculums.slice(startIndex, startIndex + this.itemsPerPage);
     }
 
     get minEnd(): number {
-        return Math.min(this.currentPage * this.itemsPerPage, this.curriculums.length);
+        return Math.min(this.currentPage * this.itemsPerPage, this.filteredCurriculums.length);
     }
 
     nextPage(): void {
