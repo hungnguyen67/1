@@ -11,22 +11,54 @@
   <div class="p-6">
     <div class="flex flex-col md:flex-row gap-4 mb-8">
       <div class="flex-1 relative group">
-        <span
-          class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500">
           <i class="fas fa-search text-sm"></i>
         </span>
-        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
-          placeholder="Tìm kiếm theo mã ngành, tên ngành, khoa..."
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+          placeholder="Tìm kiếm ngành, mã ngành, khoa..."
           class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-md  focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
       </div>
+
+      <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto">
+        <div class="relative min-w-[200px] flex-1 md:flex-none">
+          <button (click)="activeDropdown = activeDropdown === 'faculty' ? '' : 'faculty'"
+            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
+            <div class="flex items-center gap-2">
+              <span>{{ filterFaculty || 'Tất cả các khoa' }}</span>
+            </div>
+            <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
+              [class.rotate-90]="activeDropdown === 'faculty'"></i>
+          </button>
+
+          <div *ngIf="activeDropdown === 'faculty'"
+            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div (click)="filterFaculty=''; onSearch(); activeDropdown=''"
+              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              [class.text-blue-600]="filterFaculty === ''">
+              Tất cả các khoa
+            </div>
+            <div *ngFor="let faculty of faculties" (click)="filterFaculty=faculty; onSearch(); activeDropdown=''"
+              class="px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+              [class.text-blue-600]="filterFaculty === faculty">
+              {{ faculty }}
+            </div>
+          </div>
+        </div>
+        <button (click)="searchTerm=''; filterFaculty=''; onSearch()"
+          class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+          title="Đặt lại bộ lọc">
+          <i class="fas fa-sync-alt text-sm"></i>
+        </button>
+      </div>
+
     </div>
+
     <div class="overflow-x-auto">
       <table class="w-full table-auto border-collapse">
         <thead>
           <tr class="bg-slate-50 border-b border-slate-200">
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              STT
-            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+              STT</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Mã ngành
             </th>
@@ -39,54 +71,68 @@
             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Mô tả
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Số CTĐT
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              Tổng TC yêu cầu
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+              Số khối
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+              Tổng môn
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+              Tổng TC
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Trạng thái
             </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Hành động
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr *ngFor="let major of paginatedMajors; let i = index" class="hover:bg-slate-50">
-            <td class="px-4 py-3 text-sm text-slate-900">
+            <td class="px-4 py-3 text-sm text-slate-900 text-center">
               {{ (currentPage - 1) * itemsPerPage + i + 1 }}
             </td>
-            <td class="px-4 py-3 text-sm font-medium text-slate-900">
+            <td class="px-4 py-3 text-sm text-slate-900">
               {{ major.majorCode }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900">
+            <td class="px-4 py-3 text-sm text-slate-900 hover:text-blue-600 cursor-pointer transition-colors"
+              (click)="viewMajorDetail(major)">
               {{ major.majorName }}
             </td>
             <td class="px-4 py-3 text-sm text-slate-900">
               {{ major.facultyName }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900 max-w-xs truncate">
+            <td class="px-4 py-3 text-sm text-slate-900 max-w-[200px] truncate" [title]="major.description">
               {{ major.description }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900">
-              {{ major.numberOfKnowledgeBlocks }}
+            <td class="px-4 py-3 text-sm text-slate-900 text-center">
+              {{ major.numberOfCurriculums }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900">
+            <td class="px-4 py-3 text-sm text-slate-900 text-center">
+              {{ major.totalKnowledgeBlocks }}
+            </td>
+            <td class="px-4 py-3 text-sm text-slate-900 text-center">
+              {{ major.totalSubjects }}
+            </td>
+            <td class="px-4 py-3 text-sm text-slate-900 text-center">
               {{ major.totalCreditsRequired }}
             </td>
-            <td class="px-4 py-3 text-sm">
-              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+            <td class="px-4 py-3 text-sm text-center">
+              <span
+                class="inline-flex bg-emerald-50 text-emerald-600 border-emerald-100 items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full">
                 {{ major.status }}
               </span>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900">
-              <button (click)="editMajor(major)" class="text-blue-600 hover:text-blue-900 mr-3">
+            <td class="px-4 py-3 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
+              <button class="text-blue-600 hover:text-blue-900 mr-3">
                 <i class="fas fa-edit"></i>
               </button>
               <button (click)="deleteMajor(major)" class="text-red-600 hover:text-red-900">
-                <i class="fas fa-trash"></i>
+                <i class="fas fa-trash-alt"></i>
               </button>
             </td>
           </tr>

@@ -70,6 +70,9 @@ public class User {
     @Column(name = "account_status")
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
+    @Column(name = "faculty_name")
+    private String facultyName;
+
     public enum AccountStatus {
         ACTIVE, LOCKED, DISABLED
     }
@@ -149,4 +152,7 @@ public class User {
         return accountStatus != null ? accountStatus : AccountStatus.ACTIVE; 
     }
     public void setAccountStatus(AccountStatus accountStatus) { this.accountStatus = accountStatus; }
+
+    public String getFacultyName() { return facultyName; }
+    public void setFacultyName(String facultyName) { this.facultyName = facultyName; }
 }

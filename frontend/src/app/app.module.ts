@@ -22,6 +22,8 @@ import { PasswordChecklistComponent } from './shared/components/password-checkli
 // import { ScheduleComponent } from './components/admin/schedule/schedule.component';
 import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-calendar.component';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
+import { MajorDetailComponent } from './components/admin/programs/major-detail/major-detail.component';
+import { CurriculumDetailComponent } from './components/admin/programs/curriculum-detail/curriculum-detail.component';
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -49,6 +51,8 @@ const routes: Routes = [
       { path: 'users', component: UsersComponent },
       { path: 'semesters-list', component: DashboardComponent },
       { path: 'programs', component: ProgramsComponent },
+      { path: 'programs/:id', component: MajorDetailComponent },
+      { path: 'curriculums/:id', component: CurriculumDetailComponent },
       { path: 'knowledge-blocks', component: DashboardComponent },
       { path: 'administrative-classes', component: DashboardComponent },
       { path: 'lecturers', component: DashboardComponent },
@@ -97,6 +101,8 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     // ScheduleComponent,
     MiniCalendarComponent,
     ProgramsComponent,
+    MajorDetailComponent,
+    CurriculumDetailComponent,
     DashboardComponent,
     DashboardComponent,
     DashboardComponent,

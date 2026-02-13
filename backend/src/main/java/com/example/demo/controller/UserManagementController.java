@@ -94,6 +94,7 @@ public class UserManagementController {
                         userMap.put("gender", user.getGender());
                         userMap.put("isEmailVerified", user.getIsEmailVerified());
                         userMap.put("avatar", user.getAvatar());
+                        userMap.put("facultyName", user.getFacultyName());
                         userMap.put("lastLogin", user.getLastLogin());
                         userMap.put("createdAt", user.getCreatedAt());
                         return userMap;
@@ -133,6 +134,7 @@ public class UserManagementController {
         try {
             String email = userData.get("email");
             String roleName = userData.get("role");
+            String facultyName = userData.get("facultyName");
 
             if (userRepository.findByEmail(email).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of(
@@ -142,6 +144,7 @@ public class UserManagementController {
 
             User user = new User();
             user.setEmail(email);
+            user.setFacultyName(facultyName);
             user.setLastName(email.split("@")[0]);
             user.setFirstName("");
             user.setPassword(passwordEncoder.encode("Abc123"));

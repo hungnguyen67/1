@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MajorService, MajorDTO } from '../../../services/major.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-programs',
@@ -10,12 +11,15 @@ export class ProgramsComponent implements OnInit {
   majors: MajorDTO[] = [];
   filteredMajors: MajorDTO[] = [];
   searchTerm: string = '';
+  filterFaculty: string = '';
+  faculties: string[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 10;
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+  activeDropdown: string = '';
 
-  constructor(private majorService: MajorService) { }
+  constructor(private majorService: MajorService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadMajors();
@@ -23,18 +27,29 @@ export class ProgramsComponent implements OnInit {
 
   loadMajors(): void {
     this.majorService.getMajors().subscribe(data => {
+      console.log('Majors data:', data);
       this.majors = data;
-      this.filteredMajors = [...this.majors];
-      this.sortData();
+      this.extractFaculties();
+      this.onSearch();
     });
   }
 
+  extractFaculties(): void {
+    const uniqueFaculties = new Set(this.majors.map(m => m.facultyName));
+    this.faculties = Array.from(uniqueFaculties).sort();
+  }
+
   onSearch(): void {
-    this.filteredMajors = this.majors.filter(major =>
-      major.majorCode.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      major.majorName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      major.facultyName.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    this.filteredMajors = this.majors.filter(major => {
+      const matchesSearch = !this.searchTerm ||
+        major.majorCode.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        major.majorName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        major.facultyName.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+      const matchesFaculty = !this.filterFaculty || major.facultyName === this.filterFaculty;
+
+      return matchesSearch && matchesFaculty;
+    });
     this.currentPage = 1;
     this.sortData();
   }
@@ -80,8 +95,12 @@ export class ProgramsComponent implements OnInit {
     }
   }
 
+  viewMajorDetail(major: MajorDTO): void {
+    this.router.navigate(['/dashboard/programs', major.id]);
+  }
+
   editMajor(major: MajorDTO): void {
-    // Implement edit logic
+    this.router.navigate(['/admin/majors', major.id, 'edit']);
     console.log('Edit major', major);
   }
 

@@ -8,8 +8,11 @@ export interface MajorDTO {
   majorName: string;
   facultyName: string;
   description: string;
-  numberOfKnowledgeBlocks: number;
+  numberOfCurriculums: number;
   totalCreditsRequired: number;
+  activeCurriculumName: string;
+  totalSubjects: number;
+  totalKnowledgeBlocks: number;
   status: string;
 }
 

@@ -4,6 +4,7 @@ import { AuthService } from '../../../auth.service';
 import { HttpClient } from '@angular/common/http';
 import { FlashMessageService } from '../../../shared/services/flash-message.service';
 import { FormsModule } from '@angular/forms';
+import { MajorService } from '../../../services/major.service';
 
 @Component({
   selector: 'app-users',
@@ -20,9 +21,12 @@ export class UsersComponent implements OnInit {
   filterRole = '';
   filterStatus = '';
   filterVerified = '';
+  filterFaculty = '';
+  faculties: string[] = [];
   showInviteForm = false;
   inviteEmail = '';
   inviteRole = 'STUDENT';
+  inviteFaculty = '';
   inviting = false;
   availableRoles: any[] = [];
   showDeleteModal = false;
@@ -33,7 +37,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private auth: AuthService,
-    private flashMessage: FlashMessageService
+    private flashMessage: FlashMessageService,
+    private majorService: MajorService
   ) { }
 
   toggleDropdown(type: string) {
@@ -63,6 +68,14 @@ export class UsersComponent implements OnInit {
   ngOnInit() {
     this.loadUsers();
     this.loadRoles();
+    this.loadFaculties();
+  }
+
+  loadFaculties() {
+    this.majorService.getMajors().subscribe(majors => {
+      const uniqueFaculties = new Set(majors.map(m => m.facultyName));
+      this.faculties = Array.from(uniqueFaculties).sort();
+    });
   }
 
   loadUsers() {
@@ -89,7 +102,9 @@ export class UsersComponent implements OnInit {
       const matchesVerified = !this.filterVerified ||
         (this.filterVerified === 'true' ? user.isEmailVerified : !user.isEmailVerified);
 
-      return matchesSearch && matchesRole && matchesStatus && matchesVerified;
+      const matchesFaculty = !this.filterFaculty || user.facultyName === this.filterFaculty;
+
+      return matchesSearch && matchesRole && matchesStatus && matchesVerified && matchesFaculty;
     });
     this.currentPage = 1;
     this.sortData();
@@ -154,7 +169,8 @@ export class UsersComponent implements OnInit {
     this.inviting = true;
     this.http.post('http://localhost:8001/api/admin/users', {
       email: this.inviteEmail,
-      role: this.inviteRole
+      role: this.inviteRole,
+      facultyName: this.inviteFaculty
     }, this.auth.getAuthHeaders()).subscribe({
       next: (res: any) => {
         this.inviting = false;
