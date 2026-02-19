@@ -24,6 +24,8 @@ import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-ca
 import { ProgramsComponent } from './components/admin/programs/programs.component';
 import { MajorDetailComponent } from './components/admin/programs/major-detail/major-detail.component';
 import { CurriculumDetailComponent } from './components/admin/programs/curriculum-detail/curriculum-detail.component';
+import { LecturersComponent } from './components/admin/lecturers/lecturers.component';
+import { StudentsComponent } from './components/admin/students/students.component';
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -55,8 +57,8 @@ const routes: Routes = [
       { path: 'curriculums/:id', component: CurriculumDetailComponent },
       { path: 'knowledge-blocks', component: DashboardComponent },
       { path: 'administrative-classes', component: DashboardComponent },
-      { path: 'lecturers', component: DashboardComponent },
-      { path: 'students', component: DashboardComponent },
+      { path: 'lecturers', component: LecturersComponent },
+      { path: 'students', component: StudentsComponent },
       { path: 'subjects', component: DashboardComponent },
       { path: 'sections', component: DashboardComponent },
       // { path: 'schedules', component: ScheduleComponent },
@@ -103,7 +105,8 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     ProgramsComponent,
     MajorDetailComponent,
     CurriculumDetailComponent,
-    DashboardComponent,
+    LecturersComponent,
+    StudentsComponent,
     DashboardComponent,
     DashboardComponent,
     DashboardComponent,

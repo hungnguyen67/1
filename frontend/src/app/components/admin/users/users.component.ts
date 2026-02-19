@@ -226,15 +226,6 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  getGenderName(gender: string): string {
-    switch (gender) {
-      case 'Male': return 'Nam';
-      case 'Female': return 'Nữ';
-      case 'Other': return 'Khác';
-      default: return 'Khác';
-    }
-  }
-
   getStatusName(status: string): string {
     switch (status) {
       case 'ACTIVE': return 'Hoạt động';
