@@ -12,6 +12,7 @@ import { DashboardLayoutComponent } from './shared/layouts/dashboard-layout/dash
 import { UserLayoutComponent } from './shared/layouts/user-layout/user-layout.component';
 import { OAuth2RedirectComponent } from './components/oauth2-redirect/oauth2-redirect.component';
 import { UsersComponent } from './components/admin/users/users.component';
+import { SemestersComponent } from './components/admin/semesters/semesters.component';
 import { SettingsComponent } from './shared/layouts/setting-layout/setting-layout.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -52,7 +53,7 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
-      { path: 'semesters-list', component: DashboardComponent },
+      { path: 'semesters', component: SemestersComponent },
       { path: 'programs', component: ProgramsComponent },
       { path: 'programs/:id', component: MajorDetailComponent },
       { path: 'curriculums/:id', component: CurriculumDetailComponent },
@@ -111,7 +112,8 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     FlashMessageComponent,
     PasswordChecklistComponent,
     PasswordInputComponent,
-    CurriculumComponent
+    CurriculumComponent,
+    SemestersComponent
   ],
   imports: [
     BrowserModule,
