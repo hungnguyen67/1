@@ -28,6 +28,7 @@ import { LecturersComponent } from './components/admin/lecturers/lecturers.compo
 import { StudentsComponent } from './components/admin/students/students.component';
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
+import { CurriculumComponent } from './components/user/curriculum/curriculum.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -41,7 +42,7 @@ const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'grades', component: HomeComponent },
-      // { path: 'schedule', component: ScheduleComponent }
+      { path: 'curriculum', component: CurriculumComponent }
     ]
   },
   {
@@ -107,15 +108,10 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     CurriculumDetailComponent,
     LecturersComponent,
     StudentsComponent,
-    DashboardComponent,
-    DashboardComponent,
-    DashboardComponent,
-    DashboardComponent,
     FlashMessageComponent,
     PasswordChecklistComponent,
     PasswordInputComponent,
-    DashboardComponent,
-    DashboardComponent
+    CurriculumComponent
   ],
   imports: [
     BrowserModule,

@@ -10,8 +10,8 @@ import { FlashMessageService } from '../../services/flash-message.service';
 })
 export class UserLayoutComponent implements OnInit {
   isUserDropdownOpen = false;
-  openMenuId: string | null = null;
-  isSidebarCollapsed = false;
+  isSidebarOpen = true;
+  openMenuName: string | null = null;
   currentUser: any = null;
 
   constructor(
@@ -22,20 +22,17 @@ export class UserLayoutComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserData();
-    this.autoExpandMenu();
+    this.autoOpenMenuBasedOnUrl(this.router.url);
   }
 
-  // Tự động mở menu cha khi tải trang nếu đang ở trang con của nó
-  autoExpandMenu() {
-    const url = this.router.url;
-    if (url.includes('/home/grades') || url.includes('/points') || url.includes('/curriculum')) {
-      this.openMenuId = 'learning';
-    } else if (url.includes('/register-course') || url.includes('/wishes') || url.includes('/results')) {
-      this.openMenuId = 'registration';
-    } else if (url.includes('/schedule') || url.includes('/exams')) {
-      this.openMenuId = 'schedule';
-    } else if (url.includes('/profile-setup')) {
-      this.openMenuId = 'profile';
+  // Tự động mở menu cha dựa trên URL
+  autoOpenMenuBasedOnUrl(url: string) {
+    if (url.includes('/home/grades') || url.includes('/curriculum')) {
+      this.openMenuName = 'learning';
+    } else if (url.includes('/register-course')) {
+      this.openMenuName = 'registration';
+    } else {
+      this.openMenuName = null;
     }
   }
 
@@ -44,18 +41,27 @@ export class UserLayoutComponent implements OnInit {
   }
 
   toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-    if (this.isSidebarCollapsed) this.openMenuId = null;
+    this.isSidebarOpen = !this.isSidebarOpen;
+    if (!this.isSidebarOpen) {
+      this.openMenuName = null;
+    } else {
+      this.autoOpenMenuBasedOnUrl(this.router.url);
+    }
   }
 
-  toggleMenu(menuId: string, event: Event) {
+  toggleMenu(menuName: string, event: Event) {
     event.stopPropagation();
-    if (this.isSidebarCollapsed) {
-      this.isSidebarCollapsed = false;
-      this.openMenuId = menuId;
+    if (!this.isSidebarOpen) {
+      this.isSidebarOpen = true;
+      this.openMenuName = menuName;
     } else {
-      this.openMenuId = this.openMenuId === menuId ? null : menuId;
+      this.openMenuName = this.openMenuName === menuName ? null : menuName;
     }
+  }
+
+  // Kiểm tra xem menu có đang mở không
+  isMenuOpen(menuName: string): boolean {
+    return this.isSidebarOpen && this.openMenuName === menuName;
   }
 
   // Kiểm tra xem URL hiện tại có khớp với mảng các đường dẫn hay không
@@ -64,7 +70,7 @@ export class UserLayoutComponent implements OnInit {
   }
 
   getAvatarUrl(): string {
-    if (!this.currentUser || !this.currentUser.avatar) {
+    if (!this.currentUser?.avatar) {
       const name = this.currentUser?.name || 'User';
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff&size=80`;
     }

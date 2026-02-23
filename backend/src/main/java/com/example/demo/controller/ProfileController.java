@@ -27,6 +27,9 @@ public class ProfileController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.example.demo.repository.StudentProfileRepository studentProfileRepository;
+
     @GetMapping
     public ResponseEntity<?> getProfile(Authentication authentication) {
         String email = authentication.getName();
@@ -41,6 +44,15 @@ public class ProfileController {
             profile.put("avatar", user.getAvatar());
             profile.put("phone", user.getPhone());
             profile.put("address", user.getAddress());
+
+            // Add student-specific info
+            Optional<com.example.demo.model.StudentProfile> studentOpt = studentProfileRepository.findById(user.getId());
+            if (studentOpt.isPresent()) {
+                profile.put("studentCode", studentOpt.get().getStudentCode());
+                if (studentOpt.get().getCurriculum() != null) {
+                    profile.put("curriculumId", studentOpt.get().getCurriculum().getId());
+                }
+            }
             return ResponseEntity.ok(profile);
         }
         return ResponseEntity.notFound().build();
