@@ -57,14 +57,14 @@
                 [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])"></i>
 
               <span *ngIf="isSidebarOpen" class="text-[14px] flex-1 transition-colors"
-                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/tcdt'])">
+                [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])">
                 Quản lý Đào tạo
               </span>
             </div>
 
             <i *ngIf="isSidebarOpen" class="fas fa-chevron-right text-[10px] transition-all ml-2"
               [class.rotate-90]="openMenuName === 'academic'"
-              [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/tcdt'])"></i>
+              [class.text-blue-700]="isGroupActive(['/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])"></i>
           </div>
 
           <div *ngIf="isMenuOpen('academic')" class="ml-[23px] mt-1 border-l-2 border-slate-200 space-y-1">

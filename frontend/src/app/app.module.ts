@@ -34,6 +34,7 @@ import { CurriculumComponent } from './components/user/curriculum/curriculum.com
 import { RegistrationComponent } from './components/user/registration/registration.component';
 import { PasswordInputComponent } from './shared/components/password-input/password-input.component';
 import { CourseClassesComponent } from './components/admin/course-classes/course-classes.component';
+import { CurriculumsComponent } from './components/admin/curriculums/curriculums.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -61,6 +62,7 @@ const routes: Routes = [
       { path: 'semesters', component: SemestersComponent },
       { path: 'programs', component: ProgramsComponent },
       { path: 'programs/:id', component: MajorDetailComponent },
+      { path: 'training-programs', component: CurriculumsComponent },
       { path: 'curriculums/:id', component: CurriculumDetailComponent },
       { path: 'knowledge-blocks', component: DashboardComponent },
       { path: 'administrative-classes', component: DashboardComponent },
@@ -101,6 +103,7 @@ const routes: Routes = [
     UsersComponent,
     SemestersComponent,
     CourseClassesComponent,
+    CurriculumsComponent,
     SettingsComponent,
     ProfileComponent,
     ForgotPasswordComponent,

@@ -52,7 +52,8 @@ export class DashboardLayoutComponent implements OnInit {
       path.includes('/dashboard/knowledge-blocks') ||
       path.includes('/dashboard/subjects') ||
       path.includes('/dashboard/curriculum') ||
-      path.includes('/dashboard/curriculums')) {
+      path.includes('/dashboard/curriculums') ||
+      path.includes('/dashboard/training-programs')) {
       this.openMenuName = 'academic';
     }
     else if (path.includes('/dashboard/students') ||
