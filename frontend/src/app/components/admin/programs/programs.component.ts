@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { MajorService, MajorDTO } from '../../../services/major.service';
 import { Router } from '@angular/router';
 
@@ -20,6 +20,13 @@ export class ProgramsComponent implements OnInit {
   activeDropdown: string = '';
 
   constructor(private majorService: MajorService, private router: Router) { }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.faculty-dropdown-container')) {
+      this.activeDropdown = '';
+    }
+  }
 
   ngOnInit(): void {
     this.loadMajors();
@@ -43,31 +50,13 @@ export class ProgramsComponent implements OnInit {
     this.filteredMajors = this.majors.filter(major => {
       const matchesSearch = !this.searchTerm ||
         major.majorCode.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        major.majorName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        major.facultyName.toLowerCase().includes(this.searchTerm.toLowerCase());
+        major.majorName.toLowerCase().includes(this.searchTerm.toLowerCase());
 
       const matchesFaculty = !this.filterFaculty || major.facultyName === this.filterFaculty;
 
       return matchesSearch && matchesFaculty;
     });
     this.currentPage = 1;
-    this.sortData();
-  }
-
-  sortData(): void {
-    if (this.sortColumn) {
-      this.filteredMajors.sort((a, b) => {
-        let aValue = (a as any)[this.sortColumn];
-        let bValue = (b as any)[this.sortColumn];
-        if (typeof aValue === 'string') {
-          aValue = aValue.toLowerCase();
-          bValue = bValue.toLowerCase();
-        }
-        if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
-        if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
   }
 
   get paginatedMajors(): MajorDTO[] {

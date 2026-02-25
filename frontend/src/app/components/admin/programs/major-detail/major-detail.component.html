@@ -118,35 +118,9 @@
                 </div>
 
                 <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto">
-                    <div class="relative min-w-[200px] flex-1 md:flex-none">
-                        <button (click)="activeDropdown = activeDropdown === 'year' ? '' : 'year'"
-                            class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
-                            <div class="flex items-center gap-2">
-                                <span>
-                                    {{ filterYear ? ('Năm ' + filterYear) : 'Tất cả năm áp dụng' }}
-                                </span>
-                            </div>
-                            <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
-                                [class.rotate-90]="activeDropdown === 'year'"></i>
-                        </button>
-
-                        <div *ngIf="activeDropdown === 'year'"
-                            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-                            <div (click)="filterYear = null; onSearch(); activeDropdown = ''"
-                                class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                                [class.text-blue-600]="filterYear === null">
-                                Tất cả năm áp dụng
-                            </div>
-                            <div *ngFor="let year of years" (click)="filterYear = year; onSearch(); activeDropdown = ''"
-                                class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                                [class.text-blue-600]="filterYear === year">
-                                Năm áp dụng {{ year }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative min-w-[200px] flex-1 md:flex-none">
-                        <button (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'"
+                    <div class="relative min-w-[200px] flex-1 md:flex-none status-dropdown-container">
+                        <button
+                            (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'; $event.stopPropagation()"
                             class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
                             <div class="flex items-center gap-2">
                                 <span>{{ filterStatus || 'Tất cả trạng thái' }}</span>
@@ -174,7 +148,7 @@
                         </div>
                     </div>
 
-                    <button (click)="searchTerm=''; filterYear=null; filterStatus=''; onSearch()"
+                    <button (click)="searchTerm=''; filterStatus=''; onSearch()"
                         class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                         title="Đặt lại bộ lọc">
                         <i class="fas fa-sync-alt text-sm"></i>

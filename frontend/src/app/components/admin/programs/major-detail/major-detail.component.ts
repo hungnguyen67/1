@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MajorService, MajorDTO } from '../../../../services/major.service';
 import { CurriculumService, CurriculumDTO } from '../../../../services/curriculum.service';
@@ -8,9 +8,16 @@ import { CurriculumService, CurriculumDTO } from '../../../../services/curriculu
     templateUrl: './major-detail.component.html'
 })
 export class MajorDetailComponent implements OnInit {
-
     major: MajorDTO | null = null;
     curriculums: CurriculumDTO[] = [];
+    filteredCurriculums: CurriculumDTO[] = [];
+    years: number[] = [];
+    searchTerm: string = '';
+    filterYear: number | null = null;
+    filterStatus: string = '';
+    activeDropdown: string = '';
+    currentPage: number = 1;
+    itemsPerPage: number = 10;
 
     constructor(
         private route: ActivatedRoute,
@@ -27,57 +34,40 @@ export class MajorDetailComponent implements OnInit {
         }
     }
 
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.filter-dropdown-container')) {
+            this.activeDropdown = '';
+        }
+    }
+
     loadMajor(id: number): void {
         this.majorService.getMajor(id).subscribe(data => {
             this.major = data;
         });
     }
 
-    viewCurriculumDetail(curriculum: CurriculumDTO): void {
-        this.router.navigate(['/dashboard/curriculums', curriculum.id]);
-    }
-
-    searchTerm: string = '';
-    filterYear: number | null = null;
-    filterStatus: string = '';
-    filteredCurriculums: CurriculumDTO[] = [];
-    years: number[] = [];
-    activeDropdown: string = '';
-
     loadCurriculums(majorId: number): void {
         this.curriculumService.getCurriculumsByMajorId(majorId).subscribe(data => {
             this.curriculums = data;
-            this.filteredCurriculums = data;
-            this.extractYears();
             this.onSearch();
         });
-    }
-
-    extractYears(): void {
-        const uniqueYears = new Set(this.curriculums.map(c => c.appliedYear));
-        this.years = Array.from(uniqueYears).sort((a, b) => b - a);
     }
 
     onSearch(): void {
         this.filteredCurriculums = this.curriculums.filter(c => {
             const matchesSearch = !this.searchTerm ||
                 c.curriculumName.toLowerCase().includes(this.searchTerm.toLowerCase());
-
             const matchesYear = !this.filterYear || c.appliedYear === this.filterYear;
-
             const matchesStatus = !this.filterStatus || c.status === this.filterStatus;
-
             return matchesSearch && matchesYear && matchesStatus;
         });
         this.currentPage = 1;
     }
 
-    addCurriculum(): void {
-        console.log('Add new curriculum');
-    }
-
-    editCurriculum(curriculum: CurriculumDTO): void {
-        console.log('Edit curriculum', curriculum);
+    viewCurriculumDetail(curriculum: CurriculumDTO): void {
+        this.router.navigate(['/dashboard/curriculums', curriculum.id]);
     }
 
     deleteMajor(major: MajorDTO | null): void {
@@ -89,9 +79,7 @@ export class MajorDetailComponent implements OnInit {
         }
     }
 
-    currentPage: number = 1;
-    itemsPerPage: number = 10;
-
+    // Getters cho phân trang
     get totalPages(): number {
         return Math.ceil(this.filteredCurriculums.length / this.itemsPerPage);
     }
@@ -106,14 +94,10 @@ export class MajorDetailComponent implements OnInit {
     }
 
     nextPage(): void {
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
-        }
+        if (this.currentPage < this.totalPages) this.currentPage++;
     }
 
     prevPage(): void {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-        }
+        if (this.currentPage > 1) this.currentPage--;
     }
 }

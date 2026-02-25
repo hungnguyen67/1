@@ -27,6 +27,13 @@ public class CourseClassController {
         return ResponseEntity.ok(courseClassService.getClassesBySemester(semesterId));
     }
 
+    @GetMapping("/analysis")
+    public ResponseEntity<List<com.example.demo.dto.CourseClassDemandAnalysisDTO>> getDemandAnalysis(
+            @RequestParam Long semesterId,
+            @RequestParam(required = false) Integer cohort) {
+        return ResponseEntity.ok(courseClassService.analyzeDemand(semesterId, cohort));
+    }
+
     @GetMapping("/details")
     public ResponseEntity<List<CourseClassDTO>> getClassDetails(
             @RequestParam Long semesterId, 

@@ -15,13 +15,25 @@ export class CourseClassesComponent implements OnInit {
     semesters: Semester[] = [];
     allSubjects: SubjectDTO[] = [];
     allLecturers: LecturerDTO[] = [];
+    demandAnalysis: any[] = [];
+    stats: any = {
+        totalSubjects: 0,
+        totalClasses: 0,
+        totalStudentsNeeded: 0,
+        totalCapacity: 0,
+        matchRate: 0
+    };
+    showAnalysisTable = false;
 
     loading = false;
     loadingDetails = false;
     isSubmitting = false;
     searchTerm = '';
     selectedSemesterId: number | null = null;
+    selectedCohort: number | null = null;
+    allCohorts: number[] = [2021, 2022, 2023, 2024, 2025];
     selectedSubject: CourseSubjectGroup | null = null;
+    selectedDemand: any = null;
 
     // Modal State
     isModalOpen = false;
@@ -60,6 +72,11 @@ export class CourseClassesComponent implements OnInit {
         });
     }
 
+    getSelectedSemesterName(): string {
+        const s = this.semesters.find(s => s.id == this.selectedSemesterId);
+        return s ? `${s.name} (${s.academicYear})` : 'Chưa chọn';
+    }
+
     loadSubjects(): void {
         if (!this.selectedSemesterId) return;
         this.loading = true;
@@ -67,6 +84,7 @@ export class CourseClassesComponent implements OnInit {
             next: (data) => {
                 this.subjects = data;
                 this.filteredSubjects = data;
+                this.loadAnalysis(); // Load analysis after subjects
                 this.loading = false;
             },
             error: (err) => {
@@ -74,6 +92,30 @@ export class CourseClassesComponent implements OnInit {
                 this.loading = false;
             }
         });
+    }
+
+    loadAnalysis(): void {
+        if (!this.selectedSemesterId) return;
+        this.courseClassService.getDemandAnalysis(this.selectedSemesterId, this.selectedCohort || undefined).subscribe(data => {
+            this.demandAnalysis = data;
+            this.calculateOverallStats();
+        });
+    }
+
+    calculateOverallStats(): void {
+        const totalSubjects = this.demandAnalysis.length;
+        const totalClasses = this.subjects.reduce((sum, s) => sum + s.classCount, 0);
+        const totalStudentsNeeded = this.demandAnalysis.reduce((sum, a) => sum + a.totalNeeded, 0);
+        const totalCapacity = this.demandAnalysis.reduce((sum, a) => sum + a.currentCapacity, 0);
+        const matchRate = totalStudentsNeeded > 0 ? Math.round((totalCapacity / totalStudentsNeeded) * 100) : 0;
+
+        this.stats = {
+            totalSubjects,
+            totalClasses,
+            totalStudentsNeeded,
+            totalCapacity,
+            matchRate
+        };
     }
 
     onFilterChange(): void {
@@ -114,8 +156,33 @@ export class CourseClassesComponent implements OnInit {
         this.courseClassForm = this.getEmptyForm();
         if (subjectId) {
             this.courseClassForm.subjectId = subjectId;
+            this.onSubjectSelect(); // Trigger demand check
         }
+        this.selectedDemand = null;
         this.isModalOpen = true;
+    }
+
+    onSubjectSelect(): void {
+        if (!this.courseClassForm.subjectId) {
+            this.selectedDemand = null;
+            return;
+        }
+        this.selectedDemand = this.demandAnalysis.find(a => a.subjectId == this.courseClassForm.subjectId);
+    }
+
+    autoSuggest(): void {
+        if (!this.selectedDemand) return;
+
+        // Suggest a class code
+        const subjectCode = this.selectedDemand.subjectCode;
+        const nextNum = (this.selectedDemand.openedClasses || 0) + 1;
+        this.courseClassForm.classCode = `${subjectCode}_${nextNum.toString().padStart(2, '0')}`;
+
+        // Default max students
+        this.courseClassForm.maxStudents = 60;
+
+        // Reset status to PLANNING
+        this.courseClassForm.classStatus = 'PLANNING';
     }
 
     openEditModal(cc: any): void {

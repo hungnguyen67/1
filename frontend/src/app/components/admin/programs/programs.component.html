@@ -20,13 +20,13 @@
           <i class="fas fa-search text-sm"></i>
         </span>
         <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
-          placeholder="Tìm kiếm ngành, mã ngành, khoa..."
+          placeholder="Tìm kiếm mã ngành, tên ngành..."
           class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-md  focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
       </div>
 
       <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto">
-        <div class="relative min-w-[200px] flex-1 md:flex-none">
-          <button (click)="activeDropdown = activeDropdown === 'faculty' ? '' : 'faculty'"
+        <div class="relative min-w-[200px] flex-1 md:flex-none faculty-dropdown-container">
+          <button (click)="activeDropdown = activeDropdown === 'faculty' ? '' : 'faculty'; $event.stopPropagation()"
             class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
             <div class="flex items-center gap-2">
               <span>{{ filterFaculty || 'Tất cả các khoa' }}</span>
@@ -55,7 +55,6 @@
           <i class="fas fa-sync-alt text-sm"></i>
         </button>
       </div>
-
     </div>
 
     <div class="overflow-x-auto">

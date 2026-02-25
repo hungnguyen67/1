@@ -64,4 +64,11 @@ export class CourseClassService {
     deleteCourseClass(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+    getDemandAnalysis(semesterId: number, cohort?: number): Observable<any[]> {
+        const url = cohort
+            ? `${this.apiUrl}/analysis?semesterId=${semesterId}&cohort=${cohort}`
+            : `${this.apiUrl}/analysis?semesterId=${semesterId}`;
+        return this.http.get<any[]>(url);
+    }
 }

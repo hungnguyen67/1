@@ -29,6 +29,15 @@ public class CourseClassService {
     @Autowired
     private LecturerProfileRepository lecturerProfileRepository;
 
+    @Autowired
+    private CurriculumSubjectRepository curriculumSubjectRepository;
+
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
+
+    @Autowired
+    private CourseRegistrationRepository registrationRepository;
+
     public List<CourseSubjectGroupDTO> getGroupedSubjectsBySemester(Long semesterId) {
         List<CourseClass> classes = courseClassRepository.findBySemesterId(semesterId);
         
@@ -142,5 +151,119 @@ public class CourseClassService {
         }
         
         return dto;
+    }
+
+    public List<com.example.demo.dto.CourseClassDemandAnalysisDTO> analyzeDemand(Long semesterId, Integer filterCohort) {
+        com.example.demo.model.Semester academicSemester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new RuntimeException("Semester not found"));
+
+        // Use academic year start to calculate semester accurately (avoiding calendar year transitions)
+        int acadStartYear;
+        try {
+            acadStartYear = Integer.parseInt(academicSemester.getAcademicYear().split("-")[0]);
+        } catch (Exception e) {
+            acadStartYear = academicSemester.getStartDate().getYear();
+        }
+        int semesterOrder = academicSemester.getSemesterOrder();
+
+        // 1. Get all unique curriculum-subject mappings
+        List<com.example.demo.model.CurriculumSubject> allCurriculumSubjects = curriculumSubjectRepository.findAll();
+
+        // 2. Get students and group by cohort + curriculum
+        List<com.example.demo.model.StudentProfile> allStudents = studentProfileRepository.findAll();
+        
+        // Map to hold results: SubjectID -> DTO
+        Map<Long, com.example.demo.dto.CourseClassDemandAnalysisDTO> analysisMap = new java.util.HashMap<>();
+
+        // Group students by enrollment year and curriculum
+        Map<Integer, Map<Long, Long>> studentsByCohortAndCurr = allStudents.stream()
+            .filter(s -> s.getAcademicStatus() == com.example.demo.model.StudentProfile.AcademicStatus.STUDYING)
+            .filter(s -> filterCohort == null || s.getEnrollmentYear().equals(filterCohort))
+            .collect(Collectors.groupingBy(
+                com.example.demo.model.StudentProfile::getEnrollmentYear,
+                Collectors.groupingBy(s -> s.getCurriculum().getId(), Collectors.counting())
+            ));
+
+        // 3. Calculate Mandatory Demand
+        for (Map.Entry<Integer, Map<Long, Long>> cohortEntry : studentsByCohortAndCurr.entrySet()) {
+            int enrollmentYear = cohortEntry.getKey();
+            int curriculumSemester = (acadStartYear - enrollmentYear) * 2 + semesterOrder;
+
+            if (curriculumSemester < 1 || curriculumSemester > 8) continue;
+
+            for (Map.Entry<Long, Long> currEntry : cohortEntry.getValue().entrySet()) {
+                Long curriculumId = currEntry.getKey();
+                Long studentCount = currEntry.getValue();
+
+                List<com.example.demo.model.CurriculumSubject> mandatory = allCurriculumSubjects.stream()
+                    .filter(cs -> cs.getCurriculum().getId().equals(curriculumId) 
+                               && cs.getRecommendedSemester().equals(curriculumSemester)
+                               && cs.getIsRequired())
+                    .collect(Collectors.toList());
+
+                for (com.example.demo.model.CurriculumSubject cs : mandatory) {
+                    com.example.demo.dto.CourseClassDemandAnalysisDTO dto = analysisMap.computeIfAbsent(cs.getSubject().getId(), id -> {
+                        com.example.demo.dto.CourseClassDemandAnalysisDTO d = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
+                        d.setSubjectId(cs.getSubject().getId());
+                        d.setSubjectCode(cs.getSubject().getSubjectCode());
+                        d.setSubjectName(cs.getSubject().getName());
+                        d.setMandatoryStudents(0);
+                        d.setRepeatingStudents(0);
+                        d.setRecommendedSemester(curriculumSemester);
+                        return d;
+                    });
+                    dto.setMandatoryStudents(dto.getMandatoryStudents() + studentCount.intValue());
+                }
+            }
+        }
+
+        // 4. Calculate Repeating Demand (SV học lại)
+        // Simplified: students who failed this subject in the past
+        List<com.example.demo.model.CourseRegistration> allRegs = registrationRepository.findAll();
+        Map<Long, Long> failedCounts = allRegs.stream()
+            .filter(r -> r.getIsPassed() != null && !r.getIsPassed())
+            .collect(Collectors.groupingBy(r -> r.getCourseClass().getSubject().getId(), Collectors.counting()));
+
+        for (Map.Entry<Long, Long> entry : failedCounts.entrySet()) {
+            if (analysisMap.containsKey(entry.getKey())) {
+                analysisMap.get(entry.getKey()).setRepeatingStudents(entry.getValue().intValue());
+            } else {
+                // If it's not a mandatory subject for anyone this year, but people are failing it
+                // We might still want to open it
+                Subject s = subjectRepository.findById(entry.getKey()).orElse(null);
+                if (s != null) {
+                    com.example.demo.dto.CourseClassDemandAnalysisDTO dto = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
+                    dto.setSubjectId(s.getId());
+                    dto.setSubjectCode(s.getSubjectCode());
+                    dto.setSubjectName(s.getName());
+                    dto.setMandatoryStudents(0);
+                    dto.setRepeatingStudents(entry.getValue().intValue());
+                    analysisMap.put(s.getId(), dto);
+                }
+            }
+        }
+
+        // 5. Enrich with current opened classes and capacity
+        List<CourseClass> currentClasses = courseClassRepository.findBySemesterId(semesterId);
+        Map<Long, List<CourseClass>> classesBySubject = currentClasses.stream()
+            .collect(Collectors.groupingBy(cc -> cc.getSubject().getId()));
+
+        for (com.example.demo.dto.CourseClassDemandAnalysisDTO dto : analysisMap.values()) {
+            List<CourseClass> subjectClasses = classesBySubject.getOrDefault(dto.getSubjectId(), new ArrayList<>());
+            dto.setOpenedClasses(subjectClasses.size());
+            dto.setCurrentCapacity(subjectClasses.stream().mapToInt(CourseClass::getMaxStudents).sum());
+            dto.setTotalNeeded(dto.getMandatoryStudents() + dto.getRepeatingStudents());
+            dto.setMissingSlots(Math.max(0, dto.getTotalNeeded() - dto.getCurrentCapacity()));
+            
+            if (dto.getMissingSlots() > 0) {
+                // Assuming standardized class size is 60 or 40
+                int classSize = 60; 
+                dto.setSuggestedMoreClasses((int) Math.ceil((double) dto.getMissingSlots() / classSize));
+            } else {
+                dto.setSuggestedMoreClasses(0);
+            }
+        }
+
+        return new ArrayList<>(analysisMap.values());
     }
 }
