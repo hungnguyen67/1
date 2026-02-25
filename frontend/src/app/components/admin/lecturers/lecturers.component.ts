@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { LecturerService, LecturerDTO } from '../../../services/lecturer.service';
 import { MajorService, MajorDTO } from '../../../services/major.service';
 
@@ -10,9 +10,10 @@ export class LecturersComponent implements OnInit {
 
     lecturers: LecturerDTO[] = [];
     paginatedLecturers: LecturerDTO[] = [];
+    majors: MajorDTO[] = [];
+
     searchTerm: string = '';
     filterMajor: number | null = null;
-    majors: MajorDTO[] = [];
     activeDropdown: string = '';
 
     // Pagination
@@ -29,10 +30,17 @@ export class LecturersComponent implements OnInit {
         this.loadLecturers();
     }
 
+    // Tự động đóng dropdown khi click ra ngoài vùng chứa (class relative)
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.relative')) {
+            this.activeDropdown = '';
+        }
+    }
+
     loadMajors(): void {
-        this.majorService.getMajors().subscribe(data => {
-            this.majors = data;
-        });
+        this.majorService.getMajors().subscribe(data => this.majors = data);
     }
 
     loadLecturers(): void {
@@ -47,6 +55,22 @@ export class LecturersComponent implements OnInit {
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
         this.paginatedLecturers = this.lecturers.slice(startIndex, endIndex);
+    }
+
+    onSearch(): void {
+        this.loadLecturers();
+    }
+
+    resetFilters(): void {
+        this.searchTerm = '';
+        this.filterMajor = null;
+        this.loadLecturers();
+    }
+
+    getSelectedMajorName(): string {
+        if (!this.filterMajor) return 'Tất cả các ngành';
+        const major = this.majors.find(m => m.id === this.filterMajor);
+        return major ? major.majorName : 'Tất cả các ngành';
     }
 
     get totalPages(): number {
@@ -71,39 +95,18 @@ export class LecturersComponent implements OnInit {
         }
     }
 
-    getSelectedMajorName(): string {
-        if (!this.filterMajor) return 'Tất cả các ngành';
-        const major = this.majors.find(m => m.id === this.filterMajor);
-        return major ? major.majorName : 'Tất cả các ngành';
-    }
-
-    onSearch(): void {
-        this.loadLecturers();
-    }
-
-    resetFilters(): void {
-        this.searchTerm = '';
-        this.filterMajor = null;
-        this.loadLecturers();
+    getGenderName(gender: string): string {
+        const map: any = { 'Male': 'Nam', 'Female': 'Nữ', 'Other': 'Khác' };
+        return map[gender] || 'Khác';
     }
 
     editLecturer(lecturer: LecturerDTO): void {
-        console.log('Edit lecturer', lecturer);
+        console.log('Edit', lecturer);
     }
 
     deleteLecturer(lecturer: LecturerDTO): void {
-        if (confirm('Bạn có chắc chắn muốn xóa giảng viên này?')) {
-            // Implement delete logic in service and call it here
-            console.log('Delete lecturer', lecturer);
-        }
-    }
-
-    getGenderName(gender: string): string {
-        switch (gender) {
-            case 'Male': return 'Nam';
-            case 'Female': return 'Nữ';
-            case 'Other': return 'Khác';
-            default: return 'Khác';
+        if (confirm(`Xác nhận xóa giảng viên ${lecturer.fullName}?`)) {
+            console.log('Delete', lecturer.id);
         }
     }
 }

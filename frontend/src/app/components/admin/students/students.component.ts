@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { StudentDTO, StudentService } from '../../../services/student.service';
 import { MajorDTO, MajorService } from '../../../services/major.service';
 import { AdministrativeClassDTO, AdministrativeClassService } from '../../../services/administrative-class.service';
@@ -12,6 +12,7 @@ export class StudentsComponent implements OnInit {
     paginatedStudents: StudentDTO[] = [];
     majors: MajorDTO[] = [];
     classes: AdministrativeClassDTO[] = [];
+
     activeDropdown: string = '';
 
     filters = {
@@ -24,10 +25,8 @@ export class StudentsComponent implements OnInit {
         maxGpa: null as number | null
     };
 
-    // Pagination
     currentPage = 1;
     pageSize = 10;
-    totalItems = 0;
 
     constructor(
         private studentService: StudentService,
@@ -41,22 +40,25 @@ export class StudentsComponent implements OnInit {
         this.loadStudents();
     }
 
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.relative')) {
+            this.activeDropdown = '';
+        }
+    }
+
     loadMajors(): void {
-        this.majorService.getMajors().subscribe(data => {
-            this.majors = data;
-        });
+        this.majorService.getMajors().subscribe(data => this.majors = data);
     }
 
     loadClasses(): void {
-        this.classService.getClasses().subscribe(data => {
-            this.classes = data;
-        });
+        this.classService.getClasses().subscribe(data => this.classes = data);
     }
 
     loadStudents(): void {
         this.studentService.getStudents(this.filters).subscribe(data => {
             this.students = data;
-            this.totalItems = data.length;
             this.currentPage = 1;
             this.updatePagination();
         });
@@ -109,13 +111,13 @@ export class StudentsComponent implements OnInit {
 
     getSelectedMajorName(): string {
         if (!this.filters.majorId) return 'Tất cả các ngành';
-        const major = this.majors.find(m => m.id === Number(this.filters.majorId));
+        const major = this.majors.find(m => Number(m.id) === Number(this.filters.majorId));
         return major ? major.majorName : 'Tất cả các ngành';
     }
 
     getSelectedClassName(): string {
         if (!this.filters.classId) return 'Tất cả các lớp';
-        const clazz = this.classes.find(c => c.id === Number(this.filters.classId));
+        const clazz = this.classes.find(c => Number(c.id) === Number(this.filters.classId));
         return clazz ? clazz.classCode : 'Tất cả các lớp';
     }
 
@@ -136,23 +138,23 @@ export class StudentsComponent implements OnInit {
     }
 
     getStatusName(status: string): string {
-        switch (status) {
-            case 'STUDYING': return 'Đang học';
-            case 'GRADUATED': return 'Đã tốt nghiệp';
-            case 'RESERVED': return 'Bảo lưu';
-            case 'DROPPED': return 'Thôi học';
-            case 'SUSPENDED': return 'Đình chỉ';
-            default: return status || '---';
-        }
+        const map: any = {
+            'STUDYING': 'Đang học',
+            'GRADUATED': 'Đã tốt nghiệp',
+            'RESERVED': 'Bảo lưu',
+            'DROPPED': 'Thôi học',
+            'SUSPENDED': 'Đình chỉ'
+        };
+        return map[status] || status || '---';
     }
 
     editStudent(student: StudentDTO): void {
-        console.log('Edit student', student);
+        console.log('Edit', student);
     }
 
     deleteStudent(student: StudentDTO): void {
-        if (confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) {
-            console.log('Delete student', student);
+        if (confirm(`Xóa sinh viên ${student.fullName}?`)) {
+            console.log('Delete', student.id);
         }
     }
 }

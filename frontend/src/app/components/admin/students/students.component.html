@@ -14,21 +14,20 @@
     </div>
 
     <div class="p-6">
-        <!-- Search and Filter Bar Row 1 -->
         <div class="flex flex-col md:flex-row gap-4 mb-4">
             <div class="flex-1 relative group">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500">
                     <i class="fas fa-search text-sm"></i>
                 </span>
-                <input type="text" [(ngModel)]="filters.searchTerm" (keyup.enter)="applyFilters()"
+                <input type="text" [(ngModel)]="filters.searchTerm" (ngModelChange)="applyFilters()"
                     placeholder="Tìm kiếm mã SV, họ tên..."
                     class="w-full pl-10 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-md focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
             </div>
 
             <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto">
-                <!-- Major Dropdown -->
                 <div class="relative min-w-[200px] flex-1 md:flex-none">
-                    <button (click)="activeDropdown = activeDropdown === 'major' ? '' : 'major'"
+                    <button
+                        (click)="activeDropdown = activeDropdown === 'major' ? '' : 'major'; $event.stopPropagation()"
                         class="appearance-none w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
                         <div class="flex items-center gap-2">
                             <span class="truncate">{{ getSelectedMajorName() }}</span>
@@ -52,9 +51,9 @@
                     </div>
                 </div>
 
-                <!-- Class Dropdown -->
                 <div class="relative min-w-[150px] flex-1 md:flex-none">
-                    <button (click)="activeDropdown = activeDropdown === 'class' ? '' : 'class'"
+                    <button
+                        (click)="activeDropdown = activeDropdown === 'class' ? '' : 'class'; $event.stopPropagation()"
                         class="appearance-none w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
                         <div class="flex items-center gap-2">
                             <span>{{ getSelectedClassName() }}</span>
@@ -78,7 +77,8 @@
                     </div>
                 </div>
                 <div class="relative min-w-[150px]">
-                    <button (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'"
+                    <button
+                        (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'; $event.stopPropagation()"
                         class="appearance-none w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
                         <div class="flex items-center gap-2">
                             <span>{{ getSelectedStatusName() }}</span>
@@ -110,104 +110,77 @@
             </div>
         </div>
 
-        <!-- Search and Filter Bar Row 2 -->
         <div class="flex flex-wrap gap-4 mb-8">
-            <!-- Enrollment Year -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Khóa:</span>
-                <input type="number" [(ngModel)]="filters.enrollmentYear" (change)="applyFilters()"
+                <input type="number" [(ngModel)]="filters.enrollmentYear" (ngModelChange)="applyFilters()"
                     placeholder="2024..."
                     class="w-24 px-3 py-1.5 bg-slate-50/50 border border-slate-200 rounded-md focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm">
             </div>
 
-            <!-- GPA Range -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">GPA:</span>
                 <div class="flex items-center bg-slate-50/50 border border-slate-200 rounded-md px-2 py-0.5">
-                    <input type="number" [(ngModel)]="filters.minGpa" (change)="applyFilters()" step="0.1" min="0"
-                        max="4" placeholder="Từ"
+                    <input type="number" [(ngModel)]="filters.minGpa" (ngModelChange)="applyFilters()" step="0.1"
+                        min="0" max="4" placeholder="Từ"
                         class="w-12 bg-transparent border-none focus:ring-0 outline-none text-sm text-center">
                     <span class="text-slate-400 px-1">-</span>
-                    <input type="number" [(ngModel)]="filters.maxGpa" (change)="applyFilters()" step="0.1" min="0"
-                        max="4" placeholder="Đến"
+                    <input type="number" [(ngModel)]="filters.maxGpa" (ngModelChange)="applyFilters()" step="0.1"
+                        min="0" max="4" placeholder="Đến"
                         class="w-12 bg-transparent border-none focus:ring-0 outline-none text-sm text-center">
                 </div>
             </div>
         </div>
 
-        <!-- Table -->
         <div class="overflow-x-auto">
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            STT
-                        </th>
+                            STT</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Mã SV
-                        </th>
+                            Mã SV</th>
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">Họ
+                            tên</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Họ tên
-                        </th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Ngành học
-                        </th>
+                            Ngành học</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Lớp hành chính
-                        </th>
+                            Lớp hành chính</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Khóa
-                        </th>
+                            Khóa</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Tín chỉ
-                        </th>
+                            Tín chỉ</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            GPA
-                        </th>
+                            GPA</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Trạng thái
-                        </th>
+                            Trạng thái</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Hành động
-                        </th>
+                            Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
                     <tr *ngFor="let s of paginatedStudents; let i = index" class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            {{ (currentPage - 1) * pageSize + i + 1 }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            {{ s.studentCode }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900">
-                            {{ s.fullName }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900">
-                            {{ s.majorName }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            {{ s.className }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            {{ s.enrollmentYear }}
-                        </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            {{ s.totalCreditsEarned }}
-                        </td>
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ (currentPage - 1) * pageSize + i + 1
+                            }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.studentCode }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900">{{ s.fullName }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900">{{ s.majorName }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.className }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.enrollmentYear }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.totalCreditsEarned }}</td>
                         <td class="px-4 py-3 text-sm text-slate-900 text-center"
                             [class.text-green-600]="s.currentGpa >= 3.2"
                             [class.text-red-600]="s.currentGpa < 2.0 && s.currentGpa !== null">
-                            {{ s.currentGpa !== null ? s.currentGpa : '---' }}
+                            {{ s.currentGpa !== null ? s.currentGpa : '0.0' }}
                         </td>
                         <td class="px-4 py-3 text-center whitespace-nowrap">
                             <span
-                                class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-50 text-emerald-600 border-emerald-100"
+                                class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full"
                                 [ngClass]="getStatusBadgeClass(s.academicStatus)">
                                 {{ getStatusName(s.academicStatus) }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
                             <button (click)="editStudent(s)" class="text-blue-600 hover:text-blue-900 mr-3">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -221,21 +194,14 @@
         </div>
         <div class="flex justify-between items-center mt-4">
             <div class="text-sm text-slate-600">
-                Hiển thị {{ (currentPage - 1) * pageSize + 1 }} - {{ minEnd }} của {{ students.length }} kết
-                quả
+                Hiển thị {{ (currentPage - 1) * pageSize + 1 }} - {{ minEnd }} của {{ students.length }} kết quả
             </div>
             <div class="flex space-x-2">
                 <button (click)="prevPage()" [disabled]="currentPage === 1"
-                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                    Trước
-                </button>
-                <span class="px-3 py-1 text-sm text-slate-600">
-                    Trang {{ currentPage }} / {{ totalPages }}
-                </span>
+                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Trước</button>
+                <span class="px-3 py-1 text-sm text-slate-600">Trang {{ currentPage }} / {{ totalPages }}</span>
                 <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                    Sau
-                </button>
+                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Sau</button>
             </div>
         </div>
     </div>

@@ -40,7 +40,7 @@
                             class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer"
                             [class.text-blue-600]="selectedMajorId === null">Tất cả chuyên ngành</div>
                         <div *ngFor="let m of majors" (click)="selectedMajorId=m.id; onFilter(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer"
                             [class.text-blue-600]="selectedMajorId === m.id">
                             {{ m.majorName }}
                         </div>
@@ -61,14 +61,14 @@
                     <div *ngIf="activeDropdown === 'status'"
                         class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 animate-in fade-in zoom-in-95 duration-200">
                         <div (click)="selectedStatus='ALL'; onFilter(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer">Tất cả
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Tất cả
                             trạng thái</div>
                         <div (click)="selectedStatus='ACTIVE'; onFilter(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer">Đang áp
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Đang áp
                             dụng
                         </div>
                         <div (click)="selectedStatus='INACTIVE'; onFilter(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer">Ngưng áp
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Ngưng áp
                             dụng</div>
                     </div>
                 </div>
