@@ -110,9 +110,9 @@ export class StudentsComponent implements OnInit {
     }
 
     getSelectedMajorName(): string {
-        if (!this.filters.majorId) return 'Tất cả các ngành';
+        if (!this.filters.majorId) return 'Tất cả chuyên ngành';
         const major = this.majors.find(m => Number(m.id) === Number(this.filters.majorId));
-        return major ? major.majorName : 'Tất cả các ngành';
+        return major ? major.majorName : 'Tất cả chuyên ngành';
     }
 
     getSelectedClassName(): string {

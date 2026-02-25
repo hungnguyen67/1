@@ -16,7 +16,6 @@ export class LecturersComponent implements OnInit {
     filterMajor: number | null = null;
     activeDropdown: string = '';
 
-    // Pagination
     currentPage: number = 1;
     itemsPerPage: number = 10;
 
@@ -30,7 +29,6 @@ export class LecturersComponent implements OnInit {
         this.loadLecturers();
     }
 
-    // Tự động đóng dropdown khi click ra ngoài vùng chứa (class relative)
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
@@ -68,9 +66,9 @@ export class LecturersComponent implements OnInit {
     }
 
     getSelectedMajorName(): string {
-        if (!this.filterMajor) return 'Tất cả các ngành';
+        if (!this.filterMajor) return 'Tất cả chuyên ngành';
         const major = this.majors.find(m => m.id === this.filterMajor);
-        return major ? major.majorName : 'Tất cả các ngành';
+        return major ? major.majorName : 'Tất cả chuyên ngành';
     }
 
     get totalPages(): number {

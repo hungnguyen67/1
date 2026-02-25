@@ -41,7 +41,7 @@
                         <div (click)="filters.majorId=null; applyFilters(); activeDropdown=''"
                             class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="filters.majorId === null">
-                            Tất cả các ngành
+                            Tất cả chuyên ngành
                         </div>
                         <div *ngFor="let m of majors" (click)="filters.majorId=m.id; applyFilters(); activeDropdown=''"
                             class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"

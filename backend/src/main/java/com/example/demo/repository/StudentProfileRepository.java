@@ -31,4 +31,6 @@ public interface StudentProfileRepository extends JpaRepository<StudentProfile, 
             @Param("minGpa") Double minGpa,
             @Param("maxGpa") Double maxGpa
     );
+
+    long countByAdministrativeClassId(Long classId);
 }

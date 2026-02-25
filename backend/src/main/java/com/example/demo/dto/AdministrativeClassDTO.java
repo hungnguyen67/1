@@ -6,6 +6,10 @@ public class AdministrativeClassDTO {
     private Long majorId;
     private String majorName;
     private String academicYear;
+    private Long advisorId;
+    private String advisorName;
+    private String status;
+    private Long studentCount;
 
     public AdministrativeClassDTO() {}
 
@@ -23,4 +27,16 @@ public class AdministrativeClassDTO {
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
+
+    public Long getAdvisorId() { return advisorId; }
+    public void setAdvisorId(Long advisorId) { this.advisorId = advisorId; }
+
+    public String getAdvisorName() { return advisorName; }
+    public void setAdvisorName(String advisorName) { this.advisorName = advisorName; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public Long getStudentCount() { return studentCount; }
+    public void setStudentCount(Long studentCount) { this.studentCount = studentCount; }
 }

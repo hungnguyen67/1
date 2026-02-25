@@ -8,6 +8,10 @@ export interface AdministrativeClassDTO {
     majorId: number;
     majorName: string;
     academicYear: string;
+    advisorId?: number;
+    advisorName?: string;
+    status: string;
+    studentCount: number;
 }
 
 @Injectable({
