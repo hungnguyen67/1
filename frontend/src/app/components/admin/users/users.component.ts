@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core'; // Thêm HostListener
 import { AuthService } from '../../../auth.service';
 import { HttpClient } from '@angular/common/http';
-import { FlashMessageService } from '../../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../../shared/components/flash-message/flash-message.component';
 import { MajorService } from '../../../services/major.service';
 
 @Component({

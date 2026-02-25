@@ -3,7 +3,7 @@ import { CourseClassService } from '../../../services/course-class.service';
 import { RegistrationService } from '../../../services/registration.service';
 import { SemesterService } from '../../../services/semester.service';
 import { AuthService } from '../../../auth.service';
-import { FlashMessageService } from '../../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../../shared/components/flash-message/flash-message.component';
 
 @Component({
     selector: 'app-registration',

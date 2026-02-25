@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
-import { FlashMessageService } from '../../shared/services/flash-message.service';
-import { FlashMessageComponent } from '../../shared/components/flash-message/flash-message.component';
+import { FlashMessageService, FlashMessageComponent } from '../../shared/components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-profile',

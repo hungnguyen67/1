@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
-import { FlashMessageService } from '../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../shared/components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-forgot-password',

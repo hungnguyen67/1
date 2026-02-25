@@ -6,7 +6,7 @@ import { PasswordChecklistComponent } from '../../shared/components/password-che
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service'; // Quan trọng: Phải có AuthService
-import { FlashMessageService } from '../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../shared/components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-change-password',

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth.service';
-import { FlashMessageService } from '../../shared/services/flash-message.service';
+import { FlashMessageService } from '../../shared/components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-oauth2-redirect',

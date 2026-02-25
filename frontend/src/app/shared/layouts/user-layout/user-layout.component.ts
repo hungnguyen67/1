@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth.service';
-import { FlashMessageService } from '../../services/flash-message.service';
+import { FlashMessageService } from '../../components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-user-layout',
@@ -25,7 +25,6 @@ export class UserLayoutComponent implements OnInit {
     this.autoOpenMenuBasedOnUrl(this.router.url);
   }
 
-  // Tự động mở menu cha dựa trên URL
   autoOpenMenuBasedOnUrl(url: string) {
     if (url.includes('/home/grades') || url.includes('/home/curriculum')) {
       this.openMenuName = 'learning';
@@ -59,12 +58,10 @@ export class UserLayoutComponent implements OnInit {
     }
   }
 
-  // Kiểm tra xem menu có đang mở không
   isMenuOpen(menuName: string): boolean {
     return this.isSidebarOpen && this.openMenuName === menuName;
   }
 
-  // Kiểm tra xem URL hiện tại có khớp với mảng các đường dẫn hay không
   isParentActive(paths: string[]): boolean {
     return paths.some(path => this.router.url.includes(path));
   }
