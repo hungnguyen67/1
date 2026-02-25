@@ -77,7 +77,31 @@
                         </div>
                     </div>
                 </div>
+                <div class="relative min-w-[150px]">
+                    <button (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'"
+                        class="appearance-none w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
+                        <div class="flex items-center gap-2">
+                            <span>{{ getSelectedStatusName() }}</span>
+                        </div>
+                        <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
+                            [class.rotate-90]="activeDropdown === 'status'"></i>
+                    </button>
 
+                    <div *ngIf="activeDropdown === 'status'"
+                        class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 animate-in fade-in zoom-in-95 duration-200">
+                        <div (click)="filters.status=''; applyFilters(); activeDropdown=''"
+                            class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"
+                            [class.text-blue-600]="filters.status === ''">
+                            Tất cả trạng thái
+                        </div>
+                        <div *ngFor="let s of ['STUDYING', 'RESERVED', 'DROPPED', 'GRADUATED', 'SUSPENDED']"
+                            (click)="filters.status=s; applyFilters(); activeDropdown=''"
+                            class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"
+                            [class.text-blue-600]="filters.status === s">
+                            {{ getStatusName(s) }}
+                        </div>
+                    </div>
+                </div>
                 <button (click)="resetFilters()"
                     class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                     title="Đặt lại bộ lọc">
@@ -88,33 +112,6 @@
 
         <!-- Search and Filter Bar Row 2 -->
         <div class="flex flex-wrap gap-4 mb-8">
-            <!-- Status Dropdown -->
-            <div class="relative min-w-[150px]">
-                <button (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'"
-                    class="appearance-none w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
-                    <div class="flex items-center gap-2">
-                        <span>{{ getSelectedStatusName() }}</span>
-                    </div>
-                    <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
-                        [class.rotate-90]="activeDropdown === 'status'"></i>
-                </button>
-
-                <div *ngIf="activeDropdown === 'status'"
-                    class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 animate-in fade-in zoom-in-95 duration-200">
-                    <div (click)="filters.status=''; applyFilters(); activeDropdown=''"
-                        class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                        [class.text-blue-600]="filters.status === ''">
-                        Tất cả trạng thái
-                    </div>
-                    <div *ngFor="let s of ['STUDYING', 'RESERVED', 'DROPPED', 'GRADUATED', 'SUSPENDED']"
-                        (click)="filters.status=s; applyFilters(); activeDropdown=''"
-                        class="px-4 py-2 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                        [class.text-blue-600]="filters.status === s">
-                        {{ getStatusName(s) }}
-                    </div>
-                </div>
-            </div>
-
             <!-- Enrollment Year -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-500 uppercase whitespace-nowrap">Khóa:</span>
@@ -143,42 +140,34 @@
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             STT
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Mã SV
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
                             Họ tên
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
                             Ngành học
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Lớp hành chính
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Khóa
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Tín chỉ
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             GPA
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Trạng thái
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Hành động
                         </th>
                     </tr>
@@ -213,7 +202,7 @@
                         </td>
                         <td class="px-4 py-3 text-center whitespace-nowrap">
                             <span
-                                class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-medium rounded-full"
+                                class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-50 text-emerald-600 border-emerald-100"
                                 [ngClass]="getStatusBadgeClass(s.academicStatus)">
                                 {{ getStatusName(s.academicStatus) }}
                             </span>

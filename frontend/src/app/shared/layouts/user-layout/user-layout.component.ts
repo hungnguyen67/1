@@ -27,9 +27,9 @@ export class UserLayoutComponent implements OnInit {
 
   // Tự động mở menu cha dựa trên URL
   autoOpenMenuBasedOnUrl(url: string) {
-    if (url.includes('/home/grades') || url.includes('/curriculum')) {
+    if (url.includes('/home/grades') || url.includes('/home/curriculum')) {
       this.openMenuName = 'learning';
-    } else if (url.includes('/register-course')) {
+    } else if (url.includes('/home/register-course')) {
       this.openMenuName = 'registration';
     } else {
       this.openMenuName = null;

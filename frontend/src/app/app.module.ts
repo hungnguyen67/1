@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/user/home/home.component';
@@ -20,7 +21,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { FlashMessageComponent } from './shared/components/flash-message/flash-message.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { PasswordChecklistComponent } from './shared/components/password-checklist/password-checklist.component';
-// import { ScheduleComponent } from './components/admin/schedule/schedule.component';
+import { ScheduleComponent } from './components/admin/schedule/schedule.component';
 import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-calendar.component';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
 import { MajorDetailComponent } from './components/admin/programs/major-detail/major-detail.component';
@@ -30,6 +31,9 @@ import { StudentsComponent } from './components/admin/students/students.componen
 import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 import { CurriculumComponent } from './components/user/curriculum/curriculum.component';
+import { RegistrationComponent } from './components/user/registration/registration.component';
+import { PasswordInputComponent } from './shared/components/password-input/password-input.component';
+import { CourseClassesComponent } from './components/admin/course-classes/course-classes.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -43,7 +47,8 @@ const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'grades', component: HomeComponent },
-      { path: 'curriculum', component: CurriculumComponent }
+      { path: 'curriculum', component: CurriculumComponent },
+      { path: 'register-course', component: RegistrationComponent }
     ]
   },
   {
@@ -62,8 +67,8 @@ const routes: Routes = [
       { path: 'lecturers', component: LecturersComponent },
       { path: 'students', component: StudentsComponent },
       { path: 'subjects', component: DashboardComponent },
-      { path: 'sections', component: DashboardComponent },
-      // { path: 'schedules', component: ScheduleComponent },
+      { path: 'sections', component: CourseClassesComponent },
+      { path: 'schedules', component: ScheduleComponent },
       { path: 'exams', component: DashboardComponent },
       { path: 'grades', component: DashboardComponent },
       { path: 'reports', component: DashboardComponent },
@@ -84,9 +89,6 @@ const routes: Routes = [
   { path: '**', redirectTo: '' }
 ];
 
-import { FormsModule } from '@angular/forms';
-import { PasswordInputComponent } from './shared/components/password-input/password-input.component';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -97,12 +99,14 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     UserLayoutComponent,
     OAuth2RedirectComponent,
     UsersComponent,
+    SemestersComponent,
+    CourseClassesComponent,
     SettingsComponent,
     ProfileComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ChangePasswordComponent,
-    // ScheduleComponent,
+    ScheduleComponent,
     MiniCalendarComponent,
     ProgramsComponent,
     MajorDetailComponent,
@@ -113,10 +117,11 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
     PasswordChecklistComponent,
     PasswordInputComponent,
     CurriculumComponent,
-    SemestersComponent
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

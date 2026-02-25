@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Semester, SemesterService } from '../../../services/semester.service';
 
 @Component({
@@ -6,15 +6,24 @@ import { Semester, SemesterService } from '../../../services/semester.service';
     templateUrl: './semesters.component.html'
 })
 export class SemestersComponent implements OnInit {
+    // Data Lists
     semesters: Semester[] = [];
     filteredSemesters: Semester[] = [];
+    paginatedSemesters: Semester[] = [];
     loading = true;
+
+    // Pagination
+    currentPage: number = 1;
+    itemsPerPage: number = 10;
 
     // Search and Filter
     searchTerm: string = '';
     selectedYear: string = '';
     selectedStatus: string = '';
     academicYears: string[] = [];
+
+    // UI State: Quản lý dropdown nào đang mở ('year' hoặc 'status' hoặc '')
+    activeDropdown: string = '';
 
     // Modal State
     isEditModalOpen = false;
@@ -30,25 +39,33 @@ export class SemestersComponent implements OnInit {
         this.loadSemesters();
     }
 
-    getEmptySemester(): any {
-        const currentYear = new Date().getFullYear();
-        return {
-            name: '',
-            academicYear: `${currentYear}-${currentYear + 1}`,
-            semesterOrder: 1,
-            startDate: '',
-            endDate: '',
-            semesterStatus: 'UPCOMING'
-        };
+    // Tự động đóng dropdown khi click ra ngoài vùng dropdown
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        // Nếu click không nằm trong div chứa dropdown thì đóng lại
+        if (!target.closest('.relative')) {
+            this.activeDropdown = '';
+        }
     }
 
+    // --- GETTERS CHO TEMPLATE ---
+    get totalPages(): number {
+        return Math.ceil(this.filteredSemesters.length / this.itemsPerPage) || 1;
+    }
+
+    get minEnd(): number {
+        return Math.min(this.currentPage * this.itemsPerPage, this.filteredSemesters.length);
+    }
+
+    // --- DATA LOADING ---
     loadSemesters(): void {
         this.loading = true;
         this.semesterService.getAllSemesters().subscribe({
             next: (data) => {
                 this.semesters = data;
-                this.filteredSemesters = data;
                 this.extractAcademicYears();
+                this.onFilterChange();
                 this.loading = false;
             },
             error: (err) => {
@@ -63,6 +80,7 @@ export class SemestersComponent implements OnInit {
         this.academicYears = Array.from(years).sort().reverse();
     }
 
+    // --- FILTER & PAGINATION LOGIC ---
     onFilterChange(): void {
         this.filteredSemesters = this.semesters.filter(s => {
             const matchesSearch = s.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -72,9 +90,44 @@ export class SemestersComponent implements OnInit {
 
             return matchesSearch && matchesYear && matchesStatus;
         });
+
+        this.currentPage = 1;
+        this.updatePagination();
     }
 
-    // Modal Operations
+    updatePagination(): void {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        this.paginatedSemesters = this.filteredSemesters.slice(startIndex, endIndex);
+    }
+
+    nextPage(): void {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.updatePagination();
+        }
+    }
+
+    prevPage(): void {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.updatePagination();
+        }
+    }
+
+    // --- MODAL OPERATIONS ---
+    getEmptySemester(): any {
+        const currentYear = new Date().getFullYear();
+        return {
+            name: '',
+            academicYear: `${currentYear}-${currentYear + 1}`,
+            semesterOrder: 1,
+            startDate: '',
+            endDate: '',
+            semesterStatus: 'UPCOMING'
+        };
+    }
+
     openAddModal(): void {
         this.modalMode = 'ADD';
         this.currentSemester = this.getEmptySemester();
@@ -93,7 +146,6 @@ export class SemestersComponent implements OnInit {
 
     saveSemester(): void {
         if (!this.currentSemester.name || !this.currentSemester.academicYear) return;
-
         this.isSubmitting = true;
         const obs = this.modalMode === 'ADD'
             ? this.semesterService.createSemester(this.currentSemester)
@@ -124,7 +176,6 @@ export class SemestersComponent implements OnInit {
 
     confirmDelete(): void {
         if (this.semesterToDeleteId === null) return;
-
         this.isSubmitting = true;
         this.semesterService.deleteSemester(this.semesterToDeleteId).subscribe({
             next: () => {
@@ -139,6 +190,7 @@ export class SemestersComponent implements OnInit {
         });
     }
 
+    // --- HELPERS ---
     getStatusClass(status: string): string {
         switch (status) {
             case 'ONGOING': return 'bg-green-50 text-green-700 border-green-200';
@@ -153,7 +205,7 @@ export class SemestersComponent implements OnInit {
             case 'ONGOING': return 'Đang diễn ra';
             case 'UPCOMING': return 'Sắp tới';
             case 'FINISHED': return 'Đã kết thúc';
-            default: return status;
+            default: return 'Tất cả trạng thái';
         }
     }
 }

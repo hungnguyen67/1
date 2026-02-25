@@ -64,41 +64,34 @@
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             STT
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Mã GV
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
                             Họ tên
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
                             SĐT
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Giới tính
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
                             Ngành
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Học vị
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Học hàm
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Lớp cố vấn
                         </th>
-                        <th
-                            class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Hành động
                         </th>
                     </tr>
@@ -119,14 +112,7 @@
                         <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ lecturer.academicRank }}
                         </td>
                         <td class="px-4 py-3 text-sm text-slate-900 text-center">
-                            <div class="flex flex-wrap gap-1 justify-center">
-                                <span *ngFor="let classCode of lecturer.advisorClasses"
-                                    class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-medium rounded-full">
-                                    {{ classCode }}
-                                </span>
-                                <span *ngIf="!lecturer.advisorClasses || lecturer.advisorClasses.length === 0"
-                                    class="text-slate-400"></span>
-                            </div>
+                            {{ lecturer.advisorClasses.join(', ') }}
                         </td>
                         <td class="px-4 py-3 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
                             <button (click)="editLecturer(lecturer)" class="text-blue-600 hover:text-blue-900 mr-3">
