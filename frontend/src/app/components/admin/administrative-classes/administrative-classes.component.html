@@ -39,7 +39,7 @@
                         class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                         <div (click)="selectedMajorId=null; onSearch(); activeDropdown=''"
                             class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                            [class.text-blue-600]="selectedMajorId === null">Tất cả chuyên ngành</div>
+                            [class.text-blue-600]="selectedMajorId === null">Tất cả các ngành học</div>
                         <div *ngFor="let m of majors" (click)="selectedMajorId=m.id; onSearch(); activeDropdown=''"
                             class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedMajorId === m.id">{{ m.majorName }}</div>

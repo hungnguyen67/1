@@ -66,9 +66,9 @@ export class LecturersComponent implements OnInit {
     }
 
     getSelectedMajorName(): string {
-        if (!this.filterMajor) return 'Tất cả chuyên ngành';
+        if (!this.filterMajor) return 'Tất cả các ngành học';
         const major = this.majors.find(m => m.id === this.filterMajor);
-        return major ? major.majorName : 'Tất cả chuyên ngành';
+        return major ? major.majorName : 'Tất cả các ngành học';
     }
 
     get totalPages(): number {

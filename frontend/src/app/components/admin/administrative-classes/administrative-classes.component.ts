@@ -109,9 +109,9 @@ export class AdministrativeClassesComponent implements OnInit {
 
     // Getters cho giao diện
     getSelectedMajorName(): string {
-        if (!this.selectedMajorId) return 'Tất cả chuyên ngành';
+        if (!this.selectedMajorId) return 'Tất cả các ngành học';
         const major = this.majors.find(m => m.id === Number(this.selectedMajorId));
-        return major ? major.majorName : 'Tất cả chuyên ngành';
+        return major ? major.majorName : 'Tất cả các ngành học';
     }
 
     getSelectedAdvisorName(): string {
