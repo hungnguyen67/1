@@ -115,9 +115,7 @@
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Học kỳ</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Ngày bắt đầu</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Ngày kết thúc</th>
+                            Thời gian</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
                             Trạng thái</th>
                         <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
@@ -132,10 +130,11 @@
                         <td class="px-4 py-3 text-sm text-slate-900 text-center">
                             {{ semester.academicYear }}
                         </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center font-semibold">{{ semester.semesterOrder
+                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ semester.semesterOrder
                             }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">{{ semester.startDate | date:'dd/MM/yyyy' }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">{{ semester.endDate | date:'dd/MM/yyyy' }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-900">
+                            {{ semester.startDate | date:'dd/MM/yyyy' }} - {{ semester.endDate | date:'dd/MM/yyyy' }}
+                        </td>
                         <td class="px-4 py-3 text-sm text-center">
                             <span
                                 [class]="'inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full ' + getStatusClass(semester.semesterStatus)">
