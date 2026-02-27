@@ -71,22 +71,28 @@
                         (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'; $event.stopPropagation()"
                         class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
                         <div class="flex items-center gap-2">
-                            <span>{{ selectedStatus === 'ALL' ? 'Tất cả trạng thái' : selectedStatus === 'ACTIVE' ?
-                                'Đang hoạt động' : 'Đã khóa' }}</span>
+                            <span class="truncate">{{ selectedStatus === 'ACTIVE' ? 'Đang hoạt động' : selectedStatus
+                                === 'LOCKED' ? 'Đã khóa' : 'Tất cả trạng thái' }}</span>
                         </div>
-                        <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-transform"
+                        <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-transform duration-300"
                             [class.rotate-90]="activeDropdown === 'status'"></i>
                     </button>
                     <div *ngIf="activeDropdown === 'status'"
                         class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 animate-in fade-in zoom-in-95 duration-200">
                         <div (click)="selectedStatus='ALL'; onSearch(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Tất cả
-                            trạng thái</div>
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
+                            [class.text-blue-600]="selectedStatus === 'ALL' || !selectedStatus">
+                            Tất cả trạng thái
+                        </div>
                         <div (click)="selectedStatus='ACTIVE'; onSearch(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Đang hoạt
-                            động</div>
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
+                            [class.text-blue-600]="selectedStatus === 'ACTIVE'">
+                            Đang hoạt động
+                        </div>
                         <div (click)="selectedStatus='LOCKED'; onSearch(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer">Đã khóa
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
+                            [class.text-blue-600]="selectedStatus === 'LOCKED'">
+                            Đã khóa
                         </div>
                     </div>
                 </div>

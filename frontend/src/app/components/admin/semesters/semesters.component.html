@@ -40,13 +40,13 @@
                     <div *ngIf="activeDropdown === 'year'"
                         class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                         <div (click)="selectedYear=''; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedYear === ''">
                             Tất cả các năm học
                         </div>
                         <div *ngFor="let year of academicYears"
                             (click)="selectedYear=year; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedYear === year">
                             {{ year }}
                         </div>
@@ -71,22 +71,22 @@
                     <div *ngIf="activeDropdown === 'status'"
                         class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 animate-in fade-in zoom-in-95 duration-200">
                         <div (click)="selectedStatus=''; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedStatus === ''">
                             Tất cả trạng thái
                         </div>
                         <div (click)="selectedStatus='UPCOMING'; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedStatus === 'UPCOMING'">
                             Sắp tới
                         </div>
                         <div (click)="selectedStatus='ONGOING'; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedStatus === 'ONGOING'">
                             Đang diễn ra
                         </div>
                         <div (click)="selectedStatus='FINISHED'; onFilterChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
                             [class.text-blue-600]="selectedStatus === 'FINISHED'">
                             Đã kết thúc
                         </div>
