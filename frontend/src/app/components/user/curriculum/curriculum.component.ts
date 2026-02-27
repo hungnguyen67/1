@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CurriculumService, CurriculumDTO, KnowledgeBlockDetailDTO } from '../../../services/curriculum.service';
-import { ProfileService } from '../../../services/profile.service';
 import { AuthService } from '../../../auth.service';
 
 @Component({
@@ -26,7 +25,6 @@ export class CurriculumComponent implements OnInit {
 
     constructor(
         private curriculumService: CurriculumService,
-        private profileService: ProfileService,
         private authService: AuthService,
         private router: Router
     ) { }
@@ -37,7 +35,7 @@ export class CurriculumComponent implements OnInit {
 
     loadStudentProfileAndCurriculum(): void {
         this.loading = true;
-        this.profileService.getProfile().subscribe({
+        this.authService.getProfile().subscribe({
             next: (profile: any) => {
                 const role = this.authService.getRole() || '';
                 if (role.includes('STUDENT') && profile.curriculumId) {

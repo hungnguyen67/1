@@ -7,15 +7,14 @@ import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/user/home/home.component';
-import { LoginComponent } from './components/login/login.component';
+import { LoginPasswordComponent } from './components/login-password/login-password.component';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './shared/layouts/dashboard-layout/dashboard-layout.component';
 import { UserLayoutComponent } from './shared/layouts/user-layout/user-layout.component';
-import { OAuth2RedirectComponent } from './components/oauth2-redirect/oauth2-redirect.component';
 import { UsersComponent } from './components/admin/users/users.component';
 import { SemestersComponent } from './components/admin/semesters/semesters.component';
 import { SettingsComponent } from './shared/layouts/setting-layout/setting-layout.component';
-import { ProfileComponent } from './components/profile/profile.component';
+import { ProfileComponent } from './components/admin/profile/profile.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { FlashMessageComponent } from './shared/components/flash-message/flash-message.component';
@@ -39,7 +38,7 @@ import { AdministrativeClassesComponent } from './components/admin/administrativ
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginPasswordComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {
@@ -88,7 +87,7 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'oauth2/redirect', component: OAuth2RedirectComponent },
+  { path: 'oauth2/redirect', component: LoginPasswordComponent },
   { path: '**', redirectTo: '' }
 ];
 
@@ -96,11 +95,10 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     HomeComponent,
-    LoginComponent,
+    LoginPasswordComponent,
     DashboardComponent,
     DashboardLayoutComponent,
     UserLayoutComponent,
-    OAuth2RedirectComponent,
     UsersComponent,
     SemestersComponent,
     CourseClassesComponent,

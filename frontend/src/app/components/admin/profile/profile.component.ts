@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../auth.service';
-import { FlashMessageService, FlashMessageComponent } from '../../shared/components/flash-message/flash-message.component';
+import { AuthService } from '../../../auth.service';
+import { FlashMessageService, FlashMessageComponent } from '../../../shared/components/flash-message/flash-message.component';
 
 @Component({
   selector: 'app-profile',
@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserProfile() {
-    this.http.get('http://localhost:8001/api/profile', this.auth.getAuthHeaders()).subscribe({
+    this.auth.getProfile().subscribe({
       next: (data: any) => {
         this.user = data;
         this.initEditForm();

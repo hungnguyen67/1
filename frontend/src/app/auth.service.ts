@@ -88,4 +88,8 @@ export class AuthService {
   deleteUser(id: number): Observable<any> {
     return this.http.delete<any>(`${this.adminBase}/users/${id}`, this.getAuthHeaders());
   }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>('/api/profile');
+  }
 }

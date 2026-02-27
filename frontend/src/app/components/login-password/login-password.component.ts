@@ -7,10 +7,10 @@ import { FlashMessageService } from '../../shared/components/flash-message/flash
 import { PasswordInputComponent } from '../../shared/components/password-input/password-input.component';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html'
+  selector: 'app-login-password',
+  templateUrl: './login-password.component.html'
 })
-export class LoginComponent implements OnInit {
+export class LoginPasswordComponent implements OnInit {
   form!: FormGroup;
   loading = false;
 
@@ -30,11 +30,30 @@ export class LoginComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       this.flashMessage.clearAll();
-      if (params['message']) {
-        this.flashMessage.success(params['message']);
-      }
-      if (params['error']) {
-        this.flashMessage.error(params['error']);
+
+      const token = params['token'];
+      const role = params['role'];
+      const error = params['error'];
+      const message = params['message'];
+      const user = params['user'];
+
+      if (error) {
+        this.flashMessage.error(decodeURIComponent(error.replace(/\+/g, ' ')));
+      } else if (token) {
+        this.auth.setToken(token);
+        if (role) this.auth.setRole(role);
+        if (user) {
+          localStorage.setItem('user_info', decodeURIComponent(user.replace(/\+/g, ' ')));
+        }
+        if (message) {
+          this.flashMessage.success(decodeURIComponent(message.replace(/\+/g, ' ')));
+        }
+        const redirectPath = role === 'ADMIN' ? '/dashboard' : '/home';
+        this.router.navigate([redirectPath]);
+      } else {
+        if (params['message']) {
+          this.flashMessage.success(params['message']);
+        }
       }
     });
   }
