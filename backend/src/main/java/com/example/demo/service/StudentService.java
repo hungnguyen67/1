@@ -23,7 +23,6 @@ public class StudentService {
             try {
                 academicStatus = StudentProfile.AcademicStatus.valueOf(status.toUpperCase());
             } catch (IllegalArgumentException e) {
-                // Ignore invalid status
             }
         }
 

@@ -17,7 +17,6 @@ public class KnowledgeBlockDetailDTO {
         this.subjects = subjects;
     }
 
-    // Getters and Setters
     public Long getBlockId() { return blockId; }
     public void setBlockId(Long blockId) { this.blockId = blockId; }
 

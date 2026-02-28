@@ -41,7 +41,6 @@ public class CourseClassService {
     public List<CourseSubjectGroupDTO> getGroupedSubjectsBySemester(Long semesterId) {
         List<CourseClass> classes = courseClassRepository.findBySemesterId(semesterId);
         
-        // Group classes by subject
         Map<Subject, List<CourseClass>> grouped = classes.stream()
                 .collect(Collectors.groupingBy(CourseClass::getSubject));
         
@@ -157,7 +156,6 @@ public class CourseClassService {
         com.example.demo.model.Semester academicSemester = semesterRepository.findById(semesterId)
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
 
-        // Use academic year start to calculate semester accurately (avoiding calendar year transitions)
         int acadStartYear;
         try {
             acadStartYear = Integer.parseInt(academicSemester.getAcademicYear().split("-")[0]);
@@ -166,16 +164,9 @@ public class CourseClassService {
         }
         int semesterOrder = academicSemester.getSemesterOrder();
 
-        // 1. Get all unique curriculum-subject mappings
         List<com.example.demo.model.CurriculumSubject> allCurriculumSubjects = curriculumSubjectRepository.findAll();
-
-        // 2. Get students and group by cohort + curriculum
         List<com.example.demo.model.StudentProfile> allStudents = studentProfileRepository.findAll();
-        
-        // Map to hold results: SubjectID -> DTO
         Map<Long, com.example.demo.dto.CourseClassDemandAnalysisDTO> analysisMap = new java.util.HashMap<>();
-
-        // Group students by enrollment year and curriculum
         Map<Integer, Map<Long, Long>> studentsByCohortAndCurr = allStudents.stream()
             .filter(s -> s.getAcademicStatus() == com.example.demo.model.StudentProfile.AcademicStatus.STUDYING)
             .filter(s -> filterCohort == null || s.getEnrollmentYear().equals(filterCohort))
@@ -184,7 +175,6 @@ public class CourseClassService {
                 Collectors.groupingBy(s -> s.getCurriculum().getId(), Collectors.counting())
             ));
 
-        // 3. Calculate Mandatory Demand
         for (Map.Entry<Integer, Map<Long, Long>> cohortEntry : studentsByCohortAndCurr.entrySet()) {
             int enrollmentYear = cohortEntry.getKey();
             int curriculumSemester = (acadStartYear - enrollmentYear) * 2 + semesterOrder;
@@ -217,8 +207,6 @@ public class CourseClassService {
             }
         }
 
-        // 4. Calculate Repeating Demand (SV học lại)
-        // Simplified: students who failed this subject in the past
         List<com.example.demo.model.CourseRegistration> allRegs = registrationRepository.findAll();
         Map<Long, Long> failedCounts = allRegs.stream()
             .filter(r -> r.getIsPassed() != null && !r.getIsPassed())
@@ -228,8 +216,6 @@ public class CourseClassService {
             if (analysisMap.containsKey(entry.getKey())) {
                 analysisMap.get(entry.getKey()).setRepeatingStudents(entry.getValue().intValue());
             } else {
-                // If it's not a mandatory subject for anyone this year, but people are failing it
-                // We might still want to open it
                 Subject s = subjectRepository.findById(entry.getKey()).orElse(null);
                 if (s != null) {
                     com.example.demo.dto.CourseClassDemandAnalysisDTO dto = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
@@ -243,7 +229,6 @@ public class CourseClassService {
             }
         }
 
-        // 5. Enrich with current opened classes and capacity
         List<CourseClass> currentClasses = courseClassRepository.findBySemesterId(semesterId);
         Map<Long, List<CourseClass>> classesBySubject = currentClasses.stream()
             .collect(Collectors.groupingBy(cc -> cc.getSubject().getId()));
@@ -256,7 +241,6 @@ public class CourseClassService {
             dto.setMissingSlots(Math.max(0, dto.getTotalNeeded() - dto.getCurrentCapacity()));
             
             if (dto.getMissingSlots() > 0) {
-                // Assuming standardized class size is 60 or 40
                 int classSize = 60; 
                 dto.setSuggestedMoreClasses((int) Math.ceil((double) dto.getMissingSlots() / classSize));
             } else {

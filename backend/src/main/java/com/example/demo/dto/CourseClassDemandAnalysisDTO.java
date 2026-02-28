@@ -15,7 +15,6 @@ public class CourseClassDemandAnalysisDTO {
 
     public CourseClassDemandAnalysisDTO() {}
 
-    // Getters and Setters
     public Long getSubjectId() { return subjectId; }
     public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
 

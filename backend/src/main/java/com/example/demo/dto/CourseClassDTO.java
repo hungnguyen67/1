@@ -33,7 +33,6 @@ public class CourseClassDTO {
             this.sessionType = sessionType;
         }
 
-        // Getters and Setters
         public Integer getDayOfWeek() { return dayOfWeek; }
         public void setDayOfWeek(Integer dayOfWeek) { this.dayOfWeek = dayOfWeek; }
         public Integer getStartPeriod() { return startPeriod; }
@@ -48,7 +47,6 @@ public class CourseClassDTO {
 
     public CourseClassDTO() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getClassCode() { return classCode; }

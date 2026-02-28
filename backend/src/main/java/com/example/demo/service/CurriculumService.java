@@ -117,16 +117,13 @@ public class CurriculumService {
     }
 
     public void deleteCurriculum(Long id) {
-        // Delete associated data first
         curriculumSubjectRepository.deleteByCurriculumId(id);
         knowledgeBlockRepository.deleteByCurriculumId(id);
-        
         curriculumRepository.deleteById(id);
     }
 
     private CurriculumDTO convertToDTO(Curriculum curriculum) {
         Major major = curriculum.getMajor();
-        // Calculate total credits dynamically
         List<CurriculumSubject> curriculumSubjects = curriculumSubjectRepository.findByCurriculumId(curriculum.getId());
         
         log.debug("Curriculum ID: {}", curriculum.getId());
@@ -152,10 +149,10 @@ public class CurriculumService {
                 major.getMajorCode(),
                 major.getId(),
                 curriculum.getAppliedYear(),
-                totalCredits, // Use calculated credits
-                "Đang áp dụng", // Mock status
-                curriculumSubjects.size(), // Total subjects
-                totalBlocks // Total knowledge blocks
+                totalCredits, 
+                "Đang áp dụng", 
+                curriculumSubjects.size(), 
+                totalBlocks 
         );
     }
 }

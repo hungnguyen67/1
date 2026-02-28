@@ -72,17 +72,14 @@ public class MajorService {
         int totalSubjects = 0;
 
         if (!curriculums.isEmpty()) {
-             // Find latest applied year for display name
              curriculums.sort((c1, c2) -> c2.getAppliedYear().compareTo(c1.getAppliedYear()));
              activeCurriculumName = curriculums.get(0).getCurriculumName();
              
-             // Calculate total credits, subjects and blocks dynamically by aggregating ALL curriculums
              java.util.Set<Long> uniqueSubjectIds = new java.util.HashSet<>();
              java.util.Set<String> uniqueBlockNames = new java.util.HashSet<>();
              int totalKnowledgeBlocks = 0;
              
              for (Curriculum curriculum : curriculums) {
-                 // Sum unique subjects/credits
                  List<com.example.demo.model.CurriculumSubject> curriculumSubjects = curriculumSubjectRepository.findByCurriculumId(curriculum.getId());
                  for (com.example.demo.model.CurriculumSubject cs : curriculumSubjects) {
                      if (cs.getSubject() != null && !uniqueSubjectIds.contains(cs.getSubject().getId())) {
@@ -90,8 +87,6 @@ public class MajorService {
                          totalCredits += cs.getSubject().getCredits();
                      }
                  }
-                 // Count blocks for this major (unique across curriculums if generic, or just sum?)
-                 // Usually blocks have names like "Đại cương", "Cơ sở ngành".
                  List<com.example.demo.model.KnowledgeBlock> blocks = knowledgeBlockRepository.findByCurriculumId(curriculum.getId());
                  if (blocks != null) {
                     for (com.example.demo.model.KnowledgeBlock b : blocks) {
@@ -128,7 +123,7 @@ public class MajorService {
                 status,
                 activeCurriculumName,
                 totalSubjects,
-                0 // totalKnowledgeBlocks
+                0 
         );
     }
 }

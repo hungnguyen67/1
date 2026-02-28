@@ -26,7 +26,6 @@ export class ForgotPasswordComponent {
   }
 
   onSubmit() {
-    // 1. Kiểm tra Form và hiện thông báo lỗi cụ thể
     if (this.forgotForm.invalid) {
       const emailControl = this.forgotForm.get('email');
 
@@ -40,7 +39,6 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    // 2. Form hợp lệ mới tiến hành gửi yêu cầu
     this.loading = true;
     const { email } = this.forgotForm.value;
 
@@ -48,12 +46,10 @@ export class ForgotPasswordComponent {
       next: (response) => {
         this.loading = false;
         this.success = true;
-        // Hiện thông báo thành công từ backend (vd: "Mã OTP đã gửi thành công")
         this.flashMessage.handleSuccess(response);
       },
       error: (error) => {
         this.loading = false;
-        // Tự động bóc tách lỗi từ backend (vd: "Email không tồn tại")
         this.flashMessage.handleError(error);
       }
     });
@@ -61,7 +57,6 @@ export class ForgotPasswordComponent {
 
   goToReset() {
     const email = this.forgotForm.get('email')?.value;
-    // Truyền email sang trang reset để người dùng không phải nhập lại
     this.router.navigate(['/reset-password'], { queryParams: { email } });
   }
 

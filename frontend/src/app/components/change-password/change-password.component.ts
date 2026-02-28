@@ -5,7 +5,7 @@ import { PasswordInputComponent } from '../../shared/components/password-input/p
 import { PasswordChecklistComponent } from '../../shared/components/password-checklist/password-checklist.component';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service'; // Quan trọng: Phải có AuthService
+import { AuthService } from '../../auth.service';
 import { FlashMessageService } from '../../shared/components/flash-message/flash-message.component';
 
 @Component({
@@ -20,7 +20,7 @@ export class ChangePasswordComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private auth: AuthService, // Tiêm AuthService để lấy headers
+    private auth: AuthService,
     private flashMessage: FlashMessageService
   ) {
     this.form = new FormGroup({
@@ -57,7 +57,6 @@ export class ChangePasswordComponent {
 
     this.loading = true;
 
-    // Sửa URL đầy đủ và thêm headers từ AuthService
     this.http.put(this.API_URL, {
       oldPassword: currentPassword,
       newPassword: newPassword,
@@ -67,12 +66,10 @@ export class ChangePasswordComponent {
         this.loading = false;
         this.flashMessage.success(res.message || 'Thay đổi mật khẩu thành công!');
 
-        // Sau khi đổi pass thành công, chuyển về profile
         this.router.navigate(['/dashboard/settings/profile']);
       },
       error: (err) => {
         this.loading = false;
-        // flashMessage sẽ hiển thị lỗi từ Backend (ví dụ: "Mật khẩu cũ không đúng")
         this.flashMessage.handleError(err);
       }
     });

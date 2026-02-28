@@ -33,7 +33,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Lấy email từ URL để tự động điền vào form
     this.route.queryParams.subscribe(params => {
       const emailFromUrl = params['email'] || '';
       if (emailFromUrl) {
@@ -41,7 +40,6 @@ export class ResetPasswordComponent implements OnInit {
       }
     });
 
-    // Kiểm tra password valid khi nhập
     this.passwordControl.valueChanges.subscribe(value => {
       this.checkPasswordValid(value);
     });

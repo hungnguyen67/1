@@ -31,7 +31,6 @@ public class CurriculumSubject {
 
     public CurriculumSubject() {}
 
-    // Getters and Setters
     public CurriculumSubjectKey getId() { return id; }
     public void setId(CurriculumSubjectKey id) { this.id = id; }
 

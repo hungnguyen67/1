@@ -54,7 +54,6 @@ public class ClassScheduleInstance {
 
     public ClassScheduleInstance() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public CourseClass getCourseClass() { return courseClass; }

@@ -45,7 +45,6 @@ public class ProfileController {
             profile.put("phone", user.getPhone());
             profile.put("address", user.getAddress());
 
-            // Add student-specific info
             Optional<com.example.demo.model.StudentProfile> studentOpt = studentProfileRepository.findById(user.getId());
             if (studentOpt.isPresent()) {
                 profile.put("studentCode", studentOpt.get().getStudentCode());

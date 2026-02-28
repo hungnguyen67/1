@@ -47,7 +47,6 @@ public class ScheduleService {
             throw new RuntimeException("Semester dates not fully defined");
         }
 
-        // Clear existing instances for this class
         List<ClassScheduleInstance> existing = instanceRepository.findByCourseClassId(classId);
         instanceRepository.deleteAll(existing);
 
@@ -63,11 +62,8 @@ public class ScheduleService {
             int targetDay = pattern.getDayOfWeek(); 
             
             while (!current.isAfter(end)) {
-                // Java standard DayOfWeek (1=Mon, ..., 7=Sun)
-                // Normalize to 2-8 (Monday=2, ..., Sunday=8)
                 int normalizedDay = current.getDayOfWeek().getValue() + 1; 
                 if (normalizedDay == targetDay) {
-                    // Calculate week number
                     long weeksBetween = ChronoUnit.WEEKS.between(semester.getStartDate(), current) + 1;
                     
                     if (weeksBetween >= pattern.getFromWeek() && weeksBetween <= pattern.getToWeek()) {
@@ -131,7 +127,6 @@ public class ScheduleService {
         List<ConflictInfo> conflicts = new ArrayList<>();
 
         for (ClassScheduleInstance inst : classInstances) {
-            // Check Room conflict
             if (inst.getRoomName() != null && !inst.getRoomName().isEmpty()) {
                 List<ClassScheduleInstance> roomOccurrences = instanceRepository.findByRoomNameAndScheduleDate(
                         inst.getRoomName(), inst.getScheduleDate());
@@ -146,7 +141,6 @@ public class ScheduleService {
                 }
             }
 
-            // Check Lecturer conflict
             if (inst.getLecturer() != null) {
                 List<ClassScheduleInstance> lecturerOccurrences = instanceRepository.findByLecturerUserIdAndScheduleDate(
                         inst.getLecturer().getUserId(), inst.getScheduleDate());
@@ -161,7 +155,6 @@ public class ScheduleService {
                 }
             }
         }
-        // Deduplicate conflicts
         return conflicts.stream().distinct().collect(Collectors.toList());
     }
 

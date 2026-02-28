@@ -27,7 +27,6 @@ public class CurriculumSubjectComponentDTO {
         this.equivalents = equivalents;
     }
 
-    // Getters and Setters
     public Long getSubjectId() { return subjectId; }
     public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
 

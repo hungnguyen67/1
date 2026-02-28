@@ -18,7 +18,6 @@ public class CourseSubjectGroupDTO {
         this.status = status;
     }
 
-    // Getters and Setters
     public Long getSubjectId() { return subjectId; }
     public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
     public String getSubjectCode() { return subjectCode; }
