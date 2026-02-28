@@ -15,12 +15,17 @@ public class AdministrativeClass implements Serializable {
     @Column(name = "class_code", unique = true, nullable = false)
     private String classCode;
 
+    @Column(name = "class_name", nullable = false)
+    private String className;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major_id", nullable = false)
+    @JoinColumn(name = "major_id")
     private Major major;
 
-    @Column(name = "academic_year", nullable = false)
+    @Column(name = "academic_year")
     private String academicYear;
+
+    private Integer cohort;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advisor_id")
@@ -29,14 +34,14 @@ public class AdministrativeClass implements Serializable {
     @Enumerated(EnumType.STRING)
     private ClassStatus status = ClassStatus.ACTIVE;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public enum ClassStatus {
-        ACTIVE, LOCKED
+        ACTIVE, INACTIVE, GRADUATED
     }
 
     public AdministrativeClass() {}
@@ -47,11 +52,17 @@ public class AdministrativeClass implements Serializable {
     public String getClassCode() { return classCode; }
     public void setClassCode(String classCode) { this.classCode = classCode; }
 
+    public String getClassName() { return className; }
+    public void setClassName(String className) { this.className = className; }
+
     public Major getMajor() { return major; }
     public void setMajor(Major major) { this.major = major; }
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
+
+    public Integer getCohort() { return cohort; }
+    public void setCohort(Integer cohort) { this.cohort = cohort; }
 
     public LecturerProfile getAdvisor() { return advisor; }
     public void setAdvisor(LecturerProfile advisor) { this.advisor = advisor; }
@@ -64,4 +75,9 @@ public class AdministrativeClass implements Serializable {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

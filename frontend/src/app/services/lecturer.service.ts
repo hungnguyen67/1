@@ -6,13 +6,17 @@ export interface LecturerDTO {
     id: number;
     lecturerCode: string;
     fullName: string;
-    majorName: string;
-    majorId: number;
+    facultyName: string;
+    facultyId: number;
+    specialization: string;
     degree: string;
     academicRank: string;
     phone: string;
     gender: string;
+    status: string;
     advisorClasses: string[];
+    createdAt: string;
+    updatedAt: string;
 }
 
 @Injectable({
@@ -23,13 +27,13 @@ export class LecturerService {
 
     constructor(private http: HttpClient) { }
 
-    getLecturers(searchTerm?: string, majorId?: number): Observable<LecturerDTO[]> {
+    getLecturers(searchTerm?: string, facultyId?: number): Observable<LecturerDTO[]> {
         let params = new HttpParams();
         if (searchTerm) {
             params = params.set('searchTerm', searchTerm);
         }
-        if (majorId) {
-            params = params.set('majorId', majorId.toString());
+        if (facultyId) {
+            params = params.set('facultyId', facultyId.toString());
         }
         return this.http.get<LecturerDTO[]>(this.apiUrl, { params });
     }

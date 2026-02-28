@@ -1,8 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Subject;
+import com.example.demo.dto.SubjectDTO;
 import com.example.demo.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,22 @@ public class SubjectController {
     private SubjectService subjectService;
 
     @GetMapping
-    public List<Subject> getAllSubjects() {
-        return subjectService.getAllSubjects();
+    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
+        return ResponseEntity.ok(subjectService.getAllSubjects());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SubjectDTO> getSubjectById(@PathVariable Long id) {
+        return ResponseEntity.ok(subjectService.getSubjectById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<SubjectDTO> createSubject(@RequestBody SubjectDTO dto) {
+        return ResponseEntity.ok(subjectService.createSubject(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SubjectDTO> updateSubject(@PathVariable Long id, @RequestBody SubjectDTO dto) {
+        return ResponseEntity.ok(subjectService.updateSubject(id, dto));
     }
 }

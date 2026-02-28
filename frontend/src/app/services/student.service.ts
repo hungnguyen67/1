@@ -8,11 +8,17 @@ export interface StudentDTO {
     fullName: string;
     className: string;
     classId: number;
-    majorName: string;
+    curriculumId: number;
+    curriculumName: string;
     enrollmentYear: number;
+    currentSemester: number;
     totalCreditsEarned: number;
     currentGpa: number;
-    academicStatus: string;
+    currentGpa10: number;
+    status: string;
+    majorName: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 @Injectable({

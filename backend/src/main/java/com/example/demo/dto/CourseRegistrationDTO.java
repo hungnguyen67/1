@@ -14,6 +14,7 @@ public class CourseRegistrationDTO {
     private String status;
     private Double totalScore;
     private String gradeLetter;
+    private Double gradePoint;
 
     public CourseRegistrationDTO() {}
 
@@ -39,4 +40,6 @@ public class CourseRegistrationDTO {
     public void setTotalScore(Double totalScore) { this.totalScore = totalScore; }
     public String getGradeLetter() { return gradeLetter; }
     public void setGradeLetter(String gradeLetter) { this.gradeLetter = gradeLetter; }
+    public Double getGradePoint() { return gradePoint; }
+    public void setGradePoint(Double gradePoint) { this.gradePoint = gradePoint; }
 }

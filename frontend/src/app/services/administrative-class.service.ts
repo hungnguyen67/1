@@ -5,13 +5,17 @@ import { Observable } from 'rxjs';
 export interface AdministrativeClassDTO {
     id: number;
     classCode: string;
+    className: string;
     majorId: number;
     majorName: string;
     academicYear: string;
+    cohort: number;
     advisorId?: number;
     advisorName?: string;
     status: string;
     studentCount: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 @Injectable({

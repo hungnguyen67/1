@@ -48,6 +48,9 @@ public class CourseRegistration implements Serializable {
     @Column(name = "grade_letter", insertable = false, updatable = false)
     private String gradeLetter;
 
+    @Column(name = "grade_point", insertable = false, updatable = false)
+    private Double gradePoint;
+
     @Column(name = "score_updated_at")
     private LocalDateTime scoreUpdatedAt;
 
@@ -98,6 +101,9 @@ public class CourseRegistration implements Serializable {
 
     public LocalDateTime getScoreUpdatedAt() { return scoreUpdatedAt; }
     public void setScoreUpdatedAt(LocalDateTime scoreUpdatedAt) { this.scoreUpdatedAt = scoreUpdatedAt; }
+
+    public Double getGradePoint() { return gradePoint; }
+    public void setGradePoint(Double gradePoint) { this.gradePoint = gradePoint; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

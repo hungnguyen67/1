@@ -19,7 +19,7 @@ public interface StudentProfileRepository extends JpaRepository<StudentProfile, 
            "AND (:classId IS NULL OR s.administrativeClass.id = :classId) " +
            "AND (:majorId IS NULL OR s.administrativeClass.major.id = :majorId) " +
            "AND (:enrollmentYear IS NULL OR s.enrollmentYear = :enrollmentYear) " +
-           "AND (:status IS NULL OR s.academicStatus = :status) " +
+           "AND (:status IS NULL OR s.status = :status) " +
            "AND (:minGpa IS NULL OR s.currentGpa >= :minGpa) " +
            "AND (:maxGpa IS NULL OR s.currentGpa <= :maxGpa)")
     List<StudentProfile> searchStudents(
@@ -27,7 +27,7 @@ public interface StudentProfileRepository extends JpaRepository<StudentProfile, 
             @Param("classId") Long classId,
             @Param("majorId") Long majorId,
             @Param("enrollmentYear") Integer enrollmentYear,
-            @Param("status") StudentProfile.AcademicStatus status,
+            @Param("status") StudentProfile.Status status,
             @Param("minGpa") Double minGpa,
             @Param("maxGpa") Double maxGpa
     );

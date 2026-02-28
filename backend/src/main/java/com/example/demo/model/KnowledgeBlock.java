@@ -1,12 +1,13 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "knowledge_blocks", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"curriculum_id", "block_name"})
 })
-public class KnowledgeBlock {
+public class KnowledgeBlock implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +22,14 @@ public class KnowledgeBlock {
     @Column(name = "credits_required")
     private Integer creditsRequired = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "block_type")
+    private BlockType blockType = BlockType.MANDATORY;
+
+    public enum BlockType {
+        MANDATORY, ELECTIVE
+    }
+
     public KnowledgeBlock() {}
 
     public Long getId() { return id; }
@@ -34,4 +43,7 @@ public class KnowledgeBlock {
 
     public Integer getCreditsRequired() { return creditsRequired; }
     public void setCreditsRequired(Integer creditsRequired) { this.creditsRequired = creditsRequired; }
+
+    public BlockType getBlockType() { return blockType; }
+    public void setBlockType(BlockType blockType) { this.blockType = blockType; }
 }

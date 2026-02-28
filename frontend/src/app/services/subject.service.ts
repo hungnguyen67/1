@@ -7,6 +7,14 @@ export interface SubjectDTO {
     subjectCode: string;
     name: string;
     credits: number;
+    theoryCredits: number;
+    practicalCredits: number;
+    theoryPeriods: number;
+    practicalPeriods: number;
+    description: string;
+    status: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 @Injectable({

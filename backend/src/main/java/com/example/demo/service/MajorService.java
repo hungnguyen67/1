@@ -26,6 +26,9 @@ public class MajorService {
     @Autowired
     private com.example.demo.repository.KnowledgeBlockRepository knowledgeBlockRepository;
 
+    @Autowired
+    private com.example.demo.repository.FacultyRepository facultyRepository;
+
     public List<MajorDTO> getAllMajors() {
         return majorRepository.findAll().stream()
                 .map(this::convertToDTO)
@@ -41,8 +44,11 @@ public class MajorService {
         Major major = new Major();
         major.setMajorCode(majorDTO.getMajorCode());
         major.setMajorName(majorDTO.getMajorName());
-        major.setFacultyName(majorDTO.getFacultyName());
+        if (majorDTO.getFacultyId() != null) {
+            major.setFaculty(facultyRepository.findById(majorDTO.getFacultyId()).orElse(null));
+        }
         major.setDescription(majorDTO.getDescription());
+        major.setStatus(majorDTO.getStatus() != null ? com.example.demo.model.Major.Status.valueOf(majorDTO.getStatus()) : com.example.demo.model.Major.Status.ACTIVE);
         Major savedMajor = majorRepository.save(major);
         return convertToDTO(savedMajor);
     }
@@ -51,8 +57,13 @@ public class MajorService {
         Major major = majorRepository.findById(id).orElseThrow(() -> new RuntimeException("Major not found"));
         major.setMajorCode(majorDTO.getMajorCode());
         major.setMajorName(majorDTO.getMajorName());
-        major.setFacultyName(majorDTO.getFacultyName());
+        if (majorDTO.getFacultyId() != null) {
+            major.setFaculty(facultyRepository.findById(majorDTO.getFacultyId()).orElse(null));
+        }
         major.setDescription(majorDTO.getDescription());
+        if (majorDTO.getStatus() != null) {
+            major.setStatus(com.example.demo.model.Major.Status.valueOf(majorDTO.getStatus()));
+        }
         Major savedMajor = majorRepository.save(major);
         return convertToDTO(savedMajor);
     }
@@ -65,11 +76,12 @@ public class MajorService {
         List<Curriculum> curriculums = curriculumRepository.findByMajorId(major.getId());
         int numberOfCurriculums = curriculums.size();
         
-        String status = numberOfCurriculums > 0 ? "Đang áp dụng" : "Ngừng áp dụng"; 
+        String displayStatus = major.getStatus() == com.example.demo.model.Major.Status.ACTIVE ? "Đang hoạt động" : "Ngừng hoạt động"; 
         
         int totalCredits = 0;
         String activeCurriculumName = "-";
         int totalSubjects = 0;
+        int totalKnowledgeBlocks = 0;
 
         if (!curriculums.isEmpty()) {
              curriculums.sort((c1, c2) -> c2.getAppliedYear().compareTo(c1.getAppliedYear()));
@@ -77,53 +89,42 @@ public class MajorService {
              
              java.util.Set<Long> uniqueSubjectIds = new java.util.HashSet<>();
              java.util.Set<String> uniqueBlockNames = new java.util.HashSet<>();
-             int totalKnowledgeBlocks = 0;
              
              for (Curriculum curriculum : curriculums) {
-                 List<com.example.demo.model.CurriculumSubject> curriculumSubjects = curriculumSubjectRepository.findByCurriculumId(curriculum.getId());
-                 for (com.example.demo.model.CurriculumSubject cs : curriculumSubjects) {
-                     if (cs.getSubject() != null && !uniqueSubjectIds.contains(cs.getSubject().getId())) {
-                         uniqueSubjectIds.add(cs.getSubject().getId());
-                         totalCredits += cs.getSubject().getCredits();
+                  List<com.example.demo.model.CurriculumSubject> curriculumSubjects = curriculumSubjectRepository.findByCurriculumId(curriculum.getId());
+                  for (com.example.demo.model.CurriculumSubject cs : curriculumSubjects) {
+                      if (cs.getSubject() != null && !uniqueSubjectIds.contains(cs.getSubject().getId())) {
+                          uniqueSubjectIds.add(cs.getSubject().getId());
+                          totalCredits += cs.getSubject().getCredits();
+                      }
+                  }
+                  List<com.example.demo.model.KnowledgeBlock> blocks = knowledgeBlockRepository.findByCurriculumId(curriculum.getId());
+                  if (blocks != null) {
+                     for (com.example.demo.model.KnowledgeBlock b : blocks) {
+                         uniqueBlockNames.add(b.getBlockName());
                      }
-                 }
-                 List<com.example.demo.model.KnowledgeBlock> blocks = knowledgeBlockRepository.findByCurriculumId(curriculum.getId());
-                 if (blocks != null) {
-                    for (com.example.demo.model.KnowledgeBlock b : blocks) {
-                        uniqueBlockNames.add(b.getBlockName());
-                    }
-                 }
+                  }
              }
              totalSubjects = uniqueSubjectIds.size();
              totalKnowledgeBlocks = uniqueBlockNames.size();
-             
-             return new MajorDTO(
-                major.getId(),
-                major.getMajorCode(),
-                major.getMajorName(),
-                major.getFacultyName(),
-                major.getDescription(),
-                numberOfCurriculums,
-                totalCredits,
-                status,
-                activeCurriculumName,
-                totalSubjects,
-                totalKnowledgeBlocks
-             );
         }
 
-        return new MajorDTO(
-                major.getId(),
-                major.getMajorCode(),
-                major.getMajorName(),
-                major.getFacultyName(),
-                major.getDescription(),
-                numberOfCurriculums,
-                totalCredits,
-                status,
-                activeCurriculumName,
-                totalSubjects,
-                0 
+        MajorDTO dto = new MajorDTO(
+            major.getId(),
+            major.getMajorCode(),
+            major.getMajorName(),
+            major.getFaculty() != null ? major.getFaculty().getId() : null,
+            major.getFaculty() != null ? major.getFaculty().getFacultyName() : "-",
+            major.getDescription(),
+            numberOfCurriculums,
+            totalCredits,
+            major.getStatus().name(),
+            activeCurriculumName,
+            totalSubjects,
+            totalKnowledgeBlocks
         );
+        dto.setCreatedAt(major.getCreatedAt());
+        dto.setUpdatedAt(major.getUpdatedAt());
+        return dto;
     }
 }

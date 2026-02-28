@@ -130,9 +130,8 @@ export class StudentsComponent implements OnInit {
         switch (status) {
             case 'STUDYING': return 'bg-blue-100 text-blue-700';
             case 'GRADUATED': return 'bg-green-100 text-green-700';
-            case 'RESERVED': return 'bg-yellow-100 text-yellow-700';
-            case 'DROPPED': return 'bg-red-100 text-red-700';
-            case 'SUSPENDED': return 'bg-orange-100 text-orange-700';
+            case 'ACADEMIC_RESERVE': return 'bg-yellow-100 text-yellow-700';
+            case 'DROPPED_OUT': return 'bg-red-100 text-red-700';
             default: return 'bg-slate-100 text-slate-700';
         }
     }
@@ -141,9 +140,8 @@ export class StudentsComponent implements OnInit {
         const map: any = {
             'STUDYING': 'Đang học',
             'GRADUATED': 'Đã tốt nghiệp',
-            'RESERVED': 'Bảo lưu',
-            'DROPPED': 'Thôi học',
-            'SUSPENDED': 'Đình chỉ'
+            'ACADEMIC_RESERVE': 'Bảo lưu',
+            'DROPPED_OUT': 'Thôi học'
         };
         return map[status] || status || '---';
     }

@@ -1,9 +1,12 @@
 package com.example.demo.dto;
 
+import java.time.LocalDateTime;
+
 public class MajorDTO {
     private Long id;
     private String majorCode;
     private String majorName;
+    private Long facultyId;
     private String facultyName;
     private String description;
     private int numberOfCurriculums;
@@ -12,13 +15,16 @@ public class MajorDTO {
     private int totalSubjects;
     private int totalKnowledgeBlocks;
     private String status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public MajorDTO() {}
 
-    public MajorDTO(Long id, String majorCode, String majorName, String facultyName, String description, int numberOfCurriculums, int totalCreditsRequired, String status, String activeCurriculumName, int totalSubjects, int totalKnowledgeBlocks) {
+    public MajorDTO(Long id, String majorCode, String majorName, Long facultyId, String facultyName, String description, int numberOfCurriculums, int totalCreditsRequired, String status, String activeCurriculumName, int totalSubjects, int totalKnowledgeBlocks) {
         this.id = id;
         this.majorCode = majorCode;
         this.majorName = majorName;
+        this.facultyId = facultyId;
         this.facultyName = facultyName;
         this.description = description;
         this.numberOfCurriculums = numberOfCurriculums;
@@ -37,6 +43,9 @@ public class MajorDTO {
 
     public String getMajorName() { return majorName; }
     public void setMajorName(String majorName) { this.majorName = majorName; }
+
+    public Long getFacultyId() { return facultyId; }
+    public void setFacultyId(Long facultyId) { this.facultyId = facultyId; }
 
     public String getFacultyName() { return facultyName; }
     public void setFacultyName(String facultyName) { this.facultyName = facultyName; }
@@ -61,4 +70,10 @@ public class MajorDTO {
 
     public int getTotalKnowledgeBlocks() { return totalKnowledgeBlocks; }
     public void setTotalKnowledgeBlocks(int totalKnowledgeBlocks) { this.totalKnowledgeBlocks = totalKnowledgeBlocks; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

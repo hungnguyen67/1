@@ -6,6 +6,7 @@ export interface MajorDTO {
   id: number;
   majorCode: string;
   majorName: string;
+  facultyId: number;
   facultyName: string;
   description: string;
   numberOfCurriculums: number;
@@ -14,6 +15,8 @@ export interface MajorDTO {
   totalSubjects: number;
   totalKnowledgeBlocks: number;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 @Injectable({

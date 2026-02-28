@@ -6,13 +6,17 @@ public class LecturerDTO {
     private Long id;
     private String lecturerCode;
     private String fullName;
-    private String majorName;
-    private Long majorId;
+    private Long facultyId;
+    private String facultyName;
+    private String specialization;
     private String degree;
     private String academicRank;
     private String phone;
     private String gender;
+    private String status;
     private List<String> advisorClasses;
+    private java.time.LocalDateTime createdAt;
+    private java.time.LocalDateTime updatedAt;
 
     public LecturerDTO() {}
 
@@ -25,11 +29,14 @@ public class LecturerDTO {
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getMajorName() { return majorName; }
-    public void setMajorName(String majorName) { this.majorName = majorName; }
+    public Long getFacultyId() { return facultyId; }
+    public void setFacultyId(Long facultyId) { this.facultyId = facultyId; }
 
-    public Long getMajorId() { return majorId; }
-    public void setMajorId(Long majorId) { this.majorId = majorId; }
+    public String getFacultyName() { return facultyName; }
+    public void setFacultyName(String facultyName) { this.facultyName = facultyName; }
+
+    public String getSpecialization() { return specialization; }
+    public void setSpecialization(String specialization) { this.specialization = specialization; }
 
     public String getDegree() { return degree; }
     public void setDegree(String degree) { this.degree = degree; }
@@ -43,6 +50,15 @@ public class LecturerDTO {
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
 
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
     public List<String> getAdvisorClasses() { return advisorClasses; }
     public void setAdvisorClasses(List<String> advisorClasses) { this.advisorClasses = advisorClasses; }
+
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(java.time.LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

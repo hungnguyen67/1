@@ -111,6 +111,7 @@ public class CurriculumService {
                     block.getId(),
                     block.getBlockName(),
                     block.getCreditsRequired(),
+                    block.getBlockType().name(),
                     subjectDTOs
             );
         }).collect(Collectors.toList());
@@ -142,7 +143,7 @@ public class CurriculumService {
 
         int totalBlocks = knowledgeBlockRepository.findByCurriculumId(curriculum.getId()).size();
 
-        return new CurriculumDTO(
+        CurriculumDTO dto = new CurriculumDTO(
                 curriculum.getId(),
                 curriculum.getCurriculumName(),
                 major.getMajorName(),
@@ -150,9 +151,12 @@ public class CurriculumService {
                 major.getId(),
                 curriculum.getAppliedYear(),
                 totalCredits, 
-                "Đang áp dụng", 
+                curriculum.getStatus().name(), 
                 curriculumSubjects.size(), 
                 totalBlocks 
         );
+        dto.setCreatedAt(curriculum.getCreatedAt());
+        dto.setUpdatedAt(curriculum.getUpdatedAt());
+        return dto;
     }
 }

@@ -14,8 +14,8 @@ public interface LecturerProfileRepository extends JpaRepository<LecturerProfile
     @Query("SELECT l FROM LecturerProfile l JOIN l.user u WHERE " +
            "(:searchTerm IS NULL OR LOWER(l.lecturerCode) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) AND " +
-           "(:majorId IS NULL OR l.major.id = :majorId)")
-    List<LecturerProfile> searchLecturers(@Param("searchTerm") String searchTerm, @Param("majorId") Long majorId);
+           "(:facultyId IS NULL OR l.faculty.id = :facultyId)")
+    List<LecturerProfile> searchLecturers(@Param("searchTerm") String searchTerm, @Param("facultyId") Long facultyId);
 
     @Query("SELECT l FROM LecturerProfile l JOIN l.user u WHERE u.fullName = :fullName")
     LecturerProfile findByUserFullName(@Param("fullName") String fullName);

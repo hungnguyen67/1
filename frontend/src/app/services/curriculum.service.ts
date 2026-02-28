@@ -13,6 +13,8 @@ export interface CurriculumDTO {
     totalSubjects: number;
     totalKnowledgeBlocks: number;
     status: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface CurriculumSubjectComponentDTO {
@@ -31,6 +33,7 @@ export interface KnowledgeBlockDetailDTO {
     blockId: number;
     blockName: string;
     creditsRequired: number;
+    blockType: string;
     subjects: CurriculumSubjectComponentDTO[];
 }
 

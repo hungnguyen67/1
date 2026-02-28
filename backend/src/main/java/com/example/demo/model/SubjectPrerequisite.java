@@ -25,6 +25,9 @@ public class SubjectPrerequisite {
     @Column(name = "is_corequisite")
     private Boolean isCorequisite = false;
 
+    @Column(name = "group_condition")
+    private String groupCondition = "AND";
+
     public SubjectPrerequisite() {}
     public SubjectPrerequisiteKey getId() { return id; }
     public void setId(SubjectPrerequisiteKey id) { this.id = id; }
@@ -40,4 +43,7 @@ public class SubjectPrerequisite {
 
     public Boolean getIsCorequisite() { return isCorequisite; }
     public void setIsCorequisite(Boolean isCorequisite) { this.isCorequisite = isCorequisite; }
+
+    public String getGroupCondition() { return groupCondition; }
+    public void setGroupCondition(String groupCondition) { this.groupCondition = groupCondition; }
 }

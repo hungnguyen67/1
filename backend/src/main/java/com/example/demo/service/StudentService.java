@@ -18,16 +18,16 @@ public class StudentService {
     public List<StudentDTO> searchStudents(String searchTerm, Long classId, Long majorId, 
                                           Integer enrollmentYear, String status, Double minGpa, Double maxGpa) {
         
-        StudentProfile.AcademicStatus academicStatus = null;
+        StudentProfile.Status profileStatus = null;
         if (status != null && !status.isEmpty()) {
             try {
-                academicStatus = StudentProfile.AcademicStatus.valueOf(status.toUpperCase());
+                profileStatus = StudentProfile.Status.valueOf(status.toUpperCase());
             } catch (IllegalArgumentException e) {
             }
         }
 
         List<StudentProfile> students = studentProfileRepository.searchStudents(
-                searchTerm, classId, majorId, enrollmentYear, academicStatus, minGpa, maxGpa);
+                searchTerm, classId, majorId, enrollmentYear, profileStatus, minGpa, maxGpa);
                 
         return students.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -50,10 +50,23 @@ public class StudentService {
             }
         }
         
+        if (dto.getMajorName() == null && student.getCurriculum() != null && student.getCurriculum().getMajor() != null) {
+            dto.setMajorName(student.getCurriculum().getMajor().getMajorName());
+        }
+        
+        if (student.getCurriculum() != null) {
+            dto.setCurriculumId(student.getCurriculum().getId());
+            dto.setCurriculumName(student.getCurriculum().getCurriculumName());
+        }
+        
         dto.setEnrollmentYear(student.getEnrollmentYear());
+        dto.setCurrentSemester(student.getCurrentSemester());
         dto.setTotalCreditsEarned(student.getTotalCreditsEarned());
         dto.setCurrentGpa(student.getCurrentGpa());
-        dto.setAcademicStatus(student.getAcademicStatus() != null ? student.getAcademicStatus().name() : null);
+        dto.setCurrentGpa10(student.getCurrentGpa10());
+        dto.setStatus(student.getStatus() != null ? student.getStatus().name() : null);
+        dto.setCreatedAt(student.getCreatedAt());
+        dto.setUpdatedAt(student.getUpdatedAt());
         
         return dto;
     }

@@ -21,28 +21,30 @@ public class StudentProfile implements Serializable {
     private String studentCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curriculum_id", nullable = false)
+    @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id")
     private AdministrativeClass administrativeClass;
 
-    @Column(name = "enrollment_year", nullable = false)
+    @Column(name = "enrollment_year")
     private Integer enrollmentYear;
+
+    @Column(name = "current_semester")
+    private Integer currentSemester = 1;
+
+    @Column(name = "current_gpa")
+    private Double currentGpa = 0.0;
+
+    @Column(name = "current_gpa_10")
+    private Double currentGpa10 = 0.0;
 
     @Column(name = "total_credits_earned")
     private Integer totalCreditsEarned = 0;
 
-    @Column(name = "current_gpa")
-    private Double currentGpa;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "academic_status")
-    private AcademicStatus academicStatus = AcademicStatus.STUDYING;
-
-    @Column(name = "gpa_updated_at")
-    private LocalDateTime gpaUpdatedAt;
+    private Status status = Status.STUDYING;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -50,8 +52,8 @@ public class StudentProfile implements Serializable {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public enum AcademicStatus {
-        STUDYING, RESERVED, DROPPED, GRADUATED, SUSPENDED
+    public enum Status {
+        STUDYING, ACADEMIC_RESERVE, DROPPED_OUT, GRADUATED
     }
 
     public StudentProfile() {}
@@ -74,21 +76,29 @@ public class StudentProfile implements Serializable {
     public Integer getEnrollmentYear() { return enrollmentYear; }
     public void setEnrollmentYear(Integer enrollmentYear) { this.enrollmentYear = enrollmentYear; }
 
-    public Integer getTotalCreditsEarned() { return totalCreditsEarned; }
-    public void setTotalCreditsEarned(Integer totalCreditsEarned) { this.totalCreditsEarned = totalCreditsEarned; }
+    public Integer getCurrentSemester() { return currentSemester; }
+    public void setCurrentSemester(Integer currentSemester) { this.currentSemester = currentSemester; }
 
     public Double getCurrentGpa() { return currentGpa; }
     public void setCurrentGpa(Double currentGpa) { this.currentGpa = currentGpa; }
 
-    public AcademicStatus getAcademicStatus() { return academicStatus; }
-    public void setAcademicStatus(AcademicStatus academicStatus) { this.academicStatus = academicStatus; }
+    public Double getCurrentGpa10() { return currentGpa10; }
+    public void setCurrentGpa10(Double currentGpa10) { this.currentGpa10 = currentGpa10; }
 
-    public LocalDateTime getGpaUpdatedAt() { return gpaUpdatedAt; }
-    public void setGpaUpdatedAt(LocalDateTime gpaUpdatedAt) { this.gpaUpdatedAt = gpaUpdatedAt; }
+    public Integer getTotalCreditsEarned() { return totalCreditsEarned; }
+    public void setTotalCreditsEarned(Integer totalCreditsEarned) { this.totalCreditsEarned = totalCreditsEarned; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

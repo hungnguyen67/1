@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { LecturerService, LecturerDTO } from '../../../services/lecturer.service';
-import { MajorService, MajorDTO } from '../../../services/major.service';
+import { FacultyService, FacultyDTO } from '../../../services/faculty.service';
 
 @Component({
     selector: 'app-lecturers',
@@ -10,10 +10,10 @@ export class LecturersComponent implements OnInit {
 
     lecturers: LecturerDTO[] = [];
     paginatedLecturers: LecturerDTO[] = [];
-    majors: MajorDTO[] = [];
+    faculties: FacultyDTO[] = [];
 
     searchTerm: string = '';
-    filterMajor: number | null = null;
+    filterFaculty: number | null = null;
     activeDropdown: string = '';
 
     currentPage: number = 1;
@@ -21,11 +21,11 @@ export class LecturersComponent implements OnInit {
 
     constructor(
         private lecturerService: LecturerService,
-        private majorService: MajorService
+        private facultyService: FacultyService
     ) { }
 
     ngOnInit(): void {
-        this.loadMajors();
+        this.loadFaculties();
         this.loadLecturers();
     }
 
@@ -37,12 +37,12 @@ export class LecturersComponent implements OnInit {
         }
     }
 
-    loadMajors(): void {
-        this.majorService.getMajors().subscribe(data => this.majors = data);
+    loadFaculties(): void {
+        this.facultyService.getFaculties().subscribe(data => this.faculties = data);
     }
 
     loadLecturers(): void {
-        this.lecturerService.getLecturers(this.searchTerm, this.filterMajor || undefined).subscribe(data => {
+        this.lecturerService.getLecturers(this.searchTerm, this.filterFaculty || undefined).subscribe(data => {
             this.lecturers = data;
             this.currentPage = 1;
             this.updatePagination();
@@ -61,14 +61,14 @@ export class LecturersComponent implements OnInit {
 
     resetFilters(): void {
         this.searchTerm = '';
-        this.filterMajor = null;
+        this.filterFaculty = null;
         this.loadLecturers();
     }
 
-    getSelectedMajorName(): string {
-        if (!this.filterMajor) return 'Tất cả các ngành học';
-        const major = this.majors.find(m => m.id === this.filterMajor);
-        return major ? major.majorName : 'Tất cả các ngành học';
+    getSelectedFacultyName(): string {
+        if (!this.filterFaculty) return 'Tất cả các khoa';
+        const faculty = this.faculties.find(f => f.id === this.filterFaculty);
+        return faculty ? faculty.facultyName : 'Tất cả các khoa';
     }
 
     get totalPages(): number {

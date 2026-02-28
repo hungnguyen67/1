@@ -186,7 +186,7 @@ public class CourseClassService {
         List<com.example.demo.model.StudentProfile> allStudents = studentProfileRepository.findAll();
         Map<Long, com.example.demo.dto.CourseClassDemandAnalysisDTO> analysisMap = new java.util.HashMap<>();
         Map<Integer, Map<Long, Long>> studentsByCohortAndCurr = allStudents.stream()
-            .filter(s -> s.getAcademicStatus() == com.example.demo.model.StudentProfile.AcademicStatus.STUDYING)
+            .filter(s -> s.getStatus() == com.example.demo.model.StudentProfile.Status.STUDYING)
             .filter(s -> filterCohort == null || s.getEnrollmentYear().equals(filterCohort))
             .filter(s -> curriculumId == null || (s.getCurriculum() != null && s.getCurriculum().getId().equals(curriculumId)))
             .filter(s -> {

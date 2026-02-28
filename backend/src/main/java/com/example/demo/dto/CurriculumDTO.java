@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.time.LocalDateTime;
+
 public class CurriculumDTO {
     private Long id;
     private String curriculumName;
@@ -11,6 +13,8 @@ public class CurriculumDTO {
     private Integer totalSubjects;
     private Integer totalKnowledgeBlocks;
     private String status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public CurriculumDTO() {}
 
@@ -56,4 +60,10 @@ public class CurriculumDTO {
 
     public Integer getTotalKnowledgeBlocks() { return totalKnowledgeBlocks; }
     public void setTotalKnowledgeBlocks(Integer totalKnowledgeBlocks) { this.totalKnowledgeBlocks = totalKnowledgeBlocks; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

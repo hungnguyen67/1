@@ -1,10 +1,12 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "curriculums")
-public class Curriculum {
+public class Curriculum implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +24,19 @@ public class Curriculum {
     @Column(name = "total_credits_required")
     private Integer totalCreditsRequired = 120;
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public enum Status {
+        ACTIVE, INACTIVE
+    }
+
     public Curriculum() {}
 
     public Long getId() { return id; }
@@ -38,4 +53,18 @@ public class Curriculum {
 
     public Integer getTotalCreditsRequired() { return totalCreditsRequired; }
     public void setTotalCreditsRequired(Integer totalCreditsRequired) { this.totalCreditsRequired = totalCreditsRequired; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

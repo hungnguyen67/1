@@ -29,17 +29,25 @@ public class AdministrativeClassService {
         AdministrativeClassDTO dto = new AdministrativeClassDTO();
         dto.setId(clazz.getId());
         dto.setClassCode(clazz.getClassCode());
-        dto.setMajorId(clazz.getMajor().getId());
-        dto.setMajorName(clazz.getMajor().getMajorName());
+        dto.setClassName(clazz.getClassName());
+        
+        if (clazz.getMajor() != null) {
+            dto.setMajorId(clazz.getMajor().getId());
+            dto.setMajorName(clazz.getMajor().getMajorName());
+        }
+        
         dto.setAcademicYear(clazz.getAcademicYear());
+        dto.setCohort(clazz.getCohort());
         
         if (clazz.getAdvisor() != null) {
             dto.setAdvisorId(clazz.getAdvisor().getUserId());
-            dto.setAdvisorName(clazz.getAdvisor().getUser().getFirstName() + " " + clazz.getAdvisor().getUser().getLastName());
+            dto.setAdvisorName(clazz.getAdvisor().getUser().getLastName() + " " + clazz.getAdvisor().getUser().getFirstName());
         }
         
         dto.setStatus(clazz.getStatus() != null ? clazz.getStatus().name() : "ACTIVE");
         dto.setStudentCount(studentProfileRepository.countByAdministrativeClassId(clazz.getId()));
+        dto.setCreatedAt(clazz.getCreatedAt());
+        dto.setUpdatedAt(clazz.getUpdatedAt());
         
         return dto;
     }

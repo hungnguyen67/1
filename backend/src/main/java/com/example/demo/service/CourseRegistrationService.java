@@ -41,6 +41,7 @@ public class CourseRegistrationService {
         dto.setStatus(reg.getStatus().name());
         dto.setTotalScore(reg.getTotalScore());
         dto.setGradeLetter(reg.getGradeLetter());
+        dto.setGradePoint(reg.getGradePoint());
         
         if (reg.getCourseClass() != null) {
             dto.setClassId(reg.getCourseClass().getId());
