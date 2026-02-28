@@ -35,7 +35,6 @@ export class CourseClassesComponent implements OnInit {
     selectedSubject: CourseSubjectGroup | null = null;
     selectedDemand: any = null;
 
-    // Modal State
     isModalOpen = false;
     isDeleteModalOpen = false;
     modalMode: 'ADD' | 'EDIT' = 'ADD';
@@ -84,7 +83,7 @@ export class CourseClassesComponent implements OnInit {
             next: (data) => {
                 this.subjects = data;
                 this.filteredSubjects = data;
-                this.loadAnalysis(); // Load analysis after subjects
+                this.loadAnalysis();
                 this.loading = false;
             },
             error: (err) => {
@@ -150,13 +149,12 @@ export class CourseClassesComponent implements OnInit {
         this.selectedSubjectClasses = [];
     }
 
-    // CRUD Actions
     openAddModal(subjectId?: number): void {
         this.modalMode = 'ADD';
         this.courseClassForm = this.getEmptyForm();
         if (subjectId) {
             this.courseClassForm.subjectId = subjectId;
-            this.onSubjectSelect(); // Trigger demand check
+            this.onSubjectSelect();
         }
         this.selectedDemand = null;
         this.isModalOpen = true;
@@ -173,15 +171,10 @@ export class CourseClassesComponent implements OnInit {
     autoSuggest(): void {
         if (!this.selectedDemand) return;
 
-        // Suggest a class code
         const subjectCode = this.selectedDemand.subjectCode;
         const nextNum = (this.selectedDemand.openedClasses || 0) + 1;
         this.courseClassForm.classCode = `${subjectCode}_${nextNum.toString().padStart(2, '0')}`;
-
-        // Default max students
         this.courseClassForm.maxStudents = 60;
-
-        // Reset status to PLANNING
         this.courseClassForm.classStatus = 'PLANNING';
     }
 
@@ -278,7 +271,6 @@ export class CourseClassesComponent implements OnInit {
         });
     }
 
-    // Helpers
     getStatusClass(status: string): string {
         switch (status) {
             case 'OPEN_REGISTRATION': return 'bg-green-50 text-green-700 border-green-200';
