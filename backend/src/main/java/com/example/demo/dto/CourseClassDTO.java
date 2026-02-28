@@ -15,6 +15,11 @@ public class CourseClassDTO {
     private Integer maxStudents;
     private Integer currentEnrolled;
     private String classStatus;
+    private LocalDateTime registrationStart;
+    private LocalDateTime registrationEnd;
+    private Double attendanceWeight;
+    private Double midtermWeight;
+    private Double finalWeight;
     private List<ScheduleDTO> schedules;
 
     public static class ScheduleDTO {
@@ -69,6 +74,16 @@ public class CourseClassDTO {
     public void setCurrentEnrolled(Integer currentEnrolled) { this.currentEnrolled = currentEnrolled; }
     public String getClassStatus() { return classStatus; }
     public void setClassStatus(String classStatus) { this.classStatus = classStatus; }
+    public LocalDateTime getRegistrationStart() { return registrationStart; }
+    public void setRegistrationStart(LocalDateTime registrationStart) { this.registrationStart = registrationStart; }
+    public LocalDateTime getRegistrationEnd() { return registrationEnd; }
+    public void setRegistrationEnd(LocalDateTime registrationEnd) { this.registrationEnd = registrationEnd; }
+    public Double getAttendanceWeight() { return attendanceWeight; }
+    public void setAttendanceWeight(Double attendanceWeight) { this.attendanceWeight = attendanceWeight; }
+    public Double getMidtermWeight() { return midtermWeight; }
+    public void setMidtermWeight(Double midtermWeight) { this.midtermWeight = midtermWeight; }
+    public Double getFinalWeight() { return finalWeight; }
+    public void setFinalWeight(Double finalWeight) { this.finalWeight = finalWeight; }
     public List<ScheduleDTO> getSchedules() { return schedules; }
     public void setSchedules(List<ScheduleDTO> schedules) { this.schedules = schedules; }
 }

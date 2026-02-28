@@ -3,6 +3,9 @@ import { CourseClassService, CourseSubjectGroup, CourseClass, ClassSchedule } fr
 import { Semester, SemesterService } from '../../../services/semester.service';
 import { SubjectService, SubjectDTO } from '../../../services/subject.service';
 import { LecturerService, LecturerDTO } from '../../../services/lecturer.service';
+import { MajorService, MajorDTO } from '../../../services/major.service';
+import { StudentService } from '../../../services/student.service';
+import { CurriculumService, CurriculumDTO } from '../../../services/curriculum.service';
 
 @Component({
     selector: 'app-course-classes',
@@ -15,13 +18,13 @@ export class CourseClassesComponent implements OnInit {
     semesters: Semester[] = [];
     allSubjects: SubjectDTO[] = [];
     allLecturers: LecturerDTO[] = [];
+    majors: MajorDTO[] = [];
     demandAnalysis: any[] = [];
     stats: any = {
-        totalSubjects: 0,
-        totalClasses: 0,
-        totalStudentsNeeded: 0,
-        totalCapacity: 0,
-        matchRate: 0
+        totalStudents: 0,
+        mandatorySubjects: 0,
+        subjectsToOpen: 0,
+        totalClassesCreated: 0
     };
     showAnalysisTable = false;
 
@@ -30,8 +33,12 @@ export class CourseClassesComponent implements OnInit {
     isSubmitting = false;
     searchTerm = '';
     selectedSemesterId: number | null = null;
-    selectedCohort: number | null = null;
-    allCohorts: number[] = [2021, 2022, 2023, 2024, 2025];
+    selectedMajorId: number | null = null;
+    selectedYear: number | null = null;
+    selectedProgramId: number | null = null;
+
+    allCohorts: number[] = [];
+    curriculums: CurriculumDTO[] = [];
     selectedSubject: CourseSubjectGroup | null = null;
     selectedDemand: any = null;
 
@@ -45,7 +52,10 @@ export class CourseClassesComponent implements OnInit {
         private courseClassService: CourseClassService,
         private semesterService: SemesterService,
         private subjectService: SubjectService,
-        private lecturerService: LecturerService
+        private lecturerService: LecturerService,
+        private majorService: MajorService,
+        private studentService: StudentService,
+        private curriculumService: CurriculumService
     ) { }
 
     ngOnInit(): void {
@@ -56,6 +66,42 @@ export class CourseClassesComponent implements OnInit {
     loadInitialData(): void {
         this.subjectService.getAllSubjects().subscribe(data => this.allSubjects = data);
         this.lecturerService.getLecturers().subscribe(data => this.allLecturers = data);
+
+        // Load enrollment years
+        this.studentService.getEnrollmentYears().subscribe(years => {
+            this.allCohorts = years;
+            // Default to 2023 or latest year if exists
+            if (years.includes(2023)) this.selectedYear = 2023;
+            else if (years.length > 0) this.selectedYear = years[years.length - 1];
+        });
+
+        // Load majors and set default
+        this.majorService.getMajors().subscribe(data => {
+            this.majors = data;
+            if (data.length > 0) {
+                // If there's a previously used major (not implemented yet), use it.
+                // Otherwise default to first or based on some logic.
+                this.selectedMajorId = data[0].id;
+                this.onMajorChange();
+            }
+        });
+    }
+
+    onMajorChange(): void {
+        this.selectedProgramId = null; // Clear Program selection
+        if (this.selectedMajorId) {
+            this.curriculumService.getCurriculumsByMajorId(this.selectedMajorId).subscribe(data => {
+                this.curriculums = data;
+            });
+            this.loadAnalysis();
+        } else {
+            this.curriculums = [];
+            this.loadAnalysis();
+        }
+    }
+
+    onProgramChange(): void {
+        this.loadAnalysis();
     }
 
     loadSemesters(): void {
@@ -95,25 +141,23 @@ export class CourseClassesComponent implements OnInit {
 
     loadAnalysis(): void {
         if (!this.selectedSemesterId) return;
-        this.courseClassService.getDemandAnalysis(this.selectedSemesterId, this.selectedCohort || undefined).subscribe(data => {
+        this.courseClassService.getDemandAnalysis(
+            this.selectedSemesterId,
+            this.selectedYear || undefined,
+            this.selectedMajorId || undefined,
+            this.selectedProgramId || undefined
+        ).subscribe(data => {
             this.demandAnalysis = data;
             this.calculateOverallStats();
         });
     }
 
     calculateOverallStats(): void {
-        const totalSubjects = this.demandAnalysis.length;
-        const totalClasses = this.subjects.reduce((sum, s) => sum + s.classCount, 0);
-        const totalStudentsNeeded = this.demandAnalysis.reduce((sum, a) => sum + a.totalNeeded, 0);
-        const totalCapacity = this.demandAnalysis.reduce((sum, a) => sum + a.currentCapacity, 0);
-        const matchRate = totalStudentsNeeded > 0 ? Math.round((totalCapacity / totalStudentsNeeded) * 100) : 0;
-
         this.stats = {
-            totalSubjects,
-            totalClasses,
-            totalStudentsNeeded,
-            totalCapacity,
-            matchRate
+            totalStudents: this.demandAnalysis.length > 0 ? this.demandAnalysis.reduce((max, a) => Math.max(max, a.totalNeeded), 0) : 0,
+            mandatorySubjects: this.demandAnalysis.filter(a => a.mandatoryStudents > 0).length,
+            subjectsToOpen: this.demandAnalysis.filter(a => a.suggestedMoreClasses > 0).length,
+            totalClassesCreated: this.subjects.reduce((sum, s) => sum + s.classCount, 0)
         };
     }
 
@@ -155,8 +199,8 @@ export class CourseClassesComponent implements OnInit {
         if (subjectId) {
             this.courseClassForm.subjectId = subjectId;
             this.onSubjectSelect();
+            this.autoSuggest(); // Call autoSuggest after subject selection
         }
-        this.selectedDemand = null;
         this.isModalOpen = true;
     }
 
@@ -166,6 +210,10 @@ export class CourseClassesComponent implements OnInit {
             return;
         }
         this.selectedDemand = this.demandAnalysis.find(a => a.subjectId == this.courseClassForm.subjectId);
+        if (this.selectedDemand && this.modalMode === 'ADD') {
+            this.courseClassForm.classCount = this.selectedDemand.suggestedMoreClasses || 1;
+            this.onBatchCountChange();
+        }
     }
 
     autoSuggest(): void {
@@ -174,8 +222,10 @@ export class CourseClassesComponent implements OnInit {
         const subjectCode = this.selectedDemand.subjectCode;
         const nextNum = (this.selectedDemand.openedClasses || 0) + 1;
         this.courseClassForm.classCode = `${subjectCode}_${nextNum.toString().padStart(2, '0')}`;
-        this.courseClassForm.maxStudents = 60;
+        this.courseClassForm.maxStudents = 40;
+        this.courseClassForm.classCount = this.selectedDemand.suggestedMoreClasses || 1;
         this.courseClassForm.classStatus = 'PLANNING';
+        this.onBatchCountChange();
     }
 
     openEditModal(cc: any): void {
@@ -188,6 +238,11 @@ export class CourseClassesComponent implements OnInit {
             maxStudents: cc.maxStudents,
             classStatus: cc.classStatus,
             currentEnrolled: cc.currentEnrolled,
+            registrationStart: cc.registrationStart,
+            registrationEnd: cc.registrationEnd,
+            attendanceWeight: cc.attendanceWeight || 0.1,
+            midtermWeight: cc.midtermWeight || 0.3,
+            finalWeight: cc.finalWeight || 0.6,
             schedules: [...cc.schedules.map((s: any) => ({ ...s }))]
         };
         this.isModalOpen = true;
@@ -205,6 +260,13 @@ export class CourseClassesComponent implements OnInit {
             maxStudents: 40,
             classStatus: 'PLANNING',
             currentEnrolled: 0,
+            registrationStart: null,
+            registrationEnd: null,
+            attendanceWeight: 0.10,
+            midtermWeight: 0.30,
+            finalWeight: 0.60,
+            classCount: 1,
+            batchLecturers: [null],
             schedules: []
         };
     }
@@ -227,24 +289,67 @@ export class CourseClassesComponent implements OnInit {
         if (!this.selectedSemesterId) return;
         this.isSubmitting = true;
 
+        if (this.modalMode === 'ADD' && this.courseClassForm.classCount > 1) {
+            this.createBatch();
+            return;
+        }
+
         const request = this.modalMode === 'ADD'
             ? this.courseClassService.createCourseClass(this.selectedSemesterId, this.courseClassForm)
             : this.courseClassService.updateCourseClass(this.courseClassForm.id, this.courseClassForm);
 
         request.subscribe({
             next: () => {
-                this.isSubmitting = false;
-                this.closeModal();
-                if (this.selectedSubject) {
-                    this.loadClassDetails(this.selectedSubject.subjectId);
-                }
-                this.loadSubjects();
+                this.finishSubmit();
             },
             error: (err) => {
                 console.error('Error saving course class', err);
                 this.isSubmitting = false;
             }
         });
+    }
+
+    createBatch(): void {
+        const batch = [];
+        // Use subjectCode as base for batch to avoid double suffix if classCode already has one
+        const baseCode = this.selectedDemand ? this.selectedDemand.subjectCode : (this.courseClassForm.classCode.split('-')[0].split('_')[0]);
+
+        for (let i = 0; i < this.courseClassForm.classCount; i++) {
+            const cc = {
+                ...this.courseClassForm,
+                schedules: this.courseClassForm.schedules.map((s: any) => ({ ...s }))
+            };
+            cc.classCode = `${baseCode}-${(i + 1).toString().padStart(2, '0')}`;
+            cc.lecturerId = this.courseClassForm.batchLecturers[i] || this.courseClassForm.lecturerId;
+            batch.push(cc);
+        }
+
+        this.courseClassService.createBatchClasses(this.selectedSemesterId!, batch).subscribe({
+            next: () => this.finishSubmit(),
+            error: (err) => {
+                console.error('Error creating batch', err);
+                this.isSubmitting = false;
+            }
+        });
+    }
+
+    finishSubmit(): void {
+        this.isSubmitting = false;
+        this.closeModal();
+        if (this.selectedSubject) {
+            this.loadClassDetails(this.selectedSubject.subjectId);
+        }
+        this.loadSubjects();
+    }
+
+    onBatchCountChange(): void {
+        const count = this.courseClassForm.classCount;
+        while (this.courseClassForm.batchLecturers.length < count) {
+            this.courseClassForm.batchLecturers.push(null);
+        }
+        if (this.courseClassForm.batchLecturers.length > count) {
+            this.courseClassForm.batchLecturers = this.courseClassForm.batchLecturers.slice(0, count);
+        }
     }
 
     confirmDelete(id: number): void {

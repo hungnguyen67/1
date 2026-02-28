@@ -89,6 +89,14 @@ public class CourseClassService {
         courseClassRepository.deleteById(id);
     }
 
+    public List<CourseClassDTO> createBatch(Long semesterId, List<CourseClassDTO> dtos) {
+        List<CourseClassDTO> results = new java.util.ArrayList<>();
+        for (CourseClassDTO dto : dtos) {
+            results.add(createCourseClass(semesterId, dto));
+        }
+        return results;
+    }
+
     private void updateEntityFromDTO(CourseClass cc, CourseClassDTO dto, Long semesterId) {
         cc.setClassCode(dto.getClassCode());
         cc.setSubject(subjectRepository.findById(dto.getSubjectId())
@@ -101,6 +109,11 @@ public class CourseClassService {
         cc.setCurrentEnrolled(dto.getCurrentEnrolled());
         cc.setAllowRegister(dto.getCurrentEnrolled() < dto.getMaxStudents());
         cc.setClassStatus(CourseClass.ClassStatus.valueOf(dto.getClassStatus()));
+        cc.setRegistrationStart(dto.getRegistrationStart());
+        cc.setRegistrationEnd(dto.getRegistrationEnd());
+        cc.setAttendanceWeight(dto.getAttendanceWeight() != null ? dto.getAttendanceWeight() : 0.10);
+        cc.setMidtermWeight(dto.getMidtermWeight() != null ? dto.getMidtermWeight() : 0.30);
+        cc.setFinalWeight(dto.getFinalWeight() != null ? dto.getFinalWeight() : 0.60);
         
         if (cc.getSchedules() != null) {
             cc.getSchedules().clear();
@@ -137,6 +150,11 @@ public class CourseClassService {
         dto.setMaxStudents(cc.getMaxStudents());
         dto.setCurrentEnrolled(cc.getCurrentEnrolled());
         dto.setClassStatus(cc.getClassStatus().name());
+        dto.setRegistrationStart(cc.getRegistrationStart());
+        dto.setRegistrationEnd(cc.getRegistrationEnd());
+        dto.setAttendanceWeight(cc.getAttendanceWeight());
+        dto.setMidtermWeight(cc.getMidtermWeight());
+        dto.setFinalWeight(cc.getFinalWeight());
         
         if (cc.getSchedules() != null) {
             dto.setSchedules(cc.getSchedules().stream()
@@ -152,7 +170,7 @@ public class CourseClassService {
         return dto;
     }
 
-    public List<com.example.demo.dto.CourseClassDemandAnalysisDTO> analyzeDemand(Long semesterId, Integer filterCohort) {
+    public List<com.example.demo.dto.CourseClassDemandAnalysisDTO> analyzeDemand(Long semesterId, Integer filterCohort, Long majorId, Long curriculumId) {
         com.example.demo.model.Semester academicSemester = semesterRepository.findById(semesterId)
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
 
@@ -170,6 +188,17 @@ public class CourseClassService {
         Map<Integer, Map<Long, Long>> studentsByCohortAndCurr = allStudents.stream()
             .filter(s -> s.getAcademicStatus() == com.example.demo.model.StudentProfile.AcademicStatus.STUDYING)
             .filter(s -> filterCohort == null || s.getEnrollmentYear().equals(filterCohort))
+            .filter(s -> curriculumId == null || (s.getCurriculum() != null && s.getCurriculum().getId().equals(curriculumId)))
+            .filter(s -> {
+                if (majorId == null) return true;
+                Long studentMajorId = null;
+                if (s.getAdministrativeClass() != null && s.getAdministrativeClass().getMajor() != null) {
+                    studentMajorId = s.getAdministrativeClass().getMajor().getId();
+                } else if (s.getCurriculum() != null && s.getCurriculum().getMajor() != null) {
+                    studentMajorId = s.getCurriculum().getMajor().getId();
+                }
+                return majorId.equals(studentMajorId);
+            })
             .collect(Collectors.groupingBy(
                 com.example.demo.model.StudentProfile::getEnrollmentYear,
                 Collectors.groupingBy(s -> s.getCurriculum().getId(), Collectors.counting())
@@ -182,11 +211,11 @@ public class CourseClassService {
             if (curriculumSemester < 1 || curriculumSemester > 8) continue;
 
             for (Map.Entry<Long, Long> currEntry : cohortEntry.getValue().entrySet()) {
-                Long curriculumId = currEntry.getKey();
+                Long currentCurriculumId = currEntry.getKey();
                 Long studentCount = currEntry.getValue();
 
                 List<com.example.demo.model.CurriculumSubject> mandatory = allCurriculumSubjects.stream()
-                    .filter(cs -> cs.getCurriculum().getId().equals(curriculumId) 
+                    .filter(cs -> cs.getCurriculum().getId().equals(currentCurriculumId) 
                                && cs.getRecommendedSemester().equals(curriculumSemester)
                                && cs.getIsRequired())
                     .collect(Collectors.toList());
@@ -241,7 +270,7 @@ public class CourseClassService {
             dto.setMissingSlots(Math.max(0, dto.getTotalNeeded() - dto.getCurrentCapacity()));
             
             if (dto.getMissingSlots() > 0) {
-                int classSize = 60; 
+                int classSize = 40; 
                 dto.setSuggestedMoreClasses((int) Math.ceil((double) dto.getMissingSlots() / classSize));
             } else {
                 dto.setSuggestedMoreClasses(0);

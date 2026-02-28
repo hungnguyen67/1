@@ -32,6 +32,10 @@ public class StudentService {
         return students.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public List<Integer> getDistinctEnrollmentYears() {
+        return studentProfileRepository.findDistinctEnrollmentYears();
+    }
+
     private StudentDTO convertToDTO(StudentProfile student) {
         StudentDTO dto = new StudentDTO();
         dto.setId(student.getUserId());

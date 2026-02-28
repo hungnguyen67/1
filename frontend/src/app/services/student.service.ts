@@ -35,4 +35,8 @@ export class StudentService {
 
         return this.http.get<StudentDTO[]>(this.apiUrl, { params });
     }
+
+    getEnrollmentYears(): Observable<number[]> {
+        return this.http.get<number[]>(`${this.apiUrl}/enrollment-years`);
+    }
 }

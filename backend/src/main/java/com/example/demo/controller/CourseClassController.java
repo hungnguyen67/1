@@ -30,8 +30,10 @@ public class CourseClassController {
     @GetMapping("/analysis")
     public ResponseEntity<List<com.example.demo.dto.CourseClassDemandAnalysisDTO>> getDemandAnalysis(
             @RequestParam Long semesterId,
-            @RequestParam(required = false) Integer cohort) {
-        return ResponseEntity.ok(courseClassService.analyzeDemand(semesterId, cohort));
+            @RequestParam(required = false) Integer cohort,
+            @RequestParam(required = false) Long majorId,
+            @RequestParam(required = false) Long curriculumId) {
+        return ResponseEntity.ok(courseClassService.analyzeDemand(semesterId, cohort, majorId, curriculumId));
     }
 
     @GetMapping("/details")
@@ -46,6 +48,13 @@ public class CourseClassController {
             @RequestParam Long semesterId, 
             @RequestBody CourseClassDTO dto) {
         return ResponseEntity.ok(courseClassService.createCourseClass(semesterId, dto));
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<CourseClassDTO>> createBatch(
+            @RequestParam Long semesterId, 
+            @RequestBody List<CourseClassDTO> dtos) {
+        return ResponseEntity.ok(courseClassService.createBatch(semesterId, dtos));
     }
 
     @PutMapping("/{id}")

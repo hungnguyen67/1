@@ -26,4 +26,9 @@ public class StudentController {
     ) {
         return studentService.searchStudents(searchTerm, classId, majorId, enrollmentYear, status, minGpa, maxGpa);
     }
+
+    @GetMapping("/enrollment-years")
+    public List<Integer> getEnrollmentYears() {
+        return studentService.getDistinctEnrollmentYears();
+    }
 }

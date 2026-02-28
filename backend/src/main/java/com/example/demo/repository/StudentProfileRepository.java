@@ -33,4 +33,7 @@ public interface StudentProfileRepository extends JpaRepository<StudentProfile, 
     );
 
     long countByAdministrativeClassId(Long classId);
+    
+    @Query("SELECT DISTINCT s.enrollmentYear FROM StudentProfile s ORDER BY s.enrollmentYear ASC")
+    List<Integer> findDistinctEnrollmentYears();
 }

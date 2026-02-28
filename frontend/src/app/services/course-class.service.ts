@@ -22,6 +22,11 @@ export interface CourseClass {
     maxStudents: number;
     currentEnrolled: number;
     classStatus: string;
+    registrationStart?: string;
+    registrationEnd?: string;
+    attendanceWeight?: number;
+    midtermWeight?: number;
+    finalWeight?: number;
     schedules: ClassSchedule[];
 }
 
@@ -61,14 +66,19 @@ export class CourseClassService {
         return this.http.put<CourseClass>(`${this.apiUrl}/${id}`, courseClass);
     }
 
+    createBatchClasses(semesterId: number, classes: any[]): Observable<CourseClass[]> {
+        return this.http.post<CourseClass[]>(`${this.apiUrl}/batch?semesterId=${semesterId}`, classes);
+    }
+
     deleteCourseClass(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 
-    getDemandAnalysis(semesterId: number, cohort?: number): Observable<any[]> {
-        const url = cohort
-            ? `${this.apiUrl}/analysis?semesterId=${semesterId}&cohort=${cohort}`
-            : `${this.apiUrl}/analysis?semesterId=${semesterId}`;
+    getDemandAnalysis(semesterId: number, cohort?: number, majorId?: number, curriculumId?: number): Observable<any[]> {
+        let url = `${this.apiUrl}/analysis?semesterId=${semesterId}`;
+        if (cohort) url += `&cohort=${cohort}`;
+        if (majorId) url += `&majorId=${majorId}`;
+        if (curriculumId) url += `&curriculumId=${curriculumId}`;
         return this.http.get<any[]>(url);
     }
 }
