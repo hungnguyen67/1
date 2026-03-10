@@ -8,6 +8,7 @@ public class MajorDTO {
     private String majorName;
     private Long facultyId;
     private String facultyName;
+    private String facultyCode;
     private String description;
     private int numberOfCurriculums;
     private int totalCreditsRequired;
@@ -20,12 +21,13 @@ public class MajorDTO {
 
     public MajorDTO() {}
 
-    public MajorDTO(Long id, String majorCode, String majorName, Long facultyId, String facultyName, String description, int numberOfCurriculums, int totalCreditsRequired, String status, String activeCurriculumName, int totalSubjects, int totalKnowledgeBlocks) {
+    public MajorDTO(Long id, String majorCode, String majorName, Long facultyId, String facultyName, String facultyCode, String description, int numberOfCurriculums, int totalCreditsRequired, String status, String activeCurriculumName, int totalSubjects, int totalKnowledgeBlocks) {
         this.id = id;
         this.majorCode = majorCode;
         this.majorName = majorName;
         this.facultyId = facultyId;
         this.facultyName = facultyName;
+        this.facultyCode = facultyCode;
         this.description = description;
         this.numberOfCurriculums = numberOfCurriculums;
         this.totalCreditsRequired = totalCreditsRequired;
@@ -49,6 +51,9 @@ public class MajorDTO {
 
     public String getFacultyName() { return facultyName; }
     public void setFacultyName(String facultyName) { this.facultyName = facultyName; }
+
+    public String getFacultyCode() { return facultyCode; }
+    public void setFacultyCode(String facultyCode) { this.facultyCode = facultyCode; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

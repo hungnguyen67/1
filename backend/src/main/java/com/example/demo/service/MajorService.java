@@ -115,6 +115,7 @@ public class MajorService {
             major.getMajorName(),
             major.getFaculty() != null ? major.getFaculty().getId() : null,
             major.getFaculty() != null ? major.getFaculty().getFacultyName() : "-",
+            major.getFaculty() != null ? major.getFaculty().getFacultyCode() : "-",
             major.getDescription(),
             numberOfCurriculums,
             totalCredits,

@@ -23,8 +23,6 @@ import { PasswordChecklistComponent } from './shared/components/password-checkli
 import { ScheduleComponent } from './components/admin/schedule/schedule.component';
 import { MiniCalendarComponent } from './shared/components/mini-calendar/mini-calendar.component';
 import { ProgramsComponent } from './components/admin/programs/programs.component';
-import { MajorDetailComponent } from './components/admin/programs/major-detail/major-detail.component';
-import { CurriculumDetailComponent } from './components/admin/programs/curriculum-detail/curriculum-detail.component';
 import { LecturersComponent } from './components/admin/lecturers/lecturers.component';
 import { StudentsComponent } from './components/admin/students/students.component';
 import { AuthGuard } from './auth.guard';
@@ -35,6 +33,8 @@ import { PasswordInputComponent } from './shared/components/password-input/passw
 import { CourseClassesComponent } from './components/admin/course-classes/course-classes.component';
 import { CurriculumsComponent } from './components/admin/curriculums/curriculums.component';
 import { AdministrativeClassesComponent } from './components/admin/administrative-classes/administrative-classes.component';
+import { FacultiesComponent } from './components/admin/faculties/faculties.component';
+import { SubjectsComponent } from './components/admin/subjects/subjects.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -61,14 +61,13 @@ const routes: Routes = [
       { path: 'users', component: UsersComponent },
       { path: 'semesters', component: SemestersComponent },
       { path: 'programs', component: ProgramsComponent },
-      { path: 'programs/:id', component: MajorDetailComponent },
       { path: 'training-programs', component: CurriculumsComponent },
-      { path: 'curriculums/:id', component: CurriculumDetailComponent },
       { path: 'knowledge-blocks', component: DashboardComponent },
       { path: 'administrative-classes', component: AdministrativeClassesComponent },
+      { path: 'faculties', component: FacultiesComponent },
       { path: 'lecturers', component: LecturersComponent },
       { path: 'students', component: StudentsComponent },
-      { path: 'subjects', component: DashboardComponent },
+      { path: 'subjects', component: SubjectsComponent },
       { path: 'sections', component: CourseClassesComponent },
       { path: 'schedules', component: ScheduleComponent },
       { path: 'exams', component: DashboardComponent },
@@ -112,10 +111,10 @@ const routes: Routes = [
     ScheduleComponent,
     MiniCalendarComponent,
     ProgramsComponent,
-    MajorDetailComponent,
-    CurriculumDetailComponent,
     LecturersComponent,
     StudentsComponent,
+    FacultiesComponent,
+    SubjectsComponent,
     FlashMessageComponent,
     PasswordChecklistComponent,
     PasswordInputComponent,

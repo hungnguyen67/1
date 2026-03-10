@@ -61,36 +61,28 @@
       <table class="w-full table-auto border-collapse">
         <thead>
           <tr class="bg-slate-50 border-b border-slate-200">
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+            <th
+              class="w-[70px] px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               STT</th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+            <th class="w-[120px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Mã ngành
             </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
+            <th class="w-[260px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
               Tên ngành
             </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-              Khoa
+            <th class="w-[260px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
+              Thuộc khoa
             </th>
             <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
               Mô tả
             </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-              Số CTĐT
-            </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-              Số khối
-            </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-              Tổng học phần
-            </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-              Tổng tín chỉ
-            </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+            <th class="w-[140px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Trạng thái
             </th>
-            <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+            <th class="w-[140px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+              Ngày tạo
+            </th>
+            <th class="w-[120px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
               Hành động
             </th>
           </tr>
@@ -103,39 +95,29 @@
             <td class="px-4 py-3 text-sm text-slate-900 text-center">
               {{ major.majorCode }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900 hover:text-blue-600 cursor-pointer transition-colors"
-              (click)="viewMajorDetail(major)">
+            <td class="px-4 py-3 text-sm text-slate-900">
               {{ major.majorName }}
             </td>
             <td class="px-4 py-3 text-sm text-slate-900">
               {{ major.facultyName }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-900 max-w-[200px] truncate" [title]="major.description">
+            <td class="px-4 py-3 text-sm text-slate-500 max-w-[300px] truncate" [title]="major.description">
               {{ major.description }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-900 text-center">
-              {{ major.numberOfCurriculums }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-900 text-center">
-              {{ major.totalKnowledgeBlocks }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-900 text-center">
-              {{ major.totalSubjects }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-900 text-center">
-              {{ major.totalCreditsRequired }}
             </td>
             <td class="px-4 py-3 text-sm text-center">
               <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-50 text-emerald-600 border-emerald-100">
-                {{ major.status }}
+                class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                {{ major.status === 'ACTIVE' ? 'Đang áp dụng' : 'Ngừng áp dụng' }}
               </span>
             </td>
+            <td class="px-4 py-3 text-sm text-slate-500 text-center">
+              {{ major.createdAt | date:'dd/MM/yyyy' }}
+            </td>
             <td class="px-4 py-3 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
-              <button class="text-blue-600 hover:text-blue-900 mr-3">
+              <button class="text-blue-600 hover:text-blue-900 mr-3" title="Chỉnh sửa">
                 <i class="fas fa-edit"></i>
               </button>
-              <button (click)="deleteMajor(major)" class="text-red-600 hover:text-red-900">
+              <button (click)="deleteMajor(major)" class="text-red-600 hover:text-red-900" title="Xóa">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </td>

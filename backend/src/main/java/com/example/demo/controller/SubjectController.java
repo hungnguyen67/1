@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.SubjectDTO;
+import com.example.demo.repository.SubjectRepository;
 import com.example.demo.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ public class SubjectController {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @GetMapping
     public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
@@ -34,5 +38,11 @@ public class SubjectController {
     @PutMapping("/{id}")
     public ResponseEntity<SubjectDTO> updateSubject(@PathVariable Long id, @RequestBody SubjectDTO dto) {
         return ResponseEntity.ok(subjectService.updateSubject(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSubject(@PathVariable Long id) {
+        subjectRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -47,7 +47,10 @@ export class CurriculumsComponent implements OnInit {
         this.loading = true;
         this.curriculumService.getCurriculums().subscribe({
             next: (data) => {
-                this.curriculums = data;
+                this.curriculums = data.map(c => ({
+                    ...c,
+                    status: c.status === 'ACTIVE' ? 'Đang áp dụng' : 'Ngưng áp dụng'
+                }));
                 this.onFilter();
                 this.loading = false;
             },
@@ -70,7 +73,7 @@ export class CurriculumsComponent implements OnInit {
 
             const matchesStatus = this.selectedStatus === 'ALL' ||
                 (this.selectedStatus === 'ACTIVE' && c.status === 'Đang áp dụng') ||
-                (this.selectedStatus === 'INACTIVE' && c.status !== 'Đang áp dụng');
+                (this.selectedStatus === 'INACTIVE' && c.status === 'Ngưng áp dụng');
 
             return matchesSearch && matchesMajor && matchesStatus;
         });
@@ -90,10 +93,12 @@ export class CurriculumsComponent implements OnInit {
         this.onFilter();
     }
 
-    // Navigation & Actions
-    viewDetail(id: number): void {
-        this.router.navigate(['/dashboard/curriculums', id]);
+    editCurriculum(item: CurriculumDTO): void {
+        console.log('Edit curriculum', item);
+        // Implementation for edit modal or navigation will go here
     }
+
+    // Navigation & Actions
 
     // Pagination Getters
     get totalPages(): number {

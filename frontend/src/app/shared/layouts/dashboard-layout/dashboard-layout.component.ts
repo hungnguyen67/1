@@ -45,31 +45,19 @@ export class DashboardLayoutComponent implements OnInit {
   autoOpenMenuBasedOnUrl(url: string) {
     const path = url.split('?')[0];
 
-    if (path.includes('/dashboard/users')) {
+    if (this.isGroupActive(['/dashboard/users'])) {
       this.openMenuName = 'users';
     }
-    else if (path.includes('/dashboard/programs') ||
-      path.includes('/dashboard/knowledge-blocks') ||
-      path.includes('/dashboard/subjects') ||
-      path.includes('/dashboard/curriculum') ||
-      path.includes('/dashboard/curriculums') ||
-      path.includes('/dashboard/training-programs')) {
+    else if (this.isGroupActive(['/dashboard/faculties', '/dashboard/programs', '/dashboard/knowledge-blocks', '/dashboard/subjects', '/dashboard/curriculum', '/dashboard/curriculums', '/dashboard/training-programs'])) {
       this.openMenuName = 'academic';
     }
-    else if (path.includes('/dashboard/students') ||
-      path.includes('/dashboard/lecturers') ||
-      path.includes('/dashboard/administrative-classes')) {
+    else if (this.isGroupActive(['/dashboard/students', '/dashboard/lecturers', '/dashboard/administrative-classes'])) {
       this.openMenuName = 'profiles';
     }
-    else if (path.includes('/dashboard/semesters') ||
-      path.includes('/dashboard/sections') ||
-      path.includes('/dashboard/schedules') ||
-      path.includes('/dashboard/exams')) {
+    else if (this.isGroupActive(['/dashboard/semesters', '/dashboard/sections', '/dashboard/schedules', '/dashboard/exams'])) {
       this.openMenuName = 'operation';
     }
-    else if (path.includes('/dashboard/registrations') ||
-      path.includes('/dashboard/grades') ||
-      path.includes('/dashboard/attendance')) {
+    else if (this.isGroupActive(['/dashboard/registrations', '/dashboard/grades', '/dashboard/attendance'])) {
       this.openMenuName = 'learning';
     }
     else {

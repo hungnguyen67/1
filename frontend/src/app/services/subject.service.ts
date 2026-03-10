@@ -28,4 +28,16 @@ export class SubjectService {
     getAllSubjects(): Observable<SubjectDTO[]> {
         return this.http.get<SubjectDTO[]>(this.apiUrl);
     }
+
+    createSubject(dto: Partial<SubjectDTO>): Observable<SubjectDTO> {
+        return this.http.post<SubjectDTO>(this.apiUrl, dto);
+    }
+
+    updateSubject(id: number, dto: Partial<SubjectDTO>): Observable<SubjectDTO> {
+        return this.http.put<SubjectDTO>(`${this.apiUrl}/${id}`, dto);
+    }
+
+    deleteSubject(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }

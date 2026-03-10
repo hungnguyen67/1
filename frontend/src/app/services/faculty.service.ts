@@ -7,6 +7,7 @@ export interface FacultyDTO {
     facultyCode: string;
     facultyName: string;
     description: string;
+    status: string;
     createdAt: string;
     updatedAt: string;
 }

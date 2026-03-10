@@ -84,9 +84,6 @@ export class ProgramsComponent implements OnInit {
     }
   }
 
-  viewMajorDetail(major: MajorDTO): void {
-    this.router.navigate(['/dashboard/programs', major.id]);
-  }
 
   editMajor(major: MajorDTO): void {
     this.router.navigate(['/admin/majors', major.id, 'edit']);

@@ -31,6 +31,7 @@ public class FacultyService {
         faculty.setFacultyCode(dto.getFacultyCode());
         faculty.setFacultyName(dto.getFacultyName());
         faculty.setDescription(dto.getDescription());
+        faculty.setStatus(dto.getStatus() != null ? Faculty.Status.valueOf(dto.getStatus()) : Faculty.Status.ACTIVE);
         Faculty saved = facultyRepository.save(faculty);
         return convertToDTO(saved);
     }
@@ -40,6 +41,9 @@ public class FacultyService {
         faculty.setFacultyCode(dto.getFacultyCode());
         faculty.setFacultyName(dto.getFacultyName());
         faculty.setDescription(dto.getDescription());
+        if (dto.getStatus() != null) {
+            faculty.setStatus(Faculty.Status.valueOf(dto.getStatus()));
+        }
         Faculty saved = facultyRepository.save(faculty);
         return convertToDTO(saved);
     }
@@ -54,6 +58,7 @@ public class FacultyService {
         dto.setFacultyCode(faculty.getFacultyCode());
         dto.setFacultyName(faculty.getFacultyName());
         dto.setDescription(faculty.getDescription());
+        dto.setStatus(faculty.getStatus().name());
         dto.setCreatedAt(faculty.getCreatedAt());
         dto.setUpdatedAt(faculty.getUpdatedAt());
         return dto;
