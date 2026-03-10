@@ -61,7 +61,8 @@
                             [title]="faculty.description">{{ faculty.description }}</td>
                         <td class="px-4 py-3 text-center">
                             <span
-                                class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                [class]="faculty.status === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-red-50 text-red-700 border-red-100'"
+                                class="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium rounded-full border">
                                 {{ faculty.status === 'ACTIVE' ? 'Đang áp dụng' : 'Ngừng áp dụng' }}
                             </span>
                         </td>
