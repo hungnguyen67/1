@@ -5,6 +5,7 @@ public class AdministrativeClassDTO {
     private String classCode;
     private String className;
     private Long majorId;
+    private String majorCode;
     private String majorName;
     private String academicYear;
     private Integer cohort;
@@ -31,6 +32,9 @@ public class AdministrativeClassDTO {
 
     public String getMajorName() { return majorName; }
     public void setMajorName(String majorName) { this.majorName = majorName; }
+
+    public String getMajorCode() { return majorCode; }
+    public void setMajorCode(String majorCode) { this.majorCode = majorCode; }
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }

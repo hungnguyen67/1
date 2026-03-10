@@ -75,6 +75,8 @@ export class AdministrativeClassesComponent implements OnInit {
         const filtered = this.classes.filter(c => {
             const matchesSearch = !this.searchTerm ||
                 c.classCode.toLowerCase().includes(search) ||
+                (c.className && c.className.toLowerCase().includes(search)) ||
+                (c.majorCode && c.majorCode.toLowerCase().includes(search)) ||
                 (c.majorName && c.majorName.toLowerCase().includes(search));
 
             const matchesMajor = !this.selectedMajorId || c.majorId === Number(this.selectedMajorId);

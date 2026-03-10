@@ -7,6 +7,7 @@ export interface AdministrativeClassDTO {
     classCode: string;
     className: string;
     majorId: number;
+    majorCode: string;
     majorName: string;
     academicYear: string;
     cohort: number;

@@ -33,6 +33,7 @@ public class AdministrativeClassService {
         
         if (clazz.getMajor() != null) {
             dto.setMajorId(clazz.getMajor().getId());
+            dto.setMajorCode(clazz.getMajor().getMajorCode());
             dto.setMajorName(clazz.getMajor().getMajorName());
         }
         
