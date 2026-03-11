@@ -22,6 +22,10 @@ public class AdministrativeClass implements Serializable {
     @JoinColumn(name = "major_id")
     private Major major;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curriculum_id")
+    private Curriculum curriculum;
+
     @Column(name = "academic_year")
     private String academicYear;
 
@@ -57,6 +61,9 @@ public class AdministrativeClass implements Serializable {
 
     public Major getMajor() { return major; }
     public void setMajor(Major major) { this.major = major; }
+
+    public Curriculum getCurriculum() { return curriculum; }
+    public void setCurriculum(Curriculum curriculum) { this.curriculum = curriculum; }
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }

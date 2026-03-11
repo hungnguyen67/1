@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.time.LocalDateTime;
+
 public class AdministrativeClassDTO {
     private Long id;
     private String classCode;
@@ -7,14 +9,16 @@ public class AdministrativeClassDTO {
     private Long majorId;
     private String majorCode;
     private String majorName;
+    private Long curriculumId;
+    private String curriculumName;
     private String academicYear;
     private Integer cohort;
     private Long advisorId;
     private String advisorName;
     private String status;
     private Long studentCount;
-    private java.time.LocalDateTime createdAt;
-    private java.time.LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public AdministrativeClassDTO() {}
 
@@ -30,11 +34,17 @@ public class AdministrativeClassDTO {
     public Long getMajorId() { return majorId; }
     public void setMajorId(Long majorId) { this.majorId = majorId; }
 
+    public String getMajorCode() { return majorCode; }
+    public void setMajorCode(String majorCode) { this.majorCode = majorCode; }
+
     public String getMajorName() { return majorName; }
     public void setMajorName(String majorName) { this.majorName = majorName; }
 
-    public String getMajorCode() { return majorCode; }
-    public void setMajorCode(String majorCode) { this.majorCode = majorCode; }
+    public Long getCurriculumId() { return curriculumId; }
+    public void setCurriculumId(Long curriculumId) { this.curriculumId = curriculumId; }
+
+    public String getCurriculumName() { return curriculumName; }
+    public void setCurriculumName(String curriculumName) { this.curriculumName = curriculumName; }
 
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
@@ -54,9 +64,9 @@ public class AdministrativeClassDTO {
     public Long getStudentCount() { return studentCount; }
     public void setStudentCount(Long studentCount) { this.studentCount = studentCount; }
 
-    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(java.time.LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -36,6 +36,11 @@ public class AdministrativeClassService {
             dto.setMajorCode(clazz.getMajor().getMajorCode());
             dto.setMajorName(clazz.getMajor().getMajorName());
         }
+
+        if (clazz.getCurriculum() != null) {
+            dto.setCurriculumId(clazz.getCurriculum().getId());
+            dto.setCurriculumName(clazz.getCurriculum().getCurriculumName());
+        }
         
         dto.setAcademicYear(clazz.getAcademicYear());
         dto.setCohort(clazz.getCohort());
