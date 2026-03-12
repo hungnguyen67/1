@@ -8,6 +8,8 @@ public class CourseClassDTO {
     private String classCode;
     private Long subjectId;
     private Long lecturerId;
+    private Long targetClassId;
+    private String targetClassName;
     private String subjectName;
     private String subjectCode;
     private Integer credits;
@@ -86,4 +88,10 @@ public class CourseClassDTO {
     public void setFinalWeight(Double finalWeight) { this.finalWeight = finalWeight; }
     public List<ScheduleDTO> getSchedules() { return schedules; }
     public void setSchedules(List<ScheduleDTO> schedules) { this.schedules = schedules; }
+
+    public Long getTargetClassId() { return targetClassId; }
+    public void setTargetClassId(Long targetClassId) { this.targetClassId = targetClassId; }
+
+    public String getTargetClassName() { return targetClassName; }
+    public void setTargetClassName(String targetClassName) { this.targetClassName = targetClassName; }
 }

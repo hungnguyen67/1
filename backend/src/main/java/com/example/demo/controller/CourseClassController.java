@@ -57,6 +57,13 @@ public class CourseClassController {
         return ResponseEntity.ok(courseClassService.createBatch(semesterId, dtos));
     }
 
+    @PostMapping("/auto-batch")
+    public ResponseEntity<List<CourseClassDTO>> generateAutoBatch(
+            @RequestParam Long semesterId, 
+            @RequestBody List<com.example.demo.dto.CourseClassDemandAnalysisDTO> demands) {
+        return ResponseEntity.ok(courseClassService.generateAutoBatch(semesterId, demands));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CourseClassDTO> updateCourseClass(
             @PathVariable Long id, 

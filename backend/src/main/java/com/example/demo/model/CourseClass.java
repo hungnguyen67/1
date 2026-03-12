@@ -11,7 +11,7 @@ public class CourseClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "class_code", unique = true, nullable = false, length = 30)
+    @Column(name = "class_code", unique = true, nullable = false, length = 100)
     private String classCode;
 
     @ManyToOne
@@ -33,6 +33,10 @@ public class CourseClass {
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_class_id")
+    private AdministrativeClass targetClass;
 
     @Column(name = "registration_start")
     private LocalDateTime registrationStart;
@@ -116,6 +120,9 @@ public class CourseClass {
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public List<ClassSchedulePattern> getSchedules() { return schedules; }
     public void setSchedules(List<ClassSchedulePattern> schedules) { this.schedules = schedules; }
+
+    public AdministrativeClass getTargetClass() { return targetClass; }
+    public void setTargetClass(AdministrativeClass targetClass) { this.targetClass = targetClass; }
 
     @PreUpdate
     public void preUpdate() {

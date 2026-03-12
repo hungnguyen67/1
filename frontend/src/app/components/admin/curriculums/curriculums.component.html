@@ -85,38 +85,27 @@
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[80px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             STT</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Ngành</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
+                        <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
                             Tên chương trình</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Năm áp dụng</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Số khối</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Tổng học phần</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Tổng tín chỉ</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
+                            Tổng TC</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Trạng thái</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
-                    <tr *ngIf="loading">
-                        <td colspan="9" class="px-4 py-12 text-center">
-                            <div class="flex flex-col items-center">
-                                <div
-                                    class="w-8 h-8 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-4">
-                                </div>
-                                <p class="text-sm text-slate-500">Đang tải dữ liệu...</p>
-                            </div>
-                        </td>
-                    </tr>
-
                     <tr *ngFor="let item of paginatedCurriculums; let i = index"
                         class="hover:bg-slate-50 transition-colors">
                         <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ (currentPage - 1) * itemsPerPage + i
@@ -136,9 +125,10 @@
                             item.totalCreditsRequired }}</td>
                         <td class="px-4 py-4 text-center">
                             <span
-                                [class]="item.status === 'Đang áp dụng' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-slate-50 text-slate-600 border-slate-100'"
-                                class="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium rounded-full border">
-                                {{ item.status }}
+                                [class]="item.status === 'ACTIVE' 
+                                ? 'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100'
+                                : 'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-medium bg-slate-50 text-slate-400 rounded-full border border-slate-100'">
+                                {{ item.status === 'ACTIVE' ? 'Đang áp dụng' : 'Ngưng áp dụng' }}
                             </span>
                         </td>
                         <td class="px-4 py-4 text-sm text-center">

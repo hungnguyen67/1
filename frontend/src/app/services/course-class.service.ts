@@ -6,6 +6,7 @@ export interface CourseSubjectGroup {
     subjectId: number;
     subjectCode: string;
     subjectName: string;
+    description?: string;
     credits: number;
     classCount: number;
     status: string;
@@ -80,5 +81,9 @@ export class CourseClassService {
         if (majorId) url += `&majorId=${majorId}`;
         if (curriculumId) url += `&curriculumId=${curriculumId}`;
         return this.http.get<any[]>(url);
+    }
+
+    generateAutoBatch(semesterId: number, demands: any[]): Observable<CourseClass[]> {
+        return this.http.post<CourseClass[]>(`${this.apiUrl}/auto-batch?semesterId=${semesterId}`, demands);
     }
 }

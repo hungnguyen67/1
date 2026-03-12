@@ -6,6 +6,7 @@ import { LecturerService, LecturerDTO } from '../../../services/lecturer.service
 import { MajorService, MajorDTO } from '../../../services/major.service';
 import { StudentService } from '../../../services/student.service';
 import { CurriculumService, CurriculumDTO } from '../../../services/curriculum.service';
+import { AdministrativeClassService, AdministrativeClassDTO } from '../../../services/administrative-class.service';
 
 @Component({
     selector: 'app-course-classes',
@@ -20,13 +21,33 @@ export class CourseClassesComponent implements OnInit {
     allLecturers: LecturerDTO[] = [];
     majors: MajorDTO[] = [];
     demandAnalysis: any[] = [];
+    filteredDemandAnalysis: any[] = [];
     stats: any = {
         totalStudents: 0,
         mandatorySubjects: 0,
         subjectsToOpen: 0,
         totalClassesCreated: 0
     };
+    activeTab: 'statistics' | 'list' = 'statistics';
     showAnalysisTable = false;
+    selectedDemandKeys = new Set<string>();
+    allSelected = false;
+
+    // Pagination - Bảng Thống kê dự kiến
+    demandCurrentPage = 1;
+    demandItemsPerPage = 10;
+    demandTotalItems = 0;
+    get demandTotalPages(): number { return Math.max(1, Math.ceil(this.demandTotalItems / this.demandItemsPerPage)); }
+    get demandMinEnd(): number { return Math.min(this.demandCurrentPage * this.demandItemsPerPage, this.demandTotalItems); }
+    pagedDemandAnalysis: any[] = [];
+
+    // Pagination - Bảng Danh sách Lớp HP
+    subjectCurrentPage = 1;
+    subjectItemsPerPage = 10;
+    subjectTotalItems = 0;
+    get subjectTotalPages(): number { return Math.max(1, Math.ceil(this.subjectTotalItems / this.subjectItemsPerPage)); }
+    get subjectMinEnd(): number { return Math.min(this.subjectCurrentPage * this.subjectItemsPerPage, this.subjectTotalItems); }
+    pagedSubjects: any[] = [];
 
     loading = false;
     loadingDetails = false;
@@ -35,9 +56,13 @@ export class CourseClassesComponent implements OnInit {
     selectedSemesterId: number | null = null;
     selectedMajorId: number | null = null;
     selectedYear: number | null = null;
-    selectedProgramId: number | null = null;
+    selectedAdminClassId: number | null = null;
+    groupBy: 'both' | 'subject' = 'both';
+    activeDropdown: string = '';
 
     allCohorts: number[] = [];
+    administrativeClasses: AdministrativeClassDTO[] = [];
+    filteredAdminClasses: AdministrativeClassDTO[] = [];
     curriculums: CurriculumDTO[] = [];
     selectedSubject: CourseSubjectGroup | null = null;
     selectedDemand: any = null;
@@ -55,7 +80,8 @@ export class CourseClassesComponent implements OnInit {
         private lecturerService: LecturerService,
         private majorService: MajorService,
         private studentService: StudentService,
-        private curriculumService: CurriculumService
+        private curriculumService: CurriculumService,
+        private adminClassService: AdministrativeClassService
     ) { }
 
     ngOnInit(): void {
@@ -79,27 +105,68 @@ export class CourseClassesComponent implements OnInit {
         this.majorService.getMajors().subscribe(data => {
             this.majors = data;
             if (data.length > 0) {
-                // If there's a previously used major (not implemented yet), use it.
-                // Otherwise default to first or based on some logic.
                 this.selectedMajorId = data[0].id;
                 this.onMajorChange();
             }
         });
+
+        this.adminClassService.getClasses().subscribe(data => {
+            this.administrativeClasses = data;
+            this.filteredAdminClasses = data;
+        });
     }
 
     onMajorChange(): void {
-        this.selectedProgramId = null; // Clear Program selection
         if (this.selectedMajorId) {
             this.curriculumService.getCurriculumsByMajorId(this.selectedMajorId).subscribe(data => {
                 this.curriculums = data;
             });
+            this.filteredAdminClasses = this.administrativeClasses.filter(c => c.majorId == this.selectedMajorId);
             this.loadAnalysis();
         } else {
             this.curriculums = [];
+            this.filteredAdminClasses = this.administrativeClasses;
             this.loadAnalysis();
         }
     }
 
+    onGroupByChange(): void {
+        this.selectedYear = null;
+        this.selectedAdminClassId = null;
+        this.onFilterChange();
+    }
+
+    resetFilters(): void {
+        this.selectedYear = null;
+        this.selectedAdminClassId = null;
+        this.selectedMajorId = null;
+        this.searchTerm = '';
+        this.groupBy = 'both';
+        this.onMajorChange();
+        this.onFilterChange();
+    }
+
+    getSelectedMajorName(): string {
+        if (!this.selectedMajorId) return 'Tất cả các ngành học';
+        const major = this.majors.find(m => m.id == this.selectedMajorId);
+        return major ? major.majorName : 'Tất cả các ngành học';
+    }
+
+    getSelectedAdvisorName(): string {
+        if (!this.selectedAdminClassId) return 'Tất cả lớp hành chính';
+        const adminClass = this.administrativeClasses.find(c => c.id == this.selectedAdminClassId);
+        return adminClass ? adminClass.className : 'Tất cả lớp hành chính';
+    }
+
+    getSelectedLecturerName(): string {
+        if (!this.selectedYear) return 'Tất cả cố vấn';
+        const lecturer = this.allLecturers.find(l => l.id == this.selectedYear);
+        return lecturer ? lecturer.fullName : 'Tất cả cố vấn';
+    }
+
+    onSearch(): void {
+        this.onFilterChange();
+    }
     onProgramChange(): void {
         this.loadAnalysis();
     }
@@ -144,29 +211,141 @@ export class CourseClassesComponent implements OnInit {
         this.courseClassService.getDemandAnalysis(
             this.selectedSemesterId,
             this.selectedYear || undefined,
-            this.selectedMajorId || undefined,
-            this.selectedProgramId || undefined
+            this.selectedMajorId || undefined
         ).subscribe(data => {
             this.demandAnalysis = data;
+            this.onFilterChange();
             this.calculateOverallStats();
         });
     }
 
     calculateOverallStats(): void {
         this.stats = {
-            totalStudents: this.demandAnalysis.length > 0 ? this.demandAnalysis.reduce((max, a) => Math.max(max, a.totalNeeded), 0) : 0,
+            totalStudents: this.demandAnalysis.reduce((sum, a) => sum + (a.totalNeeded || 0), 0),
             mandatorySubjects: this.demandAnalysis.filter(a => a.mandatoryStudents > 0).length,
             subjectsToOpen: this.demandAnalysis.filter(a => a.suggestedMoreClasses > 0).length,
             totalClassesCreated: this.subjects.reduce((sum, s) => sum + s.classCount, 0)
         };
     }
 
-    onFilterChange(): void {
-        this.filteredSubjects = this.subjects.filter(s =>
-            s.subjectName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            s.subjectCode.toLowerCase().includes(this.searchTerm.toLowerCase())
-        );
+    toggleSelectAll(): void {
+        this.allSelected = !this.allSelected;
+        if (this.allSelected) {
+            this.filteredDemandAnalysis.forEach(d => {
+                const key = `${d.subjectId}_${d.adminClassId}`;
+                this.selectedDemandKeys.add(key);
+            });
+        } else {
+            this.selectedDemandKeys.clear();
+        }
     }
+
+    toggleSelect(demand: any): void {
+        const key = `${demand.subjectId}_${demand.adminClassId}`;
+        if (this.selectedDemandKeys.has(key)) {
+            this.selectedDemandKeys.delete(key);
+        } else {
+            this.selectedDemandKeys.add(key);
+        }
+        this.allSelected = this.selectedDemandKeys.size === this.filteredDemandAnalysis.length && this.filteredDemandAnalysis.length > 0;
+    }
+
+    isDemandSelected(demand: any): boolean {
+        return this.selectedDemandKeys.has(`${demand.subjectId}_${demand.adminClassId}`);
+    }
+
+    generateBatchClasses(): void {
+        if (this.groupBy === 'subject') {
+            alert('Vui lòng chuyển sang "Nhóm theo Môn & Lớp" để thực hiện khởi tạo hàng loạt cho từng lớp hành chính!');
+            return;
+        }
+        if (this.selectedDemandKeys.size === 0) {
+            alert('Vui lòng chọn ít nhất một môn học để khởi tạo!');
+            return;
+        }
+
+        const demandsToCreate = this.filteredDemandAnalysis.filter(d =>
+            this.selectedDemandKeys.has(`${d.subjectId}_${d.adminClassId}`));
+
+        if (!confirm(`Xác nhận khởi tạo ${demandsToCreate.length} lớp học phần hàng loạt?`)) return;
+
+        this.loading = true;
+        this.courseClassService.generateAutoBatch(this.selectedSemesterId!, demandsToCreate)
+            .subscribe({
+                next: (res) => {
+                    const createdCount = res.length;
+                    const skippedCount = demandsToCreate.length - createdCount;
+
+                    let msg = `Đã xử lý xong!`;
+                    if (createdCount > 0) msg += `\n- Thành công: ${createdCount} lớp.`;
+                    if (skippedCount > 0) msg += `\n- Bỏ qua (đã tồn tại): ${skippedCount} lớp.`;
+
+                    alert(msg);
+                    this.selectedDemandKeys.clear();
+                    this.allSelected = false;
+                    this.loadAnalysis();
+                    this.loadSubjects();
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Batch creation failed', err);
+                    alert('Khởi tạo hàng loạt thất bại!');
+                    this.loading = false;
+                }
+            });
+    }
+
+    onFilterChange(): void {
+        const search = this.searchTerm.toLowerCase();
+
+        // Filter subjects
+        const allFiltered = this.subjects.filter(s =>
+            s.subjectName.toLowerCase().includes(search) ||
+            s.subjectCode.toLowerCase().includes(search)
+        );
+        this.subjectTotalItems = allFiltered.length;
+        this.subjectCurrentPage = 1;
+        this.updateSubjectPage(allFiltered);
+        this.filteredSubjects = this.pagedSubjects;
+
+        // Filter demand
+        let filtered = this.demandAnalysis.filter(a => {
+            const matchesSearch = a.subjectName.toLowerCase().includes(search) || a.subjectCode.toLowerCase().includes(search);
+            const matchesYear = !this.selectedYear || a.cohort === Number(this.selectedYear);
+            const matchesClass = !this.selectedAdminClassId || a.adminClassId == this.selectedAdminClassId;
+            return matchesSearch && matchesYear && matchesClass;
+        });
+
+        this.demandTotalItems = filtered.length;
+        this.demandCurrentPage = 1;
+        this.updateDemandPage(filtered);
+        this.filteredDemandAnalysis = this.pagedDemandAnalysis;
+
+        this.selectedDemandKeys.clear();
+        this.allSelected = false;
+    }
+
+    private _allFilteredDemand: any[] = [];
+    private _allFilteredSubjects: any[] = [];
+
+    updateDemandPage(allData?: any[]): void {
+        if (allData) this._allFilteredDemand = allData;
+        const start = (this.demandCurrentPage - 1) * this.demandItemsPerPage;
+        this.pagedDemandAnalysis = this._allFilteredDemand.slice(start, start + this.demandItemsPerPage);
+        this.filteredDemandAnalysis = this.pagedDemandAnalysis;
+    }
+
+    updateSubjectPage(allData?: any[]): void {
+        if (allData) this._allFilteredSubjects = allData;
+        const start = (this.subjectCurrentPage - 1) * this.subjectItemsPerPage;
+        this.pagedSubjects = this._allFilteredSubjects.slice(start, start + this.subjectItemsPerPage);
+        this.filteredSubjects = this.pagedSubjects;
+    }
+
+    demandPrevPage(): void { if (this.demandCurrentPage > 1) { this.demandCurrentPage--; this.updateDemandPage(); } }
+    demandNextPage(): void { if (this.demandCurrentPage < this.demandTotalPages) { this.demandCurrentPage++; this.updateDemandPage(); } }
+    subjectPrevPage(): void { if (this.subjectCurrentPage > 1) { this.subjectCurrentPage--; this.updateSubjectPage(); } }
+    subjectNextPage(): void { if (this.subjectCurrentPage < this.subjectTotalPages) { this.subjectCurrentPage++; this.updateSubjectPage(); } }
 
     selectSubject(subject: CourseSubjectGroup): void {
         this.selectedSubject = subject;
@@ -199,7 +378,7 @@ export class CourseClassesComponent implements OnInit {
         if (subjectId) {
             this.courseClassForm.subjectId = subjectId;
             this.onSubjectSelect();
-            this.autoSuggest(); // Call autoSuggest after subject selection
+            this.autoSuggest();
         }
         this.isModalOpen = true;
     }

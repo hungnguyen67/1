@@ -17,4 +17,9 @@ public interface CourseClassRepository extends JpaRepository<CourseClass, Long> 
     
     @Query("SELECT DISTINCT c.subject.id FROM CourseClass c WHERE c.semester.id = :semesterId")
     List<Long> findDistinctSubjectIdsBySemesterId(@Param("semesterId") Long semesterId);
+
+    java.util.Optional<CourseClass> findByClassCode(String classCode);
+    
+    @Query("SELECT c FROM CourseClass c WHERE c.semester.id = :semesterId AND c.subject.id = :subjectId AND c.targetClass.id = :targetClassId")
+    java.util.List<CourseClass> findBySemesterSubjectAndTargetClass(@Param("semesterId") Long semesterId, @Param("subjectId") Long subjectId, @Param("targetClassId") Long targetClassId);
 }

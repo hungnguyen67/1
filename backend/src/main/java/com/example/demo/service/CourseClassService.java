@@ -5,9 +5,12 @@ import com.example.demo.dto.CourseSubjectGroupDTO;
 import com.example.demo.model.CourseClass;
 import com.example.demo.model.Subject;
 import com.example.demo.model.ClassSchedulePattern;
+import com.example.demo.model.AdministrativeClass;
+import com.example.demo.model.Semester;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,9 @@ public class CourseClassService {
 
     @Autowired
     private CourseRegistrationRepository registrationRepository;
+
+    @Autowired
+    private AdministrativeClassRepository administrativeClassRepository;
 
     public List<CourseSubjectGroupDTO> getGroupedSubjectsBySemester(Long semesterId) {
         List<CourseClass> classes = courseClassRepository.findBySemesterId(semesterId);
@@ -97,6 +103,58 @@ public class CourseClassService {
         return results;
     }
 
+    @Transactional
+    public List<CourseClassDTO> generateAutoBatch(Long semesterId, List<com.example.demo.dto.CourseClassDemandAnalysisDTO> demands) {
+        com.example.demo.model.Semester sem = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new RuntimeException("Semester not found"));
+        
+        List<CourseClass> toSave = new ArrayList<>();
+        List<com.example.demo.model.LecturerProfile> lecturers = lecturerProfileRepository.findAll();
+        if (lecturers.isEmpty()) throw new RuntimeException("No lecturers found in database");
+
+        for (com.example.demo.dto.CourseClassDemandAnalysisDTO d : demands) {
+            if (d.getAdminClassId() == null) continue;
+            
+            Subject s = subjectRepository.findById(d.getSubjectId())
+                    .orElseThrow(() -> new RuntimeException("Subject not found"));
+            AdministrativeClass ac = administrativeClassRepository.findById(d.getAdminClassId())
+                    .orElseThrow(() -> new RuntimeException("Admin class not found"));
+            
+            // Formula: [MãMôn]_[MãLớp]_[HọcKỳ]
+            String semPart = sem.getAcademicYear().replace("-", "") + "K" + sem.getSemesterOrder();
+            String code = s.getSubjectCode() + "_" + ac.getClassCode() + "_" + semPart;
+            
+            // Check if already exists
+            if (courseClassRepository.findByClassCode(code).isPresent()) continue;
+
+            CourseClass cc = new CourseClass();
+            cc.setSubject(s);
+            cc.setSemester(sem);
+            cc.setTargetClass(ac);
+            cc.setMajor(ac.getMajor());
+            cc.setCurriculum(ac.getCurriculum());
+            cc.setMaxStudents(d.getTotalNeeded() != null && d.getTotalNeeded() > 0 ? d.getTotalNeeded() : 40);
+            cc.setClassCode(code);
+            
+            // Find lecturer: Prefer advisor of the class, or first lecturer in major, or just first available
+            com.example.demo.model.LecturerProfile l = null;
+            if (ac.getAdvisor() != null) l = ac.getAdvisor();
+            else if (ac.getMajor() != null) {
+                Long majorId = ac.getMajor().getId();
+                l = lecturers.stream()
+                        .filter(lp -> lp.getFaculty() != null && lp.getFaculty().getId().equals(majorId))
+                        .findFirst().orElse(lecturers.get(0));
+            } else {
+                l = lecturers.get(0);
+            }
+            cc.setLecturer(l);
+            
+            toSave.add(cc);
+        }
+        if (toSave.isEmpty()) return new ArrayList<>(); // None to update or all exist
+        return courseClassRepository.saveAll(toSave).stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     private void updateEntityFromDTO(CourseClass cc, CourseClassDTO dto, Long semesterId) {
         cc.setClassCode(dto.getClassCode());
         cc.setSubject(subjectRepository.findById(dto.getSubjectId())
@@ -114,6 +172,10 @@ public class CourseClassService {
         cc.setAttendanceWeight(dto.getAttendanceWeight() != null ? dto.getAttendanceWeight() : 0.10);
         cc.setMidtermWeight(dto.getMidtermWeight() != null ? dto.getMidtermWeight() : 0.30);
         cc.setFinalWeight(dto.getFinalWeight() != null ? dto.getFinalWeight() : 0.60);
+        
+        if (dto.getTargetClassId() != null) {
+            cc.setTargetClass(administrativeClassRepository.findById(dto.getTargetClassId()).orElse(null));
+        }
         
         if (cc.getSchedules() != null) {
             cc.getSchedules().clear();
@@ -166,6 +228,11 @@ public class CourseClassService {
                         s.getSessionType()
                 )).collect(Collectors.toList()));
         }
+
+        if (cc.getTargetClass() != null) {
+            dto.setTargetClassId(cc.getTargetClass().getId());
+            dto.setTargetClassName(cc.getTargetClass().getClassName());
+        }
         
         return dto;
     }
@@ -184,86 +251,108 @@ public class CourseClassService {
 
         List<com.example.demo.model.CurriculumSubject> allCurriculumSubjects = curriculumSubjectRepository.findAll();
         List<com.example.demo.model.StudentProfile> allStudents = studentProfileRepository.findAll();
-        Map<Long, com.example.demo.dto.CourseClassDemandAnalysisDTO> analysisMap = new java.util.HashMap<>();
-        Map<Integer, Map<Long, Long>> studentsByCohortAndCurr = allStudents.stream()
-            .filter(s -> s.getStatus() == com.example.demo.model.StudentProfile.Status.STUDYING)
-            .filter(s -> filterCohort == null || s.getEnrollmentYear().equals(filterCohort))
-            .filter(s -> curriculumId == null || (s.getCurriculum() != null && s.getCurriculum().getId().equals(curriculumId)))
-            .filter(s -> {
-                if (majorId == null) return true;
-                Long studentMajorId = null;
-                if (s.getAdministrativeClass() != null && s.getAdministrativeClass().getMajor() != null) {
-                    studentMajorId = s.getAdministrativeClass().getMajor().getId();
-                } else if (s.getCurriculum() != null && s.getCurriculum().getMajor() != null) {
-                    studentMajorId = s.getCurriculum().getMajor().getId();
-                }
-                return majorId.equals(studentMajorId);
-            })
-            .collect(Collectors.groupingBy(
-                com.example.demo.model.StudentProfile::getEnrollmentYear,
-                Collectors.groupingBy(s -> s.getCurriculum().getId(), Collectors.counting())
-            ));
+        Map<String, com.example.demo.dto.CourseClassDemandAnalysisDTO> analysisMap = new java.util.HashMap<>();
 
-        for (Map.Entry<Integer, Map<Long, Long>> cohortEntry : studentsByCohortAndCurr.entrySet()) {
-            int enrollmentYear = cohortEntry.getKey();
-            int curriculumSemester = (acadStartYear - enrollmentYear) * 2 + semesterOrder;
+        // Process all students to find mandatory subjects based on their curriculum and semester
+        for (com.example.demo.model.StudentProfile student : allStudents) {
+            if (student.getStatus() != com.example.demo.model.StudentProfile.Status.STUDYING) continue;
+            if (filterCohort != null && !student.getEnrollmentYear().equals(filterCohort)) continue;
+            if (curriculumId != null && (student.getCurriculum() == null || !student.getCurriculum().getId().equals(curriculumId))) continue;
+            
+            Long studentMajorId = null;
+            if (student.getAdministrativeClass() != null && student.getAdministrativeClass().getMajor() != null) {
+                studentMajorId = student.getAdministrativeClass().getMajor().getId();
+            } else if (student.getCurriculum() != null && student.getCurriculum().getMajor() != null) {
+                studentMajorId = student.getCurriculum().getMajor().getId();
+            }
+            if (majorId != null && !majorId.equals(studentMajorId)) continue;
 
-            if (curriculumSemester < 1 || curriculumSemester > 8) continue;
+            int enrollmentYear = student.getEnrollmentYear();
+            int currentSemesterNum = (acadStartYear - enrollmentYear) * 2 + semesterOrder;
+            if (currentSemesterNum < 1 || currentSemesterNum > 8) continue;
 
-            for (Map.Entry<Long, Long> currEntry : cohortEntry.getValue().entrySet()) {
-                Long currentCurriculumId = currEntry.getKey();
-                Long studentCount = currEntry.getValue();
-
+            if (student.getCurriculum() != null) {
+                Long currId = student.getCurriculum().getId();
                 List<com.example.demo.model.CurriculumSubject> mandatory = allCurriculumSubjects.stream()
-                    .filter(cs -> cs.getCurriculum().getId().equals(currentCurriculumId) 
-                               && cs.getRecommendedSemester().equals(curriculumSemester)
+                    .filter(cs -> cs.getCurriculum().getId().equals(currId) 
+                               && cs.getRecommendedSemester().equals(currentSemesterNum)
                                && cs.getIsRequired())
                     .collect(Collectors.toList());
 
                 for (com.example.demo.model.CurriculumSubject cs : mandatory) {
-                    com.example.demo.dto.CourseClassDemandAnalysisDTO dto = analysisMap.computeIfAbsent(cs.getSubject().getId(), id -> {
+                    Long subjId = cs.getSubject().getId();
+                    Long adminClassId = student.getAdministrativeClass() != null ? student.getAdministrativeClass().getId() : 0L;
+                    String key = subjId + "_" + adminClassId;
+
+                    com.example.demo.dto.CourseClassDemandAnalysisDTO dto = analysisMap.computeIfAbsent(key, k -> {
                         com.example.demo.dto.CourseClassDemandAnalysisDTO d = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
-                        d.setSubjectId(cs.getSubject().getId());
+                        d.setSubjectId(subjId);
                         d.setSubjectCode(cs.getSubject().getSubjectCode());
                         d.setSubjectName(cs.getSubject().getName());
+                        d.setCredits(cs.getSubject().getCredits());
+                        d.setTheoryPeriods(cs.getSubject().getTheoryPeriods());
+                        d.setPracticalPeriods(cs.getSubject().getPracticalPeriods());
+                        String majorName = (student.getCurriculum() != null && student.getCurriculum().getMajor() != null) ? student.getCurriculum().getMajor().getMajorName() : "";
+                        d.setMajorName(majorName);
                         d.setMandatoryStudents(0);
                         d.setRepeatingStudents(0);
-                        d.setRecommendedSemester(curriculumSemester);
+                        d.setRecommendedSemester(currentSemesterNum);
+                        if (student.getAdministrativeClass() != null) {
+                            d.setAdminClassId(student.getAdministrativeClass().getId());
+                            d.setAdminClassName(student.getAdministrativeClass().getClassName());
+                            d.setAdminClassCode(student.getAdministrativeClass().getClassCode());
+                            d.setCohort(student.getAdministrativeClass().getCohort());
+                        } else {
+                            d.setCohort(student.getEnrollmentYear());
+                        }
                         return d;
                     });
-                    dto.setMandatoryStudents(dto.getMandatoryStudents() + studentCount.intValue());
+                    dto.setMandatoryStudents(dto.getMandatoryStudents() + 1);
                 }
             }
         }
 
+        // Process failing students to find repeating demand
         List<com.example.demo.model.CourseRegistration> allRegs = registrationRepository.findAll();
-        Map<Long, Long> failedCounts = allRegs.stream()
-            .filter(r -> r.getIsPassed() != null && !r.getIsPassed())
-            .collect(Collectors.groupingBy(r -> r.getCourseClass().getSubject().getId(), Collectors.counting()));
+        for (com.example.demo.model.CourseRegistration reg : allRegs) {
+            if (reg.getIsPassed() != null && !reg.getIsPassed()) {
+                Long subjId = reg.getCourseClass().getSubject().getId();
+                Long adminClassId = reg.getStudent().getAdministrativeClass() != null ? reg.getStudent().getAdministrativeClass().getId() : 0L;
+                String key = subjId + "_" + adminClassId;
 
-        for (Map.Entry<Long, Long> entry : failedCounts.entrySet()) {
-            if (analysisMap.containsKey(entry.getKey())) {
-                analysisMap.get(entry.getKey()).setRepeatingStudents(entry.getValue().intValue());
-            } else {
-                Subject s = subjectRepository.findById(entry.getKey()).orElse(null);
-                if (s != null) {
-                    com.example.demo.dto.CourseClassDemandAnalysisDTO dto = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
-                    dto.setSubjectId(s.getId());
-                    dto.setSubjectCode(s.getSubjectCode());
-                    dto.setSubjectName(s.getName());
-                    dto.setMandatoryStudents(0);
-                    dto.setRepeatingStudents(entry.getValue().intValue());
-                    analysisMap.put(s.getId(), dto);
+                if (analysisMap.containsKey(key)) {
+                    analysisMap.get(key).setRepeatingStudents(analysisMap.get(key).getRepeatingStudents() + 1);
+                } else {
+                    // If not in standard flow, we still add it
+                    Subject s = reg.getCourseClass().getSubject();
+                    com.example.demo.dto.CourseClassDemandAnalysisDTO d = new com.example.demo.dto.CourseClassDemandAnalysisDTO();
+                    d.setSubjectId(subjId);
+                    d.setSubjectCode(s.getSubjectCode());
+                    d.setSubjectName(s.getName());
+                    d.setCredits(s.getCredits());
+                    d.setTheoryPeriods(s.getTheoryPeriods());
+                    d.setPracticalPeriods(s.getPracticalPeriods());
+                    d.setMandatoryStudents(0);
+                    d.setRepeatingStudents(1);
+                    if (reg.getStudent().getAdministrativeClass() != null) {
+                        d.setAdminClassId(reg.getStudent().getAdministrativeClass().getId());
+                        d.setAdminClassName(reg.getStudent().getAdministrativeClass().getClassName());
+                    }
+                    analysisMap.put(key, d);
                 }
             }
         }
 
+        // Calculate missing slots and suggested classes
         List<CourseClass> currentClasses = courseClassRepository.findBySemesterId(semesterId);
-        Map<Long, List<CourseClass>> classesBySubject = currentClasses.stream()
-            .collect(Collectors.groupingBy(cc -> cc.getSubject().getId()));
-
+        
         for (com.example.demo.dto.CourseClassDemandAnalysisDTO dto : analysisMap.values()) {
-            List<CourseClass> subjectClasses = classesBySubject.getOrDefault(dto.getSubjectId(), new ArrayList<>());
+            // Find existing classes for this subject and optionally this target admin class
+            List<CourseClass> subjectClasses = currentClasses.stream()
+                .filter(cc -> cc.getSubject().getId().equals(dto.getSubjectId()))
+                .filter(cc -> dto.getAdminClassId() == null || (cc.getTargetClass() != null && cc.getTargetClass().getId().equals(dto.getAdminClassId())))
+                .collect(Collectors.toList());
+
             dto.setOpenedClasses(subjectClasses.size());
             dto.setCurrentCapacity(subjectClasses.stream().mapToInt(CourseClass::getMaxStudents).sum());
             dto.setTotalNeeded(dto.getMandatoryStudents() + dto.getRepeatingStudents());

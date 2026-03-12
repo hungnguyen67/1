@@ -47,10 +47,7 @@ export class CurriculumsComponent implements OnInit {
         this.loading = true;
         this.curriculumService.getCurriculums().subscribe({
             next: (data) => {
-                this.curriculums = data.map(c => ({
-                    ...c,
-                    status: c.status === 'ACTIVE' ? 'Đang áp dụng' : 'Ngưng áp dụng'
-                }));
+                this.curriculums = data;
                 this.onFilter();
                 this.loading = false;
             },
@@ -71,9 +68,7 @@ export class CurriculumsComponent implements OnInit {
 
             const matchesMajor = !this.selectedMajorId || c.majorId === this.selectedMajorId;
 
-            const matchesStatus = this.selectedStatus === 'ALL' ||
-                (this.selectedStatus === 'ACTIVE' && c.status === 'Đang áp dụng') ||
-                (this.selectedStatus === 'INACTIVE' && c.status === 'Ngưng áp dụng');
+            const matchesStatus = this.selectedStatus === 'ALL' || c.status === this.selectedStatus;
 
             return matchesSearch && matchesMajor && matchesStatus;
         });

@@ -136,57 +136,65 @@
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[80px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             STT</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Mã SV</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">Họ
-                            tên</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
+                        <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
+                            Họ tên</th>
+                        <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
                             Ngành học</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
                             Lớp hành chính</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Khóa</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Tín chỉ</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             GPA</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Trạng thái</th>
-                        <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
                             Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
                     <tr *ngFor="let s of paginatedStudents; let i = index" class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ (currentPage - 1) * pageSize + i + 1
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ (currentPage - 1) * pageSize + i + 1
                             }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.studentCode }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">{{ s.fullName }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">{{ s.majorName }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.className }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.enrollmentYear }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ s.totalCreditsEarned }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ s.studentCode }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{ s.fullName }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{ s.majorName }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-left">{{ s.className }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ s.enrollmentYear }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ s.totalCreditsEarned }}</td>
                         <td class="px-4 py-3 text-sm text-slate-900 text-center"
                             [class.text-green-600]="s.currentGpa >= 3.2"
                             [class.text-red-600]="s.currentGpa < 2.0 && s.currentGpa !== null">
                             {{ s.currentGpa !== null ? s.currentGpa : '0.0' }}
                         </td>
-                        <td class="px-4 py-3 text-center whitespace-nowrap">
+                        <td class="px-4 py-4 text-center">
                             <span
                                 class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full"
                                 [ngClass]="getStatusBadgeClass(s.status)">
                                 {{ getStatusName(s.status) }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">
                             <button (click)="editStudent(s)" class="text-blue-600 hover:text-blue-900 mr-3">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button (click)="deleteStudent(s)" class="text-red-600 hover:text-red-900">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="students.length === 0">
+                        <td colspan="10" class="px-4 py-12 text-center text-slate-500">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-folder-open text-4xl text-slate-200 mb-4"></i>
+                                <p class="text-sm font-medium">Không tìm thấy sinh viên nào</p>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
