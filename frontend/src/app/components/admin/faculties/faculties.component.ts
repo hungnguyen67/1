@@ -10,15 +10,27 @@ export class FacultiesComponent implements OnInit {
     faculties: FacultyDTO[] = [];
     filteredFaculties: FacultyDTO[] = [];
     searchTerm: string = '';
+    selectedStatus: string = '';
 
     currentPage: number = 1;
     itemsPerPage: number = 10;
 
     showModal: boolean = false;
     isEditing: boolean = false;
+    showFilter: boolean = false;
+    activeDropdown: string = '';
     currentFaculty: Partial<FacultyDTO> = {};
 
     constructor(private facultyService: FacultyService) { }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.relative')) {
+            this.showFilter = false;
+            this.activeDropdown = '';
+        }
+    }
 
     ngOnInit(): void {
         this.loadFaculties();
@@ -33,13 +45,23 @@ export class FacultiesComponent implements OnInit {
 
     onSearch(): void {
         this.filteredFaculties = this.faculties.filter(f => {
+            const search = this.searchTerm.toLowerCase();
             const matchesSearch = !this.searchTerm ||
-                f.facultyCode.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                f.facultyName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                (f.description && f.description.toLowerCase().includes(this.searchTerm.toLowerCase()));
-            return matchesSearch;
+                f.facultyCode.toLowerCase().includes(search) ||
+                f.facultyName.toLowerCase().includes(search) ||
+                (f.description && f.description.toLowerCase().includes(search));
+
+            const matchesStatus = !this.selectedStatus || f.status === this.selectedStatus;
+
+            return matchesSearch && matchesStatus;
         });
         this.currentPage = 1;
+    }
+
+    resetFilters(): void {
+        this.searchTerm = '';
+        this.selectedStatus = '';
+        this.onSearch();
     }
 
     get paginatedFaculties(): FacultyDTO[] {

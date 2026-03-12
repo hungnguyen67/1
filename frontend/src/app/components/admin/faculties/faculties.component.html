@@ -1,10 +1,10 @@
-<div class="bg-white rounded-lg shadow-sm border border-slate-200">
-    <div class="p-6 border-b border-slate-200">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Quản lý Khoa</h1>
-                <p class="text-sm text-slate-500">Danh sách các khoa đào tạo trong trường</p>
-            </div>
+<div class="pb-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-slate-800">Quản lý Khoa</h1>
+            <p class="text-sm text-slate-500">Danh sách các khoa đào tạo trong trường</p>
+        </div>
+        <div class="flex items-center gap-2">
             <button (click)="openAddModal()"
                 class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm shadow-blue-200">
                 <i class="fas fa-plus text-xs"></i>
@@ -12,22 +12,107 @@
             </button>
         </div>
     </div>
+</div>
 
+<div class="bg-white rounded-lg shadow-sm border border-slate-200">
     <div class="p-6">
-        <div class="flex flex-col md:flex-row gap-4 mb-8">
-            <div class="flex-1 relative group">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500">
-                    <i class="fas fa-search text-sm"></i>
-                </span>
-                <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
-                    placeholder="Tìm kiếm mã khoa, tên khoa..."
-                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-md focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
+        <div class="sticky top-0 z-10 bg-white pb-4 border-b border-slate-100 mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Danh sách Khoa</h2>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+
+                    <div class="relative w-full md:w-64 group">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors">
+                            <i class="fas fa-search text-sm"></i>
+                        </span>
+                        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+                            placeholder="Tìm kiếm mã khoa, tên khoa..."
+                            class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none transition-all text-sm">
+                    </div>
+
+                    <div class="relative">
+                        <button (click)="showFilter = !showFilter"
+                            class="flex items-center gap-3 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 transition-all">
+                            <i class="fas fa-filter text-slate-400"></i>
+                            Lọc
+                            <i class="fas fa-chevron-right text-[7px] transition-transform duration-200"
+                                [class.rotate-90]="showFilter"></i>
+                        </button>
+
+                        <div *ngIf="showFilter" (click)="$event.stopPropagation()"
+                            class="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-xl border border-slate-200 z-50 animate-in fade-in zoom-in-95 duration-200">
+                            <div class="p-4 border-b border-slate-100 rounded-md">
+                                <span class="font-bold text-slate-700">Bộ lọc</span>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="space-y-2">
+                                    <label
+                                        class="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                                        Trạng thái
+                                    </label>
+
+                                    <div class="relative status-dropdown-container">
+                                        <button
+                                            (click)="activeDropdown = activeDropdown === 'status' ? '' : 'status'; $event.stopPropagation()"
+                                            class="w-full flex items-center justify-between pl-4 pr-10 py-3 border border-slate-200 rounded-md outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50 group">
+
+                                            <div class="flex items-center gap-2.5">
+                                                <span>
+                                                    {{ selectedStatus === 'ACTIVE' ? 'Đang áp dụng' : (selectedStatus
+                                                    === 'INACTIVE' ? 'Ngừng áp dụng' : 'Tất cả trạng thái') }}
+                                                </span>
+                                            </div>
+
+                                            <i class="fas fa-chevron-right absolute text-[10px] right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
+                                                [class.rotate-90]="activeDropdown === 'status'"></i>
+                                        </button>
+
+                                        <div *ngIf="activeDropdown === 'status'"
+                                            class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-2xl max-h-60 overflow-hidden animate-in fade-in zoom-in-95 duration-200 transform origin-top">
+
+                                            <div (click)="selectedStatus=''; activeDropdown=''; $event.stopPropagation()"
+                                                class="px-4 py-3 text-sm flex items-center gap-3 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors"
+                                                [class.text-blue-600]="selectedStatus === ''"
+                                                [class.bg-blue-50]="selectedStatus === ''">
+                                                Tất cả trạng thái
+                                            </div>
+
+                                            <div (click)="selectedStatus='ACTIVE'; activeDropdown=''; $event.stopPropagation()"
+                                                class="px-4 py-3 text-sm flex items-center gap-3 hover:bg-slate-50 hover:text-green-600 cursor-pointer transition-colors"
+                                                [class.text-green-600]="selectedStatus === 'ACTIVE'"
+                                                [class.bg-green-50]="selectedStatus === 'ACTIVE'">
+                                                Đang áp dụng
+                                            </div>
+
+                                            <div (click)="selectedStatus='INACTIVE'; activeDropdown=''; $event.stopPropagation()"
+                                                class="px-4 py-3 text-sm flex items-center gap-3 hover:bg-slate-50 hover:text-red-600 cursor-pointer transition-colors"
+                                                [class.text-red-600]="selectedStatus === 'INACTIVE'"
+                                                [class.bg-red-50]="selectedStatus === 'INACTIVE'">
+                                                Ngừng áp dụng
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 border-t border-slate-100 flex justify-end gap-2 rounded-b-xl">
+                                <button (click)="resetFilters(); showFilter = false"
+                                    class="px-4 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-lg transition-all">
+                                    Đặt lại
+                                </button>
+                                <button (click)="onSearch(); showFilter = false"
+                                    class="px-4 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-200 transition-all">
+                                    Áp dụng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <button (click)="searchTerm=''; onSearch()"
-                class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                title="Đặt lại bộ lọc">
-                <i class="fas fa-sync-alt text-sm"></i>
-            </button>
         </div>
 
         <div class="overflow-x-auto">
@@ -58,7 +143,8 @@
                         <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ faculty.facultyCode }}</td>
                         <td class="px-4 py-4 text-sm text-slate-900">{{ faculty.facultyName }}</td>
                         <td class="px-4 py-4 text-sm text-slate-500 max-w-[300px] truncate"
-                            [title]="faculty.description">{{ faculty.description }}</td>
+                            [title]="faculty.description">{{
+                            faculty.description }}</td>
                         <td class="px-4 py-4 text-center">
                             <span
                                 [class]="faculty.status === 'ACTIVE' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-red-50 text-red-700 border-red-100'"
@@ -70,7 +156,8 @@
                             {{ faculty.createdAt | date:'dd/MM/yyyy' }}
                         </td>
                         <td class="px-4 py-4 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
-                            <button class="text-blue-600 hover:text-blue-900 mr-3" title="Chỉnh sửa">
+                            <button (click)="editFaculty(faculty)" class="text-blue-600 hover:text-blue-900 mr-3"
+                                title="Chỉnh sửa">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button (click)="deleteFaculty(faculty)" class="text-red-600 hover:text-red-900"
@@ -93,7 +180,8 @@
 
         <div class="flex justify-between items-center mt-4">
             <div class="text-sm text-slate-600">
-                Hiển thị {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ minEnd }} của {{ filteredFaculties.length }}
+                Hiển thị {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ minEnd }} của {{ filteredFaculties.length
+                }}
                 kết quả
             </div>
             <div class="flex space-x-2">
