@@ -106,49 +106,35 @@
             <table class="w-full table-auto border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th
-                            class="w-[70px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            STT</th>
-                        <th
-                            class="w-[200px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Tên học kỳ</th>
-                        <th
-                            class="w-[120px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Năm học</th>
-                        <th
-                            class="w-[120px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Học kỳ</th>
-                        <th
-                            class="w-[200px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-left">
-                            Thời gian</th>
-                        <th
-                            class="w-[140px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Trạng thái</th>
-                        <th
-                            class="w-[120px] px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                            Hành động</th>
+                        <th class="w-[80px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">STT</th>
+                        <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Tên học kỳ</th>
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">Năm học</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">Học kỳ</th>
+                        <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Thời gian</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">Trạng thái</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
                     <tr *ngFor="let semester of filteredSemesters; let i = index"
                         class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ i + 1 }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">{{ semester.name }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ i + 1 }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{ semester.name }}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">
                             {{ semester.academicYear }}
                         </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">{{ semester.semesterOrder
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{ semester.semesterOrder
                             }}</td>
-                        <td class="px-4 py-3 text-sm text-slate-900">
+                        <td class="px-4 py-4 text-sm text-slate-900">
                             {{ semester.startDate | date:'dd/MM/yyyy' }} - {{ semester.endDate | date:'dd/MM/yyyy' }}
                         </td>
-                        <td class="px-4 py-3 text-sm text-center">
+                        <td class="px-4 py-4 text-sm text-center">
                             <span
                                 [class]="'inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full ' + getStatusClass(semester.semesterStatus)">
                                 {{ getStatusLabel(semester.semesterStatus) }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-sm text-slate-900 text-center">
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">
                             <button (click)="openEditModal(semester)"
                                 class="text-blue-600 hover:text-blue-900 mr-3 transition-colors">
                                 <i class="fas fa-edit"></i>
@@ -159,8 +145,6 @@
                             </button>
                         </td>
                     </tr>
-
-                    <!-- Empty State -->
                     <tr *ngIf="!loading && filteredSemesters.length === 0">
                         <td colspan="8" class="px-4 py-12 text-center text-slate-500">
                             <div class="flex flex-col items-center">
