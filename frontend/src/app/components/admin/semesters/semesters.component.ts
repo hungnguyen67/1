@@ -6,26 +6,21 @@ import { Semester, SemesterService } from '../../../services/semester.service';
     templateUrl: './semesters.component.html'
 })
 export class SemestersComponent implements OnInit {
-    // Data Lists
     semesters: Semester[] = [];
     filteredSemesters: Semester[] = [];
     paginatedSemesters: Semester[] = [];
     loading = true;
 
-    // Pagination
     currentPage: number = 1;
     itemsPerPage: number = 10;
 
-    // Search and Filter
     searchTerm: string = '';
     selectedYear: string = '';
     selectedStatus: string = '';
     academicYears: string[] = [];
 
-    // UI State: Quản lý dropdown nào đang mở ('year' hoặc 'status' hoặc '')
     activeDropdown: string = '';
 
-    // Modal State
     isEditModalOpen = false;
     isDeleteModalOpen = false;
     modalMode: 'ADD' | 'EDIT' = 'ADD';
@@ -39,17 +34,14 @@ export class SemestersComponent implements OnInit {
         this.loadSemesters();
     }
 
-    // Tự động đóng dropdown khi click ra ngoài vùng dropdown
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
-        // Nếu click không nằm trong div chứa dropdown thì đóng lại
         if (!target.closest('.relative')) {
             this.activeDropdown = '';
         }
     }
 
-    // --- GETTERS CHO TEMPLATE ---
     get totalPages(): number {
         return Math.ceil(this.filteredSemesters.length / this.itemsPerPage) || 1;
     }
@@ -58,12 +50,13 @@ export class SemestersComponent implements OnInit {
         return Math.min(this.currentPage * this.itemsPerPage, this.filteredSemesters.length);
     }
 
-    // --- DATA LOADING ---
     loadSemesters(): void {
         this.loading = true;
         this.semesterService.getAllSemesters().subscribe({
             next: (data) => {
-                this.semesters = data;
+                this.semesters = data.sort((a, b) => {
+                    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+                });
                 this.extractAcademicYears();
                 this.onFilterChange();
                 this.loading = false;
@@ -80,7 +73,6 @@ export class SemestersComponent implements OnInit {
         this.academicYears = Array.from(years).sort().reverse();
     }
 
-    // --- FILTER & PAGINATION LOGIC ---
     onFilterChange(): void {
         this.filteredSemesters = this.semesters.filter(s => {
             const matchesSearch = s.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -115,7 +107,6 @@ export class SemestersComponent implements OnInit {
         }
     }
 
-    // --- MODAL OPERATIONS ---
     getEmptySemester(): any {
         const currentYear = new Date().getFullYear();
         return {
@@ -190,7 +181,6 @@ export class SemestersComponent implements OnInit {
         });
     }
 
-    // --- HELPERS ---
     getStatusClass(status: string): string {
         switch (status) {
             case 'ONGOING': return 'bg-green-50 text-green-700 border-green-200';
