@@ -35,7 +35,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+            Authentication authentication) throws IOException, ServletException {
 
         System.out.println("OAuth2 Success Handler called");
 
@@ -76,7 +76,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     System.out.println("Updated existing user with GoogleId: " + user.getEmail());
                 } else {
                     String message = "Tài khoản chưa được kích hoạt";
-                    String redirectUrl = "http://localhost:4200/login?error=" + java.net.URLEncoder.encode(message, "UTF-8");
+                    String redirectUrl = "http://localhost:4200/login?error="
+                            + java.net.URLEncoder.encode(message, "UTF-8");
                     getRedirectStrategy().sendRedirect(request, response, redirectUrl);
                     return;
                 }
@@ -94,17 +95,22 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
             String roleName = (user.getRole() != null) ? user.getRole().getName() : "NONE";
             String message = "Đăng nhập thành công!";
-            String userJson = String.format("{\"id\":%d,\"email\":\"%s\",\"name\":\"%s\",\"avatar\":\"%s\",\"role\":\"%s\"}", 
-                user.getId(), user.getEmail(), user.getLastName() + " " + user.getFirstName(), user.getAvatar() != null ? user.getAvatar() : "", roleName);
-            String redirectUrl = String.format("http://localhost:4200/oauth2/redirect?token=%s&role=%s&message=%s&user=%s", 
-                jwt, roleName, java.net.URLEncoder.encode(message, "UTF-8"), java.net.URLEncoder.encode(userJson, "UTF-8"));
+            String userJson = String.format(
+                    "{\"id\":%d,\"email\":\"%s\",\"name\":\"%s\",\"avatar\":\"%s\",\"role\":\"%s\"}",
+                    user.getId(), user.getEmail(), user.getLastName() + " " + user.getFirstName(),
+                    user.getAvatar() != null ? user.getAvatar() : "", roleName);
+            String redirectUrl = String.format(
+                    "http://localhost:4200/oauth2/redirect?token=%s&role=%s&message=%s&user=%s",
+                    jwt, roleName, java.net.URLEncoder.encode(message, "UTF-8"),
+                    java.net.URLEncoder.encode(userJson, "UTF-8"));
 
             System.out.println("Redirecting to: " + redirectUrl);
 
             getRedirectStrategy().sendRedirect(request, response, redirectUrl);
         } else {
             System.out.println("Authentication principal is not OAuth2User");
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:4200/oauth2/redirect?error=auth_failed");
+            getRedirectStrategy().sendRedirect(request, response,
+                    "http://localhost:4200/oauth2/redirect?error=auth_failed");
         }
     }
 }
