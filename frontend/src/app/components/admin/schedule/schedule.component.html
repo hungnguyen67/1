@@ -393,6 +393,7 @@
                             <th class="border-r border-slate-200 py-3 px-2 w-10 text-center">STT</th>
                             <th class="border-r border-slate-200 py-3 px-3 w-44 text-left">Mã lớp HP</th>
                             <th class="border-r border-slate-200 py-3 px-3 min-w-[200px]">Tên học phần</th>
+                            <th class="border-r border-slate-200 py-3 px-3 w-32 text-center">Trạng thái</th>
                             <th class="border-r border-slate-200 py-3 px-2 w-16 text-center">Số TC</th>
                             <th class="border-r border-slate-200 py-3 px-2 w-20 text-center">Tổng tiết</th>
                             <th class="border-r border-slate-200 py-3 px-2 w-16 text-center">Đã xếp</th>
@@ -400,7 +401,6 @@
                             <th class="border-r border-slate-200 py-3 px-3 w-48 text-left">Ngành</th>
                             <th class="border-r border-slate-200 py-3 px-3 w-32 text-left">Lớp dự kiến</th>
                             <th class="py-3 px-3 w-48 text-left">Giảng viên dự kiến</th>
-                            <th class="border-r border-slate-200 py-3 px-3 w-32 text-center">Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -417,6 +417,9 @@
                             <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700"
                                 [title]="c.subjectName">
                                 {{ c.subjectName }}
+                            </td>
+                            <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700 text-center">
+                                {{ getStatusLabel(c.classStatus) }}
                             </td>
                             <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700 text-center">
                                 {{ c.credits }}
@@ -442,9 +445,6 @@
                                 [title]="c.lecturerName">
                                 {{ c.lecturerName }}
                             </td>
-                            <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700 text-center">
-                                {{ getStatusLabel(c.classStatus) }}
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -456,6 +456,7 @@
                             <th class="border-r border-slate-200 py-3 px-2 w-10 text-center">STT</th>
                             <th class="border-r border-slate-200 py-3 px-3 w-40 text-left">Mã lớp HP</th>
                             <th class="border-r border-slate-200 py-3 px-3 min-w-[180px]">Tên học phần</th>
+                            <th class="border-r border-slate-200 py-3 px-3 w-32 text-center">Trạng thái</th>
                             <th class="border-r border-slate-200 py-3 px-3 w-28 text-left">Ngày học</th>
                             <th class="border-r border-slate-200 py-3 px-2 w-14 text-center">Thứ</th>
                             <th class="border-r border-slate-200 py-3 px-2 w-14 text-center">Tiết</th>
@@ -464,7 +465,6 @@
                             <th class="border-r border-slate-200 py-3 px-3 w-40 text-left">Ngành</th>
                             <th class="py-3 px-3 w-32 text-left">Lớp dự kiến</th>
                             <th class="border-r border-slate-200 py-3 px-3 w-48 text-left">Giảng viên dự kiến</th>
-                            <th class="border-r border-slate-200 py-3 px-3 w-32 text-center">Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -480,6 +480,9 @@
                             <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700"
                                 [title]="item.title">
                                 {{ item.title }}
+                            </td>
+                            <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700 text-center">
+                                {{ getStatusLabel(item.status) }}
                             </td>
                             <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700">
                                 {{ item.scheduleDate }}
@@ -506,9 +509,6 @@
                             <td class="border-r border-slate-100 py-2 px-3 font-semibold text-slate-700"
                                 [title]="item.lecturerName">
                                 {{ item.lecturerName }}
-                            </td>
-                            <td class="border-r border-slate-100 py-2 px-2 font-semibold text-slate-700 text-center">
-                                {{ getStatusLabel(item.status) }}
                             </td>
                         </tr>
                     </tbody>
