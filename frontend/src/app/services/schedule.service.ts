@@ -23,11 +23,40 @@ export class ScheduleService {
         return this.http.post<void>(`${this.apiUrl}/patterns/${classId}`, pattern);
     }
 
+    addPatternsBulk(classId: number, patterns: any[]): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/patterns/${classId}/bulk`, patterns);
+    }
+
     getScheduleByCourseClass(classId: number): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/class/${classId}`);
     }
 
     getConflicts(classId: number): Observable<ConflictInfo[]> {
         return this.http.get<ConflictInfo[]>(`${this.apiUrl}/conflicts/${classId}`);
+    }
+
+    deletePattern(patternId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/patterns/${patternId}`);
+    }
+
+    deletePatternSingle(patternId: number, week: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/patterns/${patternId}/single`, { params: { week } });
+    }
+
+    deletePatternForward(patternId: number, week: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/patterns/${patternId}/forward`, { params: { week } });
+    }
+
+    updatePattern(patternId: number, startPeriod: number, endPeriod: number, roomName?: string, lecturerName?: string): Observable<void> {
+        let params: any = { 
+            startPeriod: startPeriod, 
+            endPeriod: endPeriod 
+        };
+        
+        // Use empty string to clear value, otherwise pass the value
+        params.roomName = roomName !== undefined && roomName !== null ? roomName : '';
+        params.lecturerName = lecturerName !== undefined && lecturerName !== null ? lecturerName : '';
+
+        return this.http.patch<void>(`${this.apiUrl}/patterns/${patternId}`, {}, { params });
     }
 }

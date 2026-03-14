@@ -28,6 +28,11 @@ export interface CourseClass {
     attendanceWeight?: number;
     midtermWeight?: number;
     finalWeight?: number;
+    theoryPeriods?: number;
+    practicalPeriods?: number;
+    majorName?: string;
+    targetClassName?: string;
+    expectedRoom?: string;
     schedules: ClassSchedule[];
 }
 

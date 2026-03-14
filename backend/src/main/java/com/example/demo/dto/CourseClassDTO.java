@@ -22,6 +22,9 @@ public class CourseClassDTO {
     private Double attendanceWeight;
     private Double midtermWeight;
     private Double finalWeight;
+    private Integer theoryPeriods;
+    private Integer practicalPeriods;
+    private String expectedRoom;
     private List<ScheduleDTO> schedules;
 
     public static class ScheduleDTO {
@@ -89,9 +92,22 @@ public class CourseClassDTO {
     public List<ScheduleDTO> getSchedules() { return schedules; }
     public void setSchedules(List<ScheduleDTO> schedules) { this.schedules = schedules; }
 
+    public Integer getTheoryPeriods() { return theoryPeriods; }
+    public void setTheoryPeriods(Integer theoryPeriods) { this.theoryPeriods = theoryPeriods; }
+
+    public Integer getPracticalPeriods() { return practicalPeriods; }
+    public void setPracticalPeriods(Integer practicalPeriods) { this.practicalPeriods = practicalPeriods; }
+
     public Long getTargetClassId() { return targetClassId; }
     public void setTargetClassId(Long targetClassId) { this.targetClassId = targetClassId; }
 
+    public String getExpectedRoom() { return expectedRoom; }
+    public void setExpectedRoom(String expectedRoom) { this.expectedRoom = expectedRoom; }
+
     public String getTargetClassName() { return targetClassName; }
     public void setTargetClassName(String targetClassName) { this.targetClassName = targetClassName; }
+
+    private String majorName;
+    public String getMajorName() { return majorName; }
+    public void setMajorName(String majorName) { this.majorName = majorName; }
 }

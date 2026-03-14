@@ -18,6 +18,9 @@ public class ClassScheduleInstance {
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"schedules", "hibernateLazyInitializer", "handler"})
     private CourseClass courseClass;
 
+    @Column(name = "pattern_id")
+    private Long patternId;
+
     @Column(name = "schedule_date", nullable = false)
     private LocalDate scheduleDate;
 
@@ -58,6 +61,8 @@ public class ClassScheduleInstance {
     public void setId(Long id) { this.id = id; }
     public CourseClass getCourseClass() { return courseClass; }
     public void setCourseClass(CourseClass courseClass) { this.courseClass = courseClass; }
+    public Long getPatternId() { return patternId; }
+    public void setPatternId(Long patternId) { this.patternId = patternId; }
     public LocalDate getScheduleDate() { return scheduleDate; }
     public void setScheduleDate(LocalDate scheduleDate) { this.scheduleDate = scheduleDate; }
     public LocalTime getStartTime() { return startTime; }

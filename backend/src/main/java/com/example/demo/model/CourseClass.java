@@ -57,6 +57,9 @@ public class CourseClass {
     @Column(name = "class_status")
     private ClassStatus classStatus = ClassStatus.PLANNING;
 
+    @Column(name = "expected_room")
+    private String expectedRoom;
+
     @Column(name = "attendance_weight")
     private Double attendanceWeight = 0.10;
 
@@ -123,6 +126,9 @@ public class CourseClass {
 
     public AdministrativeClass getTargetClass() { return targetClass; }
     public void setTargetClass(AdministrativeClass targetClass) { this.targetClass = targetClass; }
+
+    public String getExpectedRoom() { return expectedRoom; }
+    public void setExpectedRoom(String expectedRoom) { this.expectedRoom = expectedRoom; }
 
     @PreUpdate
     public void preUpdate() {
