@@ -1,333 +1,207 @@
-<div class="bg-white rounded-lg shadow-sm border border-slate-200 animate-in fade-in duration-500">
-    <!-- Header -->
-    <div class="p-6 border-b border-slate-200">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Quản lý Lớp học phần</h1>
-                <p class="text-sm text-slate-500">Lập kế hoạch và điều phối lớp học phần dựa trên nhu cầu thực tế</p>
-            </div>
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <button (click)="openAddModal()"
-                    class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm shadow-blue-200">
-                    <i class="fas fa-plus text-xs"></i>
-                    Tạo lớp thủ công
-                </button>
-            </div>
+<div class="pb-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-slate-800">Quản lý Lớp học phần</h1>
+            <p class="text-sm text-slate-500">Lập kế hoạch và điều phối lớp học phần dựa trên nhu cầu thực tế</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button (click)="openSelectionModal()"
+                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm shadow-blue-200">
+                <i class="fas fa-plus"></i>
+                Tạo Lớp HP
+            </button>
         </div>
     </div>
+</div>
 
+<div class="bg-white rounded-lg shadow-sm border border-slate-200">
     <div class="p-6">
-        <div class="flex flex-col md:flex-row gap-4 mb-8">
+        <div class="flex flex-col md:flex-row gap-4 mb-4">
             <div class="flex-1 relative group">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors">
                     <i class="fas fa-search text-sm"></i>
                 </span>
                 <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()"
                     placeholder="Tìm kiếm mã học phần hoặc tên học phần..."
-                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-md focus:bg-white focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm placeholder:text-slate-400">
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 transition-all text-sm outline-none">
             </div>
 
-            <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto dropdown-container">
-
-                <div class="relative min-w-[200px] flex-1 md:flex-none">
-                    <button
-                        (click)="activeDropdown = activeDropdown === 'semester' ? '' : 'semester'; $event.stopPropagation()"
-                        class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
-                        <div class="flex items-center gap-2">
-                            <span class="truncate">{{ getSelectedSemesterName() }}</span>
-                        </div>
-                        <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
-                            [class.rotate-90]="activeDropdown === 'semester'"></i>
-                    </button>
-                    <div *ngIf="activeDropdown === 'semester'"
-                        class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-                        <div *ngFor="let s of semesters"
-                            (click)="selectedSemesterId=s.id; loadSubjects(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                            [class.text-blue-600]="selectedSemesterId === s.id">
-                            {{ s.name }} {{ s.academicYear }}
-                        </div>
-                    </div>
+            <div class="flex flex-wrap md:flex-nowrap gap-3 items-center w-full md:w-auto">
+                <div class="relative min-w-[140px]">
+                    <select [(ngModel)]="selectedSemesterId" (change)="loadSubjects()"
+                        class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none hover:border-blue-300 transition-all appearance-none cursor-pointer">
+                        <option *ngFor="let s of semesters" [value]="s.id">{{ s.name }} ({{ s.academicYear }})
+                        </option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
                 </div>
 
-                <div class="relative min-w-[200px] flex-1 md:flex-none">
-                    <button
-                        (click)="activeDropdown = activeDropdown === 'major' ? '' : 'major'; $event.stopPropagation()"
-                        class="appearance-none w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-md hover:border-slate-300 focus:border-slate-300 focus:ring-0 outline-none transition-all text-sm cursor-pointer font-medium text-slate-700 shadow-sm shadow-slate-100/50">
-                        <div class="flex items-center gap-2">
-                            <span class="truncate">{{ getSelectedMajorName() }}</span>
-                        </div>
-                        <i class="fas fa-chevron-right absolute text-[9px] right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform duration-300 ease-in-out"
-                            [class.rotate-90]="activeDropdown === 'major'"></i>
-                    </button>
-                    <div *ngIf="activeDropdown === 'major'"
-                        class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-md shadow-xl py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-                        <div *ngFor="let m of majors" (click)="selectedMajorId=m.id; onMajorChange(); activeDropdown=''"
-                            class="px-4 py-2.5 text-sm hover:text-blue-600 cursor-pointer transition-colors"
-                            [class.text-blue-600]="selectedMajorId === m.id">
-                            {{ m.majorName }}
-                        </div>
-                    </div>
+                <div class="relative min-w-[180px]">
+                    <select [(ngModel)]="selectedMajorId" (change)="onMajorChange()"
+                        class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none hover:border-blue-300 transition-all appearance-none cursor-pointer">
+                        <option [value]="null">Tất cả ngành</option>
+                        <option *ngFor="let m of majors" [value]="m.id">{{ m.majorName }}</option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+                </div>
+
+                <div class="relative min-w-[120px]">
+                    <select [(ngModel)]="selectedYear" (change)="onFilterChange()"
+                        class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none hover:border-blue-300 transition-all appearance-none cursor-pointer">
+                        <option [value]="null">Tất cả khóa</option>
+                        <option *ngFor="let y of allCohorts" [value]="y">Khóa {{ y }}</option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+                </div>
+
+                <div class="relative min-w-[160px]">
+                    <select [(ngModel)]="selectedAdminClassId" (change)="onFilterChange()"
+                        class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none hover:border-blue-300 transition-all appearance-none cursor-pointer">
+                        <option [value]="null">Tất cả lớp HC</option>
+                        <option *ngFor="let c of filteredAdminClasses" [value]="c.id">{{ c.className }}</option>
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
                 </div>
 
                 <button (click)="resetFilters()"
-                    class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                    class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                     title="Đặt lại bộ lọc">
                     <i class="fas fa-sync-alt text-sm"></i>
                 </button>
             </div>
         </div>
 
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="flex p-1 bg-slate-100 rounded-xl w-fit shadow-inner">
-                <button (click)="activeTab = 'statistics'"
-                    [class]="activeTab === 'statistics' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:text-slate-700'"
-                    class="px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Thống kê dự kiến</span>
-                </button>
-                <button (click)="activeTab = 'list'"
-                    [class]="activeTab === 'list' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:text-slate-700'"
-                    class="px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
-                    <i class="fas fa-list-ul"></i>
-                    <span>Danh sách Lớp HP</span>
-                </button>
-            </div>
+        <div class="overflow-x-auto">
+            <table class="w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <th class="w-[80px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
+                            STT</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Mã LHP</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            Mã HP</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Tên học phần</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            Số TC</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            LT/TH</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Giảng viên</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Học kỳ</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Ngành</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Lớp dự kiến</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            Sĩ số</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            Trạng thái</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-left">
+                            Thời gian ĐK</th>
+                        <th class="px-4 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                            Hành động</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr *ngFor="let cc of filteredCourseClasses; let i = index"
+                        class="hover:bg-blue-50/30 transition-colors group">
+                        <td class="px-4 py-4 text-xs text-slate-500 text-center font-medium">
+                            {{ (classCurrentPage - 1) * classItemsPerPage + i + 1 }}
+                        </td>
+                        <td class="px-4 py-4">
+                            <span
+                                class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
+                                {{cc.classCode}}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-xs text-slate-600 text-center font-bold">
+                            {{cc.subjectCode}}
+                        </td>
+                        <td class="px-4 py-4 text-xs text-slate-800 font-medium">{{cc.subjectName}}</td>
+                        <td class="px-4 py-4 text-xs text-slate-600 text-center">{{cc.credits}}</td>
+                        <td class="px-4 py-4 text-xs text-slate-600 text-center">
+                            {{ cc.schedules.length > 0 ? (cc.schedules[0].sessionType === 'THEORY' ? 'LT' :
+                            'TH') : '--' }}
+                        </td>
+                        <td class="px-4 py-4 text-xs text-slate-700 font-medium">
+                            {{ cc.lecturerName || 'Chưa phân công' }}
+                        </td>
+                        <td class="px-4 py-4 text-xs text-slate-600">{{ getSelectedSemesterName() }}</td>
+                        <td class="px-4 py-4 text-xs text-slate-600">{{ cc.subjectName }}</td>
+                        <td class="px-4 py-4 text-xs text-slate-600">--</td>
+                        <td class="px-4 py-4 text-center">
+                            <div class="flex flex-col gap-1 items-center">
+                                <span
+                                    class="text-xs font-bold text-slate-700">{{cc.currentEnrolled}}/{{cc.maxStudents}}</span>
+                                <div class="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500"
+                                        [style.width.%]="(cc.currentEnrolled/cc.maxStudents)*100"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <span
+                                [class]="'px-2 py-0.5 text-[9px] font-black rounded uppercase border ' + getStatusClass(cc.classStatus)">
+                                {{getStatusLabel(cc.classStatus)}}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="flex flex-col text-[10px] font-medium text-slate-500">
+                                <span>Bắt đầu: {{ cc.registrationStart | date:'dd/MM HH:mm' }}</span>
+                                <span>Kết thúc: {{ cc.registrationEnd | date:'dd/MM HH:mm' }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center" (click)="$event.stopPropagation()">
+                            <button (click)="openEditModal(cc)" class="text-blue-600 hover:text-blue-900 mr-3"
+                                title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button (click)="confirmDelete(cc.id)" class="text-red-600 hover:text-red-900" title="Xóa">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
 
+                    <tr *ngIf="filteredCourseClasses.length === 0">
+                        <td colspan="14" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-2 opacity-40">
+                                <i class="fas fa-folder-open text-4xl"></i>
+                                <span class="text-sm font-bold">Không tìm thấy lớp học phần nào</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <section *ngIf="activeTab === 'statistics'"
-            class="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div
-                class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl">
-                        <i class="fas fa-magnifying-glass-chart"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-black text-slate-800 uppercase tracking-tight">Phân tích nhu cầu</h2>
-                        <p class="text-xs text-slate-500 font-medium">Khởi tạo lớp học dựa trên dữ liệu đăng ký</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div *ngIf="selectedDemandKeys.size > 0"
-                        class="text-xs font-bold text-blue-700 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 animate-pulse">
-                        Đã chọn: {{selectedDemandKeys.size}} mục
-                    </div>
-                    <button (click)="generateBatchClasses()" [disabled]="selectedDemandKeys.size === 0"
-                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-blue-200 flex items-center gap-2 uppercase tracking-wider">
-                        <i class="fas fa-magic"></i> Khởi tạo hàng loạt
-                    </button>
-                </div>
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-slate-600">
+                Hiển thị {{ (classCurrentPage - 1) * classItemsPerPage + 1 }} - {{ classMinEnd }} của {{
+                filteredCourseClasses.length
+                }}
+                kết quả
             </div>
-
-            <div class="bg-white">
-                <div class="overflow-x-auto">
-                    <table class="w-full table-auto border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th
-                                    class="px-4 py-2 text-xs font-semibold text-slate-600 uppercase tracking-wider w-12 text-center">
-                                    <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()"
-                                        class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                </th>
-                                <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    Mã HP</th>
-                                <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                                    Tên học phần</th>
-                                <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    Số TC</th>
-                                <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    LT/TH</th>
-                                <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                                    Khoa/Ngành đào tạo</th>
-                                <th class="w-[200px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                                    Lớp học</th>
-                                <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    Sĩ số dự kiến</th>
-                                <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    Gợi ý</th>
-                                <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                                    Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <tr *ngFor="let item of filteredDemandAnalysis"
-                                class="hover:bg-blue-50/30 transition-colors group">
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    <input type="checkbox" [checked]="isDemandSelected(item)"
-                                        (change)="toggleSelect(item)"
-                                        class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
-                                </td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">{{item.subjectCode}}</td>
-                                <td class="px-4 py-4 text-sm text-slate-900">{{item.subjectName}}</td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    {{item.credits}}
-                                </td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    <span>{{ item.theoryPeriods }}</span>
-                                    <span class="text-slate-400 mx-1">/</span>
-                                    <span>{{ item.practicalPeriods }}</span>
-                                </td>
-                                <td class="px-4 py-4 text-sm text-slate-900">{{item.majorName}}</td>
-                                <td class="px-4 py-4 text-sm text-slate-900">{{item.adminClassCode}}</td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    {{item.totalNeeded}}
-                                </td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    {{item.suggestedMoreClasses}}
-                                </td>
-                                <td class="px-4 py-4 text-sm text-slate-900 text-center">
-                                    <button (click)="openAddModal(item.subjectId)"
-                                        class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                                        <i class="fas fa-plus-circle text-lg"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-slate-600">
-                        Hiển thị {{ (demandCurrentPage - 1) * demandItemsPerPage + 1 }} - {{ demandMinEnd }} của {{
-                        demandTotalItems }}
-                        kết quả
-                    </div>
-                    <div class="flex space-x-2">
-                        <button (click)="demandPrevPage()" [disabled]="demandCurrentPage === 1"
-                            class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                            Trước
-                        </button>
-                        <span class="px-3 py-1 text-sm text-slate-600">
-                            Trang {{ demandCurrentPage }} / {{ demandTotalPages }}
-                        </span>
-                        <button (click)="demandNextPage()" [disabled]="demandCurrentPage === demandTotalPages"
-                            class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                            Sau
-                        </button>
-                    </div>
-                </div>
+            <div class="flex space-x-2">
+                <button (click)="classPrevPage()" [disabled]="classCurrentPage === 1"
+                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
+                    Trước
+                </button>
+                <span class="px-3 py-1 text-sm text-slate-600">
+                    Trang {{ classCurrentPage }} / {{ classTotalPages }}
+                </span>
+                <button (click)="classNextPage()" [disabled]="classCurrentPage === classTotalPages"
+                    class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
+                    Sau
+                </button>
             </div>
-        </section>
-
-        <section *ngIf="activeTab === 'list'" class="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="flex items-center justify-between px-1">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg">
-                        <i class="fas fa-list-check text-sm"></i>
-                    </div>
-                    <h2 class="text-sm font-black text-slate-700 uppercase tracking-wider">Danh sách lớp học phần đã mở
-                    </h2>
-                </div>
-            </div>
-
-            <div class="bg-white">
-                <div class="overflow-x-auto">
-                    <table class="w-full table-auto border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Mã
-                                    học phần</th>
-                                <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Tên
-                                    học phần</th>
-                                <th
-                                    class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                                    Tín chỉ</th>
-                                <th
-                                    class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-                                    Số lớp hiện có</th>
-                                <th
-                                    class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider text-right">
-                                    Thao tác quản lý</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr *ngFor="let cc of filteredSubjects" class="hover:bg-blue-50/30 transition-colors group">
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
-                                        {{cc.subjectCode}}
-                                    </span>
-                                </td>
-
-                                <td class="px-4 py-4">
-                                    <div>
-                                        <div
-                                            class="text-sm font-medium text-slate-800 group-hover:text-blue-700 transition-colors">
-                                            {{cc.subjectName}}
-                                        </div>
-                                        <div class="text-xs text-slate-400 truncate max-w-[250px]"
-                                            [title]="cc.description || ''">
-                                            {{ cc.description || '&nbsp;' }}
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-                                    <span class="text-xs font-black text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-                                        {{cc.credits}} TC
-                                    </span>
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-                                    <div class="inline-flex items-center gap-2">
-                                        <span
-                                            class="w-6 h-6 flex items-center justify-center bg-indigo-600 text-white text-[10px] font-black rounded-full shadow-sm shadow-indigo-200">
-                                            {{cc.classCount}}
-                                        </span>
-                                        <span class="text-xs font-bold text-slate-500 italic">lớp</span>
-                                    </div>
-                                </td>
-
-                                <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
-                                    <button (click)="openAddModal(cc.subjectId)"
-                                        class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all border border-transparent hover:border-emerald-100"
-                                        title="Mở thêm lớp mới cho môn này">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-
-                                    <button (click)="selectSubject(cc)"
-                                        class="px-4 py-2 text-[10px] font-black text-blue-600 bg-white border border-slate-200 rounded-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all uppercase tracking-widest flex items-center gap-2 shadow-sm">
-                                        Quản trị chi tiết
-                                        <i class="fas fa-chevron-right text-[8px]"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr *ngIf="filteredSubjects.length === 0">
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center gap-2 opacity-40">
-                                        <i class="fas fa-folder-open text-4xl"></i>
-                                        <span class="text-sm font-bold">Không tìm thấy môn học nào</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-slate-600">
-                        Hiển thị {{ (subjectCurrentPage - 1) * subjectItemsPerPage + 1 }} - {{ subjectMinEnd }} của {{
-                        subjectTotalItems }}
-                        kết quả
-                    </div>
-                    <div class="flex space-x-2">
-                        <button (click)="subjectPrevPage()" [disabled]="subjectCurrentPage === 1"
-                            class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                            Trước
-                        </button>
-                        <span class="px-3 py-1 text-sm text-slate-600">
-                            Trang {{ subjectCurrentPage }} / {{ subjectTotalPages }}
-                        </span>
-                        <button (click)="subjectNextPage()" [disabled]="subjectCurrentPage === subjectTotalPages"
-                            class="px-3 py-1 border border-slate-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50">
-                            Sau
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
     <!-- Modal: Tạo/Sửa lớp (Standard Admin Style) -->
@@ -357,7 +231,8 @@
                         <div class="flex items-center gap-2 border-b border-slate-50 pb-2">
                             <span
                                 class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-[10px] font-black">01</span>
-                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Thông tin cơ bản
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Thông tin cơ
+                                bản
                             </h4>
                         </div>
 
@@ -367,7 +242,8 @@
                                 <select [(ngModel)]="courseClassForm.subjectId" (change)="onSubjectSelect()"
                                     [disabled]="modalMode === 'EDIT'"
                                     class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
-                                    <option *ngFor="let s of allSubjects" [value]="s.id">{{s.subjectCode}} - {{s.name}}
+                                    <option *ngFor="let s of allSubjects" [value]="s.id">{{s.subjectCode}} -
+                                        {{s.name}}
                                     </option>
                                 </select>
                             </div>
@@ -389,7 +265,8 @@
                             </div>
 
                             <div class="space-y-1.5" *ngIf="courseClassForm.classCount <= 1">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Giảng viên</label>
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Giảng
+                                    viên</label>
                                 <select [(ngModel)]="courseClassForm.lecturerId"
                                     class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 transition-all">
                                     <option *ngFor="let l of allLecturers" [value]="l.id">{{l.fullName}}</option>
@@ -403,7 +280,8 @@
                         <div class="flex items-center gap-2 border-b border-slate-50 pb-2">
                             <span
                                 class="w-5 h-5 bg-blue-100 text-blue-600 rounded flex items-center justify-center text-[10px] font-black">02</span>
-                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quản lý điểm &
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quản lý điểm
+                                &
                                 đăng
                                 ký</h4>
                         </div>
@@ -536,7 +414,8 @@
                         {{selectedSubject.subjectCode.substring(0, 2)}}
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800 tracking-tight">{{selectedSubject.subjectName}}</h3>
+                        <h3 class="text-lg font-bold text-slate-800 tracking-tight">{{selectedSubject.subjectName}}
+                        </h3>
                         <p class="text-[10px] text-blue-600 font-black uppercase">{{selectedSubject.subjectCode}} –
                             {{selectedSubject.credits}} Tín chỉ</p>
                     </div>
@@ -611,6 +490,208 @@
         </div>
     </div>
 
+    <!-- Selection Modal: Tạo lớp học mới (List View) -->
+    <div *ngIf="isSelectionModalOpen"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+            <!-- Modal Header -->
+            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Tạo lớp học mới</h3>
+                    <p class="text-xs text-slate-500 font-medium">Lựa chọn học phần từ danh sách phân tích nhu cầu
+                        để
+                        khởi tạo lớp</p>
+                </div>
+                <button (click)="closeSelectionModal()"
+                    class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-8 overflow-y-auto space-y-6">
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-lg shadow-sm">
+                                <i class="fas fa-filter text-xs"></i>
+                            </div>
+                            <span class="text-xs font-black text-slate-700 uppercase tracking-widest">Bộ lọc khởi
+                                tạo</span>
+                        </div>
+                        <div class="relative w-72">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i class="fas fa-search text-[10px]"></i>
+                            </span>
+                            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()"
+                                placeholder="Tìm kiếm nhanh học phần..."
+                                class="w-full pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:border-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex-1 flex flex-wrap gap-3">
+                            <div class="relative min-w-[180px]">
+                                <select [(ngModel)]="selectedMajorId" (change)="onMajorChange()"
+                                    class="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                                    <option [value]="null">Tất cả ngành</option>
+                                    <option *ngFor="let m of majors" [value]="m.id">{{ m.majorName }}</option>
+                                </select>
+                                <i
+                                    class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+                            </div>
+
+                            <div class="relative min-w-[120px]">
+                                <select [(ngModel)]="selectedYear" (change)="onFilterChange()"
+                                    class="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                                    <option [value]="null">Tất cả khóa</option>
+                                    <option *ngFor="let y of allCohorts" [value]="y">Khóa {{ y }}</option>
+                                </select>
+                                <i
+                                    class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+                            </div>
+
+                            <div class="relative min-w-[180px]">
+                                <select [(ngModel)]="selectedAdminClassId" (change)="onFilterChange()"
+                                    class="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                                    <option [value]="null">Tất cả lớp hành chính</option>
+                                    <option *ngFor="let c of filteredAdminClasses" [value]="c.id">{{ c.className }}
+                                    </option>
+                                </select>
+                                <i
+                                    class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <button (click)="resetFilters()"
+                            class="text-xs font-bold text-slate-400 hover:text-blue-600 transition-all">
+                            Xóa bộ lọc
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Batch Action Banner -->
+                <div *ngIf="selectedDemandKeys.size > 0"
+                    class="flex items-center justify-between bg-blue-50/50 p-4 rounded-2xl border border-blue-100 animate-in slide-in-from-top-2 duration-300">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-xl">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800 tracking-tight">Đã chọn
+                                {{selectedDemandKeys.size}} học phần</p>
+                            <p class="text-[10px] text-blue-600 font-bold uppercase">Sẵn sàng khởi tạo lớp học phần
+                                hàng
+                                loạt</p>
+                        </div>
+                    </div>
+                    <button (click)="generateBatchClasses()"
+                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-blue-200 flex items-center gap-2 uppercase tracking-wider">
+                        <i class="fas fa-magic"></i>
+                        Khởi tạo hàng loạt
+                    </button>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th
+                                        class="px-4 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider w-12 text-center">
+                                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()"
+                                            class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
+                                    </th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        Mã HP</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-left">
+                                        Tên học phần</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        Số TC</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        LT/TH</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-left">
+                                        Khoa/Ngành đào tạo</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-left">
+                                        Lớp học</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        Sĩ số dự kiến</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        Gợi ý</th>
+                                    <th
+                                        class="px-4 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">
+                                        Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr *ngFor="let item of filteredDemandAnalysis"
+                                    class="hover:bg-blue-50/30 transition-colors group">
+                                    <td class="px-4 py-4 text-center">
+                                        <input type="checkbox" [checked]="isDemandSelected(item)"
+                                            (change)="toggleSelect(item)"
+                                            class="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-slate-900 text-center font-bold">
+                                        {{item.subjectCode}}</td>
+                                    <td class="px-4 py-4 text-sm text-slate-900 font-medium">{{item.subjectName}}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-slate-900 text-center">{{item.credits}}</td>
+                                    <td class="px-4 py-4 text-sm text-slate-900 text-center">
+                                        {{item.theoryPeriods}}/{{item.practicalPeriods}}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-slate-600">{{item.majorName}}</td>
+                                    <td class="px-4 py-4 text-sm text-slate-600">{{item.adminClassCode}}</td>
+                                    <td class="px-4 py-4 text-sm text-slate-900 text-center font-bold">
+                                        {{item.totalNeeded}}</td>
+                                    <td class="px-4 py-4 text-sm text-blue-600 text-center font-black">
+                                        {{item.suggestedMoreClasses}}</td>
+                                    <td class="px-4 py-4 text-center">
+                                        <button (click)="openAddModal(item.subjectId)"
+                                            class="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                            title="Khởi tạo lớp cho môn này">
+                                            <i class="fas fa-plus-circle text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer / Pagination inside Modal -->
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        Hiển thị {{ demandMinEnd }} / {{ demandTotalItems }} kết quả
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button (click)="demandPrevPage()" [disabled]="demandCurrentPage === 1"
+                            class="p-2 bg-white border border-slate-200 rounded-lg disabled:opacity-30 hover:bg-slate-50 transition-all">
+                            <i class="fas fa-chevron-left text-xs text-slate-500"></i>
+                        </button>
+                        <span class="text-xs font-black text-slate-600">{{ demandCurrentPage }} / {{
+                            demandTotalPages
+                            }}</span>
+                        <button (click)="demandNextPage()" [disabled]="demandCurrentPage === demandTotalPages"
+                            class="p-2 bg-white border border-slate-200 rounded-lg disabled:opacity-30 hover:bg-slate-50 transition-all">
+                            <i class="fas fa-chevron-right text-xs text-slate-500"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation -->
     <div *ngIf="isDeleteModalOpen"
         class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
@@ -621,7 +702,8 @@
                     <i class="fas fa-trash-can text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 mb-2">Xác nhận xóa?</h3>
-                <p class="text-slate-500 text-sm">Hành động này sẽ xóa vĩnh viễn lớp học phần và các dữ liệu liên quan.
+                <p class="text-slate-500 text-sm">Hành động này sẽ xóa vĩnh viễn lớp học phần và các dữ liệu liên
+                    quan.
                 </p>
             </div>
             <div class="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center gap-3">

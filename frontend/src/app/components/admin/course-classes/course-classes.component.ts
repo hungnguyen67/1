@@ -15,6 +15,8 @@ import { AdministrativeClassService, AdministrativeClassDTO } from '../../../ser
 export class CourseClassesComponent implements OnInit {
     subjects: CourseSubjectGroup[] = [];
     filteredSubjects: CourseSubjectGroup[] = [];
+    allCourseClasses: CourseClass[] = [];
+    filteredCourseClasses: CourseClass[] = [];
     selectedSubjectClasses: CourseClass[] = [];
     semesters: Semester[] = [];
     allSubjects: SubjectDTO[] = [];
@@ -28,7 +30,8 @@ export class CourseClassesComponent implements OnInit {
         subjectsToOpen: 0,
         totalClassesCreated: 0
     };
-    activeTab: 'statistics' | 'list' = 'statistics';
+    activeTab: 'statistics' | 'list' = 'list';
+    isSelectionModalOpen = false;
     showAnalysisTable = false;
     selectedDemandKeys = new Set<string>();
     allSelected = false;
@@ -48,6 +51,12 @@ export class CourseClassesComponent implements OnInit {
     get subjectTotalPages(): number { return Math.max(1, Math.ceil(this.subjectTotalItems / this.subjectItemsPerPage)); }
     get subjectMinEnd(): number { return Math.min(this.subjectCurrentPage * this.subjectItemsPerPage, this.subjectTotalItems); }
     pagedSubjects: any[] = [];
+    classCurrentPage = 1;
+    classItemsPerPage = 10;
+    classTotalItems = 0;
+    get classTotalPages(): number { return Math.max(1, Math.ceil(this.classTotalItems / this.classItemsPerPage)); }
+    get classMinEnd(): number { return Math.min(this.classCurrentPage * this.classItemsPerPage, this.classTotalItems); }
+    pagedClasses: CourseClass[] = [];
 
     loading = false;
     loadingDetails = false;
@@ -181,6 +190,15 @@ export class CourseClassesComponent implements OnInit {
                 this.selectedSemesterId = data[0].id;
             }
             this.loadSubjects();
+            this.loadAllClasses();
+        });
+    }
+
+    loadAllClasses(): void {
+        if (!this.selectedSemesterId) return;
+        this.courseClassService.getClassesBySemester(this.selectedSemesterId).subscribe(data => {
+            this.allCourseClasses = data;
+            this.onFilterChange();
         });
     }
 
@@ -298,32 +316,33 @@ export class CourseClassesComponent implements OnInit {
     onFilterChange(): void {
         const search = this.searchTerm.toLowerCase();
 
-        // Filter subjects
-        const allFiltered = this.subjects.filter(s =>
-            s.subjectName.toLowerCase().includes(search) ||
-            s.subjectCode.toLowerCase().includes(search)
-        );
-        this.subjectTotalItems = allFiltered.length;
-        this.subjectCurrentPage = 1;
-        this.updateSubjectPage(allFiltered);
-        this.filteredSubjects = this.pagedSubjects;
-
-        // Filter demand
-        let filtered = this.demandAnalysis.filter(a => {
-            const matchesSearch = a.subjectName.toLowerCase().includes(search) || a.subjectCode.toLowerCase().includes(search);
-            const matchesYear = !this.selectedYear || a.cohort === Number(this.selectedYear);
-            const matchesClass = !this.selectedAdminClassId || a.adminClassId == this.selectedAdminClassId;
-            return matchesSearch && matchesYear && matchesClass;
+        // Filter classes
+        let filteredClasses = this.allCourseClasses.filter(c => {
+            const matchesSearch = c.subjectName.toLowerCase().includes(search) ||
+                c.subjectCode.toLowerCase().includes(search) ||
+                c.classCode.toLowerCase().includes(search);
+            // Add more filters if needed (major, cohort etc if they exist on CourseClass)
+            return matchesSearch;
         });
-
-        this.demandTotalItems = filtered.length;
-        this.demandCurrentPage = 1;
-        this.updateDemandPage(filtered);
-        this.filteredDemandAnalysis = this.pagedDemandAnalysis;
+        this.classTotalItems = filteredClasses.length;
+        this.classCurrentPage = 1;
+        this.updateClassPage(filteredClasses);
 
         this.selectedDemandKeys.clear();
         this.allSelected = false;
     }
+
+    private _allFilteredClasses: CourseClass[] = [];
+
+    updateClassPage(allData?: CourseClass[]): void {
+        if (allData) this._allFilteredClasses = allData;
+        const start = (this.classCurrentPage - 1) * this.classItemsPerPage;
+        this.pagedClasses = this._allFilteredClasses.slice(start, start + this.classItemsPerPage);
+        this.filteredCourseClasses = this.pagedClasses;
+    }
+
+    classPrevPage(): void { if (this.classCurrentPage > 1) { this.classCurrentPage--; this.updateClassPage(); } }
+    classNextPage(): void { if (this.classCurrentPage < this.classTotalPages) { this.classCurrentPage++; this.updateClassPage(); } }
 
     private _allFilteredDemand: any[] = [];
     private _allFilteredSubjects: any[] = [];
@@ -380,7 +399,17 @@ export class CourseClassesComponent implements OnInit {
             this.onSubjectSelect();
             this.autoSuggest();
         }
+        this.isSelectionModalOpen = false;
         this.isModalOpen = true;
+    }
+
+    openSelectionModal(): void {
+        this.isSelectionModalOpen = true;
+        this.loadAnalysis();
+    }
+
+    closeSelectionModal(): void {
+        this.isSelectionModalOpen = false;
     }
 
     onSubjectSelect(): void {
@@ -519,6 +548,7 @@ export class CourseClassesComponent implements OnInit {
             this.loadClassDetails(this.selectedSubject.subjectId);
         }
         this.loadSubjects();
+        this.loadAllClasses();
     }
 
     onBatchCountChange(): void {
@@ -547,6 +577,7 @@ export class CourseClassesComponent implements OnInit {
                     this.loadClassDetails(this.selectedSubject.subjectId);
                 }
                 this.loadSubjects();
+                this.loadAllClasses();
             },
             error: (err) => {
                 console.error('Error deleting course class', err);
