@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CourseClassService, CourseSubjectGroup, CourseClass, ClassSchedule } from '../../../services/course-class.service';
 import { Semester, SemesterService } from '../../../services/semester.service';
 import { SubjectService, SubjectDTO } from '../../../services/subject.service';
@@ -61,17 +61,25 @@ export class CourseClassesComponent implements OnInit {
     loading = false;
     loadingDetails = false;
     isSubmitting = false;
-    searchTerm = '';
+    listSearchTerm = '';
     selectedSemesterId: number | null = null;
-    selectedMajorId: number | null = null;
-    selectedYear: number | null = null;
-    selectedAdminClassId: number | null = null;
+    listMajorId: number | null = null;
+    listYear: number | null = null;
+    listAdminClassId: number | null = null;
+    
+    selectionSearchTerm = '';
+    selectionMajorId: number | null = null;
+    selectionYear: number | null = null;
+    selectionAdminClassId: number | null = null;
     groupBy: 'both' | 'subject' = 'both';
     activeDropdown: string = '';
+    showFilter = false;
 
     allCohorts: number[] = [];
     administrativeClasses: AdministrativeClassDTO[] = [];
-    filteredAdminClasses: AdministrativeClassDTO[] = [];
+    
+    listFilteredAdminClasses: AdministrativeClassDTO[] = [];
+    selectionFilteredAdminClasses: AdministrativeClassDTO[] = [];
     curriculums: CurriculumDTO[] = [];
     selectedSubject: CourseSubjectGroup | null = null;
     selectedDemand: any = null;
@@ -98,6 +106,15 @@ export class CourseClassesComponent implements OnInit {
         this.loadInitialData();
     }
 
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.relative')) {
+            this.showFilter = false;
+            this.activeDropdown = '';
+        }
+    }
+
     loadInitialData(): void {
         this.subjectService.getAllSubjects().subscribe(data => this.allSubjects = data);
         this.lecturerService.getLecturers().subscribe(data => this.allLecturers = data);
@@ -106,78 +123,109 @@ export class CourseClassesComponent implements OnInit {
         this.studentService.getEnrollmentYears().subscribe(years => {
             this.allCohorts = years;
             // Default to 2023 or latest year if exists
-            if (years.includes(2023)) this.selectedYear = 2023;
-            else if (years.length > 0) this.selectedYear = years[years.length - 1];
+            if (years.includes(2023)) {
+                this.selectionYear = 2023;
+                this.listYear = 2023;
+            } else if (years.length > 0) {
+                this.selectionYear = years[years.length - 1];
+                this.listYear = years[years.length - 1];
+            }
         });
 
         // Load majors and set default
         this.majorService.getMajors().subscribe(data => {
             this.majors = data;
             if (data.length > 0) {
-                this.selectedMajorId = data[0].id;
-                this.onMajorChange();
+                this.selectionMajorId = data[0].id;
+                this.listMajorId = data[0].id;
+                this.onSelectionMajorChange();
+                this.onListMajorChange();
             }
         });
 
         this.adminClassService.getClasses().subscribe(data => {
             this.administrativeClasses = data;
-            this.filteredAdminClasses = data;
+            this.listFilteredAdminClasses = data;
+            this.selectionFilteredAdminClasses = data;
         });
     }
 
-    onMajorChange(): void {
-        if (this.selectedMajorId) {
-            this.curriculumService.getCurriculumsByMajorId(this.selectedMajorId).subscribe(data => {
-                this.curriculums = data;
-            });
-            this.filteredAdminClasses = this.administrativeClasses.filter(c => c.majorId == this.selectedMajorId);
-            this.loadAnalysis();
-        } else {
-            this.curriculums = [];
-            this.filteredAdminClasses = this.administrativeClasses;
-            this.loadAnalysis();
-        }
+    onListMajorChange(): void {
+        this.listFilteredAdminClasses = this.listMajorId 
+            ? this.administrativeClasses.filter(c => c.majorId == this.listMajorId)
+            : this.administrativeClasses;
+        this.onListFilterChange();
+    }
+
+    onSelectionMajorChange(): void {
+        this.selectionFilteredAdminClasses = this.selectionMajorId 
+            ? this.administrativeClasses.filter(c => c.majorId == this.selectionMajorId)
+            : this.administrativeClasses;
+        this.loadAnalysis();
     }
 
     onGroupByChange(): void {
-        this.selectedYear = null;
-        this.selectedAdminClassId = null;
-        this.onFilterChange();
+        this.listYear = null;
+        this.listAdminClassId = null;
+        this.onListFilterChange();
     }
 
-    resetFilters(): void {
-        this.selectedYear = null;
-        this.selectedAdminClassId = null;
-        this.selectedMajorId = null;
-        this.searchTerm = '';
-        this.groupBy = 'both';
-        this.onMajorChange();
-        this.onFilterChange();
+    resetListFilters(): void {
+        this.listYear = null;
+        this.listAdminClassId = null;
+        this.listMajorId = null;
+        this.listSearchTerm = '';
+        this.onListMajorChange();
     }
 
-    getSelectedMajorName(): string {
-        if (!this.selectedMajorId) return 'Tất cả các ngành học';
-        const major = this.majors.find(m => m.id == this.selectedMajorId);
+    resetSelectionFilters(): void {
+        this.selectionYear = null;
+        this.selectionAdminClassId = null;
+        this.selectionMajorId = null;
+        this.selectionSearchTerm = '';
+        this.onSelectionMajorChange();
+    }
+
+    getListMajorName(): string {
+        if (!this.listMajorId) return 'Tất cả các ngành học';
+        const major = this.majors.find(m => m.id == this.listMajorId);
         return major ? major.majorName : 'Tất cả các ngành học';
     }
 
-    getSelectedAdvisorName(): string {
-        if (!this.selectedAdminClassId) return 'Tất cả lớp hành chính';
-        const adminClass = this.administrativeClasses.find(c => c.id == this.selectedAdminClassId);
+    getSelectionMajorName(): string {
+        if (!this.selectionMajorId) return 'Tất cả các ngành học';
+        const major = this.majors.find(m => m.id == this.selectionMajorId);
+        return major ? major.majorName : 'Tất cả các ngành học';
+    }
+
+    getListAdminClassName(): string {
+        if (!this.listAdminClassId) return 'Tất cả lớp hành chính';
+        const adminClass = this.administrativeClasses.find(c => c.id == this.listAdminClassId);
         return adminClass ? adminClass.className : 'Tất cả lớp hành chính';
     }
 
-    getSelectedLecturerName(): string {
-        if (!this.selectedYear) return 'Tất cả cố vấn';
-        const lecturer = this.allLecturers.find(l => l.id == this.selectedYear);
-        return lecturer ? lecturer.fullName : 'Tất cả cố vấn';
+    getSelectionAdminClassName(): string {
+        if (!this.selectionAdminClassId) return 'Tất cả lớp hành chính';
+        const adminClass = this.administrativeClasses.find(c => c.id == this.selectionAdminClassId);
+        return adminClass ? adminClass.className : 'Tất cả lớp hành chính';
+    }
+
+    getListYearLabel(): string {
+        if (!this.listYear) return 'Tất cả các khóa';
+        return 'Khóa ' + this.listYear;
+    }
+
+    getSelectionYearLabel(): string {
+        if (!this.selectionYear) return 'Tất cả các khóa';
+        return 'Khóa ' + this.selectionYear;
     }
 
     onSearch(): void {
-        this.onFilterChange();
+        this.onListFilterChange();
     }
-    onProgramChange(): void {
-        this.loadAnalysis();
+    
+    onSelectionSearch(): void {
+        this.onSelectionFilterChange();
     }
 
     loadSemesters(): void {
@@ -198,7 +246,7 @@ export class CourseClassesComponent implements OnInit {
         if (!this.selectedSemesterId) return;
         this.courseClassService.getClassesBySemester(this.selectedSemesterId).subscribe(data => {
             this.allCourseClasses = data;
-            this.onFilterChange();
+            this.onListFilterChange();
         });
     }
 
@@ -228,11 +276,11 @@ export class CourseClassesComponent implements OnInit {
         if (!this.selectedSemesterId) return;
         this.courseClassService.getDemandAnalysis(
             this.selectedSemesterId,
-            this.selectedYear || undefined,
-            this.selectedMajorId || undefined
+            this.selectionYear || undefined,
+            this.selectionMajorId || undefined
         ).subscribe(data => {
             this.demandAnalysis = data;
-            this.onFilterChange();
+            this.onSelectionFilterChange();
             this.calculateOverallStats();
         });
     }
@@ -313,20 +361,41 @@ export class CourseClassesComponent implements OnInit {
             });
     }
 
-    onFilterChange(): void {
-        const search = this.searchTerm.toLowerCase();
+    onListFilterChange(): void {
+        const search = this.listSearchTerm.toLowerCase();
 
-        // Filter classes
+        // Filter main classes list
         let filteredClasses = this.allCourseClasses.filter(c => {
-            const matchesSearch = c.subjectName.toLowerCase().includes(search) ||
+            const matchesSearch = !search ||
+                c.subjectName.toLowerCase().includes(search) ||
                 c.subjectCode.toLowerCase().includes(search) ||
                 c.classCode.toLowerCase().includes(search);
-            // Add more filters if needed (major, cohort etc if they exist on CourseClass)
+            
             return matchesSearch;
         });
+
         this.classTotalItems = filteredClasses.length;
         this.classCurrentPage = 1;
         this.updateClassPage(filteredClasses);
+    }
+
+    onSelectionFilterChange(): void {
+        const search = this.selectionSearchTerm.toLowerCase();
+
+        // Filter demand analysis list
+        let filteredDemand = this.demandAnalysis.filter(d => {
+            const matchesSearch = !search ||
+                d.subjectName.toLowerCase().includes(search) ||
+                d.subjectCode.toLowerCase().includes(search);
+
+            const matchesAdminClass = !this.selectionAdminClassId || d.adminClassId == this.selectionAdminClassId;
+            
+            return matchesSearch && matchesAdminClass;
+        });
+
+        this.demandTotalItems = filteredDemand.length;
+        this.demandCurrentPage = 1;
+        this.updateDemandPage(filteredDemand);
 
         this.selectedDemandKeys.clear();
         this.allSelected = false;
@@ -561,7 +630,7 @@ export class CourseClassesComponent implements OnInit {
         }
     }
 
-    confirmDelete(id: number): void {
+    openDeleteConfirmation(id: number): void {
         this.courseClassToDeleteId = id;
         this.isDeleteModalOpen = true;
     }

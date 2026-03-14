@@ -23,6 +23,7 @@ export class SemestersComponent implements OnInit {
 
     isEditModalOpen = false;
     isDeleteModalOpen = false;
+    showFilter = false;
     modalMode: 'ADD' | 'EDIT' = 'ADD';
     currentSemester: any = this.getEmptySemester();
     semesterToDeleteId: number | null = null;
@@ -38,6 +39,7 @@ export class SemestersComponent implements OnInit {
     onDocumentClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
         if (!target.closest('.relative')) {
+            this.showFilter = false;
             this.activeDropdown = '';
         }
     }
@@ -58,6 +60,9 @@ export class SemestersComponent implements OnInit {
                     return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
                 });
                 this.extractAcademicYears();
+                if (!this.selectedYear && this.academicYears.length > 0) {
+                    this.selectedYear = this.academicYears[0];
+                }
                 this.onFilterChange();
                 this.loading = false;
             },
@@ -75,16 +80,26 @@ export class SemestersComponent implements OnInit {
 
     onFilterChange(): void {
         this.filteredSemesters = this.semesters.filter(s => {
-            const matchesSearch = s.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                s.academicYear.includes(this.searchTerm);
-            const matchesYear = this.selectedYear ? s.academicYear === this.selectedYear : true;
-            const matchesStatus = this.selectedStatus ? s.semesterStatus === this.selectedStatus : true;
+            const search = this.searchTerm.toLowerCase();
+            const matchesSearch = !this.searchTerm ||
+                s.name.toLowerCase().includes(search) ||
+                s.academicYear.toLowerCase().includes(search);
+
+            const matchesYear = !this.selectedYear || s.academicYear === this.selectedYear;
+            const matchesStatus = !this.selectedStatus || s.semesterStatus === this.selectedStatus;
 
             return matchesSearch && matchesYear && matchesStatus;
         });
 
         this.currentPage = 1;
         this.updatePagination();
+    }
+
+    resetFilters(): void {
+        this.searchTerm = '';
+        this.selectedYear = this.academicYears.length > 0 ? this.academicYears[0] : '';
+        this.selectedStatus = '';
+        this.onFilterChange();
     }
 
     updatePagination(): void {

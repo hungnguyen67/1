@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { MajorService, MajorDTO } from '../../../services/major.service';
+import { FacultyService, FacultyDTO } from '../../../services/faculty.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,52 +12,78 @@ export class ProgramsComponent implements OnInit {
   majors: MajorDTO[] = [];
   filteredMajors: MajorDTO[] = [];
   searchTerm: string = '';
-  filterFaculty: string = '';
-  faculties: string[] = [];
+  selectedStatus: string = '';
+  selectedFacultyId: string = '';
+  faculties: FacultyDTO[] = [];
+
   currentPage: number = 1;
   itemsPerPage: number = 10;
-  sortColumn: string = '';
-  sortDirection: 'asc' | 'desc' = 'asc';
-  activeDropdown: string = '';
 
-  constructor(private majorService: MajorService, private router: Router) { }
+  showModal: boolean = false;
+  isEditing: boolean = false;
+  showFilter: boolean = false;
+  activeDropdown: string = '';
+  currentMajor: Partial<MajorDTO> = {};
+
+  constructor(
+    private majorService: MajorService,
+    private facultyService: FacultyService,
+    private router: Router
+  ) { }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.faculty-dropdown-container')) {
+    if (!target.closest('.relative')) {
+      this.showFilter = false;
       this.activeDropdown = '';
     }
   }
 
   ngOnInit(): void {
     this.loadMajors();
+    this.loadFaculties();
   }
 
   loadMajors(): void {
     this.majorService.getMajors().subscribe(data => {
-      console.log('Majors data:', data);
       this.majors = data;
-      this.extractFaculties();
       this.onSearch();
     });
   }
 
-  extractFaculties(): void {
-    const uniqueFaculties = new Set(this.majors.map(m => m.facultyName));
-    this.faculties = Array.from(uniqueFaculties).sort();
+  loadFaculties(): void {
+    this.facultyService.getFaculties().subscribe(data => {
+      this.faculties = data;
+    });
   }
 
   onSearch(): void {
     this.filteredMajors = this.majors.filter(major => {
+      const search = this.searchTerm.toLowerCase();
       const matchesSearch = !this.searchTerm ||
-        major.majorCode.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        major.majorName.toLowerCase().includes(this.searchTerm.toLowerCase());
+        major.majorCode.toLowerCase().includes(search) ||
+        major.majorName.toLowerCase().includes(search) ||
+        (major.description && major.description.toLowerCase().includes(search));
 
-      const matchesFaculty = !this.filterFaculty || major.facultyName === this.filterFaculty;
+      const matchesStatus = !this.selectedStatus || major.status === this.selectedStatus;
+      const matchesFaculty = !this.selectedFacultyId || major.facultyId === Number(this.selectedFacultyId);
 
-      return matchesSearch && matchesFaculty;
+      return matchesSearch && matchesStatus && matchesFaculty;
     });
     this.currentPage = 1;
+  }
+
+  getSelectedFacultyName(): string {
+    const faculty = this.faculties.find(f => f.id.toString() === this.selectedFacultyId);
+    return faculty ? faculty.facultyName : '';
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.selectedStatus = '';
+    this.selectedFacultyId = '';
+    this.onSearch();
   }
 
   get paginatedMajors(): MajorDTO[] {
@@ -65,7 +92,7 @@ export class ProgramsComponent implements OnInit {
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filteredMajors.length / this.itemsPerPage);
+    return Math.ceil(this.filteredMajors.length / this.itemsPerPage) || 1;
   }
 
   get minEnd(): number {
@@ -84,17 +111,47 @@ export class ProgramsComponent implements OnInit {
     }
   }
 
+  openAddModal(): void {
+    this.isEditing = false;
+    this.currentMajor = {
+      majorCode: '',
+      majorName: '',
+      description: '',
+      facultyId: undefined,
+      status: 'ACTIVE'
+    };
+    this.showModal = true;
+  }
 
   editMajor(major: MajorDTO): void {
-    this.router.navigate(['/admin/majors', major.id, 'edit']);
-    console.log('Edit major', major);
+    this.isEditing = true;
+    this.currentMajor = { ...major };
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+  }
+
+  saveMajor(): void {
+    if (this.isEditing) {
+      this.majorService.updateMajor(this.currentMajor.id!, this.currentMajor).subscribe(() => {
+        this.loadMajors();
+        this.closeModal();
+      });
+    } else {
+      this.majorService.createMajor(this.currentMajor).subscribe(() => {
+        this.loadMajors();
+        this.closeModal();
+      });
+    }
   }
 
   deleteMajor(major: MajorDTO): void {
-    if (confirm('Bạn có chắc chắn muốn xóa ngành này?')) {
+    if (confirm(`Bạn có chắc chắn muốn xóa ngành ${major.majorName}?`)) {
       this.majorService.deleteMajor(major.id).subscribe(() => {
         this.loadMajors();
       });
     }
   }
-}
+}
