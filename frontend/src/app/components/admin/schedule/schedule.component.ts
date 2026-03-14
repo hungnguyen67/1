@@ -28,7 +28,7 @@ export class ScheduleComponent implements OnInit {
     majors: MajorDTO[] = [];
     selectedMajorId: number | null = null;
 
-    cohorts: number[] = []; // Dynamic cohorts from DB
+    cohorts: number[] = [];
     selectedCohort: number | null = null;
 
     adminClasses: AdministrativeClassDTO[] = [];
@@ -38,23 +38,20 @@ export class ScheduleComponent implements OnInit {
 
     lecturers: LecturerDTO[] = [];
 
-    classes: CourseClass[] = []; // Backlog classes
+    classes: CourseClass[] = [];
     scheduleItems: any[] = [];
     allInstances: any[] = [];
-    selectedScheduleItem: any = null; // For right info pane
-    activeDropdown: string = ''; // For custom filter dropdowns
-    searchTerm: string = ''; // For class search input
+    selectedScheduleItem: any = null;
+    activeDropdown: string = '';
+    searchTerm: string = '';
 
     loading = false;
     conflicts: ConflictInfo[] = [];
 
-    // Resizing logic
     isResizing = false;
     resizingItem: any = null;
     resizingItemObject: any = null;
     newEndPeriod: number | null = null;
-
-    // Grid config
     periods: number[] = Array.from({ length: 17 }, (_, i) => i + 1);
 
     showPatternModal = false;
@@ -68,7 +65,6 @@ export class ScheduleComponent implements OnInit {
         sessionType: 'THEORY'
     };
 
-    // Context Menu
     contextMenu = {
         visible: false,
         x: 0,
@@ -80,7 +76,7 @@ export class ScheduleComponent implements OnInit {
 
     showCopyModal = false;
     copyOptions = {
-        type: '', // 'NEXT_WEEK', 'RANGE', 'ALL'
+        type: '',
         fromWeek: null as number | null,
         toWeek: null as number | null,
         isAlternateWeek: false,
@@ -190,7 +186,7 @@ export class ScheduleComponent implements OnInit {
         if (semester && semester.startDate) {
             const start = new Date(semester.startDate);
             const day = start.getDay();
-            const diff = start.getDate() - (day === 0 ? 6 : day - 1); // Finds Monday
+            const diff = start.getDate() - (day === 0 ? 6 : day - 1);
             this.currentDate = new Date(start.getFullYear(), start.getMonth(), diff);
             this.updateWeekDays();
         }
@@ -199,8 +195,8 @@ export class ScheduleComponent implements OnInit {
     loadBacklog(): void {
         if (!this.selectedAdminClass || !this.selectedSemesterId) return;
         this.courseClassService.getClassesBySemester(this.selectedSemesterId).subscribe(res => {
-            this.classes = res.filter(c => 
-                c.targetClassName === this.selectedAdminClass!.classCode || 
+            this.classes = res.filter(c =>
+                c.targetClassName === this.selectedAdminClass!.classCode ||
                 (c.classCode && c.classCode.includes(this.selectedAdminClass!.classCode))
             );
         });
@@ -211,8 +207,8 @@ export class ScheduleComponent implements OnInit {
         this.loading = true;
 
         this.courseClassService.getClassesBySemester(this.selectedSemesterId).subscribe(classes => {
-            const targetClasses = classes.filter(c => 
-                c.targetClassName === this.selectedAdminClass!.classCode || 
+            const targetClasses = classes.filter(c =>
+                c.targetClassName === this.selectedAdminClass!.classCode ||
                 (c.classCode && c.classCode.includes(this.selectedAdminClass!.classCode))
             );
 
@@ -243,10 +239,9 @@ export class ScheduleComponent implements OnInit {
                 this.allInstances = newAllInstances;
                 this.scheduleItems = newScheduleItems;
 
-                // Sync selected item if it exists
                 if (this.selectedScheduleItem) {
-                    const updated = this.scheduleItems.find(i => 
-                        i.scheduleDate === this.selectedScheduleItem.scheduleDate && 
+                    const updated = this.scheduleItems.find(i =>
+                        i.scheduleDate === this.selectedScheduleItem.scheduleDate &&
                         i.startPeriod === this.selectedScheduleItem.startPeriod
                     );
                     if (updated) this.selectedScheduleItem = updated;
@@ -375,7 +370,7 @@ export class ScheduleComponent implements OnInit {
 
             return {
                 ...item,
-                courseClass: courseClass, // Lưu toàn bộ info lớp để dùng ở table
+                courseClass: courseClass,
                 title: item.subjectName || 'N/A',
                 subjectCode: item.subjectCode || '',
                 classCode: item.classCode || courseClass?.classCode || '',
@@ -431,9 +426,9 @@ export class ScheduleComponent implements OnInit {
     onItemContextMenu(event: MouseEvent, item: any): void {
         event.preventDefault();
         event.stopPropagation();
-        
+
         this.selectScheduleItem(item);
-        
+
         this.contextMenu = {
             visible: true,
             x: event.clientX,
@@ -450,7 +445,7 @@ export class ScheduleComponent implements OnInit {
         if (!this.contextMenu.item) return;
         this.clipboardItem = { ...this.contextMenu.item };
         this.closeContextMenu();
-        
+
         const currentWeek = this.getCurrentWeek();
         this.copyOptions.fromWeek = currentWeek !== null ? currentWeek + 1 : null;
         this.copyOptions.toWeek = currentWeek !== null ? currentWeek + 1 : null;
@@ -483,7 +478,7 @@ export class ScheduleComponent implements OnInit {
         const classId = this.clipboardItem.classId;
         const itemDate = new Date(this.clipboardItem.scheduleDate);
         let dayOfWeekInt = itemDate.getDay() + 1;
-        if (dayOfWeekInt === 1) dayOfWeekInt = 8; // Backend Day logic
+        if (dayOfWeekInt === 1) dayOfWeekInt = 8;
 
         const patternData = {
             dayOfWeek: dayOfWeekInt,
@@ -503,28 +498,27 @@ export class ScheduleComponent implements OnInit {
             fromWeek = this.copyOptions.fromWeek || (currentWeek + 1);
             toWeek = this.copyOptions.toWeek || (currentWeek + 1);
         } else if (this.copyOptions.type === 'ALL') {
-             let remainingPeriods = 0;
-             const courseClass = this.classes.find(c => c.id === classId);
-             if (courseClass) {
-                 remainingPeriods = this.getRemainingPeriods(courseClass);
-             }
-             
-             if (remainingPeriods <= 0) {
-                 alert('Học phần này đã được xếp đủ số tiết (đã hết tiến độ)!');
-                 return;
-             }
+            let remainingPeriods = 0;
+            const courseClass = this.classes.find(c => c.id === classId);
+            if (courseClass) {
+                remainingPeriods = this.getRemainingPeriods(courseClass);
+            }
 
-             const periodsPerPattern = patternData.endPeriod - patternData.startPeriod + 1;
-             const weeksNeeded = Math.ceil(remainingPeriods / periodsPerPattern);
-             
-             fromWeek = currentWeek + 1;
-             // Tính toán toWeek dựa trên số tuần cần xếp và giãn cách tuần (nếu có)
-             if (this.copyOptions.isAlternateWeek) {
-                 const step = (this.copyOptions.alternateWeekCount || 1) + 1;
-                 toWeek = fromWeek + (weeksNeeded - 1) * step;
-             } else {
-                 toWeek = fromWeek + weeksNeeded - 1;
-             }
+            if (remainingPeriods <= 0) {
+                alert('Học phần này đã được xếp đủ số tiết (đã hết tiến độ)!');
+                return;
+            }
+
+            const periodsPerPattern = patternData.endPeriod - patternData.startPeriod + 1;
+            const weeksNeeded = Math.ceil(remainingPeriods / periodsPerPattern);
+
+            fromWeek = currentWeek + 1;
+            if (this.copyOptions.isAlternateWeek) {
+                const step = (this.copyOptions.alternateWeekCount || 1) + 1;
+                toWeek = fromWeek + (weeksNeeded - 1) * step;
+            } else {
+                toWeek = fromWeek + weeksNeeded - 1;
+            }
         }
 
         if (fromWeek > toWeek) {
@@ -535,33 +529,33 @@ export class ScheduleComponent implements OnInit {
         const patternsToCreate = [];
 
         if (this.copyOptions.isAlternateWeek) {
-             const step = (this.copyOptions.alternateWeekCount || 1) + 1;
-             for (let w = fromWeek; w <= toWeek; w += step) {
-                 const pat = { ...patternData, fromWeek: w, toWeek: w };
-                 patternsToCreate.push(pat);
-             }
+            const step = (this.copyOptions.alternateWeekCount || 1) + 1;
+            for (let w = fromWeek; w <= toWeek; w += step) {
+                const pat = { ...patternData, fromWeek: w, toWeek: w };
+                patternsToCreate.push(pat);
+            }
         } else {
-             const pat = { ...patternData, fromWeek: fromWeek, toWeek: toWeek };
-             patternsToCreate.push(pat);
+            const pat = { ...patternData, fromWeek: fromWeek, toWeek: toWeek };
+            patternsToCreate.push(pat);
         }
 
         if (patternsToCreate.length > 0) {
-             this.scheduleService.addPatternsBulk(classId, patternsToCreate).subscribe({
-                 next: () => {
-                     this.loadScheduleForAdminClass();
-                     this.closeCopyModal();
-                 },
-                 error: (err) => {
-                     console.error('Lỗi khi sao chép lịch học', err);
-                     alert('Lỗi sao chép: ' + (err.error?.message || err.message));
-                 }
-             });
+            this.scheduleService.addPatternsBulk(classId, patternsToCreate).subscribe({
+                next: () => {
+                    this.loadScheduleForAdminClass();
+                    this.closeCopyModal();
+                },
+                error: (err) => {
+                    console.error('Lỗi khi sao chép lịch học', err);
+                    alert('Lỗi sao chép: ' + (err.error?.message || err.message));
+                }
+            });
         }
     }
 
     deleteScheduleItem(): void {
         if (!this.contextMenu.item || !this.contextMenu.item.patternId) return;
-        
+
         const currentWeek = this.getCurrentWeek();
         if (currentWeek === null) {
             alert('Lịch học hiện tại nằm ngoài khoảng thời gian học kỳ!');
@@ -579,7 +573,7 @@ export class ScheduleComponent implements OnInit {
                     this.closeContextMenu();
                 },
                 error: (err) => {
-                     alert('Lỗi: ' + (err.error?.message || err.message));
+                    alert('Lỗi: ' + (err.error?.message || err.message));
                 }
             });
         }
@@ -587,7 +581,7 @@ export class ScheduleComponent implements OnInit {
 
     deleteScheduleForward(): void {
         if (!this.contextMenu.item || !this.contextMenu.item.patternId) return;
-        
+
         const currentWeek = this.getCurrentWeek();
         if (currentWeek === null) {
             alert('Lịch học hiện tại nằm ngoài khoảng thời gian học kỳ!');
@@ -605,7 +599,7 @@ export class ScheduleComponent implements OnInit {
                     this.closeContextMenu();
                 },
                 error: (err) => {
-                     alert('Lỗi: ' + (err.error?.message || err.message));
+                    alert('Lỗi: ' + (err.error?.message || err.message));
                 }
             });
         }
@@ -712,7 +706,6 @@ export class ScheduleComponent implements OnInit {
     }
 
     getScheduledPeriods(classId: number): number {
-        // Use a Set to ensure we don't count duplicate instances (same ID)
         const uniqueInstances = new Map<number, any>();
         this.allInstances
             .filter(i => i.classId === classId)
@@ -761,16 +754,6 @@ export class ScheduleComponent implements OnInit {
         return weekNum > 0 ? weekNum : 1;
     }
 
-    getStatusClass(status: string): string {
-        switch (status) {
-            case 'OPEN_REGISTRATION': return 'bg-green-50 text-green-700 border-green-200 shadow-sm shadow-green-100/50';
-            case 'FULL': return 'bg-orange-50 text-orange-700 border-orange-200 shadow-sm shadow-orange-100/50';
-            case 'CLOSED': return 'bg-slate-50 text-slate-700 border-slate-200 shadow-sm shadow-slate-100/50';
-            case 'CANCELLED': return 'bg-red-50 text-red-700 border-red-200 shadow-sm shadow-red-100/50';
-            default: return 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm shadow-blue-100/50';
-        }
-    }
-
     getStatusLabel(status: string): string {
         switch (status) {
             case 'OPEN_REGISTRATION': return 'Đang đăng ký';
@@ -778,6 +761,7 @@ export class ScheduleComponent implements OnInit {
             case 'CLOSED': return 'Đã khóa';
             case 'CANCELLED': return 'Đã hủy';
             case 'PLANNING': return 'Lập kế hoạch';
+            case 'PLANNED': return 'Đã lập lịch';
             default: return status;
         }
     }
@@ -807,22 +791,26 @@ export class ScheduleComponent implements OnInit {
         const moveItemJson = event.dataTransfer?.getData('moveItem');
 
         if (courseClassJson) {
-            const courseClass: CourseClass = JSON.parse(courseClassJson);
-            this.addNewPattern(courseClass.id, day, periodNumber);
+            const courseClass: any = JSON.parse(courseClassJson);
+            this.addNewPattern(courseClass.id, day, periodNumber, {
+                room: courseClass.expectedRoom,
+                lecturer: courseClass.lecturerId ? { id: courseClass.lecturerId } : null
+            });
         } else if (moveItemJson) {
             const item = JSON.parse(moveItemJson);
             this.rescheduleItem(item, day, periodNumber);
         }
     }
 
-    private addNewPattern(classId: number, day: any, periodNumber: number): void {
+    private addNewPattern(classId: number, day: any, periodNumber: number, initialData: any = {}): void {
         const currentWeek = this.getCurrentWeek();
         const pattern = {
             dayOfWeek: this.getDayNumberOfWeek(day.name),
             startPeriod: periodNumber,
-            endPeriod: periodNumber + 2,
-            roomName: 'Chưa xếp',
-            sessionType: 'THEORY',
+            endPeriod: initialData.endPeriod || (periodNumber + 2),
+            roomName: initialData.room || 'Chưa xếp',
+            lecturer: initialData.lecturer || null,
+            sessionType: initialData.type || 'THEORY',
             fromWeek: currentWeek !== null ? currentWeek : 1,
             toWeek: currentWeek !== null ? currentWeek : 1
         };
@@ -835,8 +823,16 @@ export class ScheduleComponent implements OnInit {
 
     private rescheduleItem(item: any, day: any, periodNumber: number): void {
         if (item.patternId) {
+            const duration = item.endPeriod - item.startPeriod;
+            const initialData = {
+                room: item.room,
+                lecturer: item.lecturer,
+                endPeriod: periodNumber + duration,
+                type: item.type
+            };
+
             this.scheduleService.deletePattern(item.patternId).subscribe(() => {
-                this.addNewPattern(item.classId, day, periodNumber);
+                this.addNewPattern(item.classId, day, periodNumber, initialData);
             });
         }
     }

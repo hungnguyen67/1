@@ -122,10 +122,10 @@ export class CourseClassesComponent implements OnInit {
         // Load enrollment years
         this.studentService.getEnrollmentYears().subscribe(years => {
             this.allCohorts = years;
-            // Default to 2023 or latest year if exists
-            if (years.includes(2023)) {
-                this.selectionYear = 2023;
-                this.listYear = 2023;
+            // Default to 2024 or latest year if exists
+            if (years.includes(2024)) {
+                this.selectionYear = 2024;
+                this.listYear = 2024;
             } else if (years.length > 0) {
                 this.selectionYear = years[years.length - 1];
                 this.listYear = years[years.length - 1];
@@ -135,12 +135,6 @@ export class CourseClassesComponent implements OnInit {
         // Load majors and set default
         this.majorService.getMajors().subscribe(data => {
             this.majors = data;
-            if (data.length > 0) {
-                this.selectionMajorId = data[0].id;
-                this.listMajorId = data[0].id;
-                this.onSelectionMajorChange();
-                this.onListMajorChange();
-            }
         });
 
         this.adminClassService.getClasses().subscribe(data => {
@@ -679,5 +673,11 @@ export class CourseClassesComponent implements OnInit {
     formatSchedule(schedules: any[]): string {
         if (!schedules || schedules.length === 0) return 'Chưa có lịch';
         return schedules.map(s => `Thứ ${s.dayOfWeek}: Tiết ${s.startPeriod}-${s.endPeriod}`).join(', ');
+    }
+
+    formatRooms(schedules: any[]): string {
+        if (!schedules || schedules.length === 0) return '--';
+        const rooms = schedules.map(s => s.roomName || 'N/A').filter((v, i, a) => a.indexOf(v) === i);
+        return rooms.join(', ');
     }
 }

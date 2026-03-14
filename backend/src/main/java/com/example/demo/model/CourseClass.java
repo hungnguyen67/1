@@ -19,7 +19,7 @@ public class CourseClass {
     private Subject subject;
 
     @ManyToOne
-    @JoinColumn(name = "lecturer_id", nullable = false)
+    @JoinColumn(name = "lecturer_id", nullable = true)
     private LecturerProfile lecturer;
 
     @ManyToOne

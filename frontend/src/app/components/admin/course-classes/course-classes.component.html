@@ -189,20 +189,15 @@
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
                         <th class="w-[80px] px-4 py-4 text-sm font-semibold text-slate-900 text-center">STT</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                            Mã LHP</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                            Tên học phần</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                            TC</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-left">
-                            Giảng viên</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                            Sĩ số</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                            Trạng thái</th>
-                        <th class="px-4 py-4 text-sm font-semibold text-slate-900 text-center">
-                            Hành động</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Mã lớp HP</th>
+                        <th class="w-[120px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Mã HP</th>
+                        <th class="w-[180px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Tên học phần</th>
+                        <th class="w-[120px] px-2 py-4 text-sm font-semibold text-slate-900 text-center">Số TC</th>
+                        <th class="w-[180px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Ngành</th>
+                        <th class="w-[140px] px-4 py-4 text-sm font-semibold text-slate-900 text-left">Lớp dự kiến</th>
+                        <th class="w-[120px] px-2 py-4 text-sm font-semibold text-slate-900 text-center">Sĩ số</th>
+                        <th class="w-[120px] px-2 py-4 text-sm font-semibold text-slate-900 text-center">Trạng thái</th>
+                        <th class="w-[120px] px-2 py-4 text-sm font-semibold text-slate-900 text-center">Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -211,46 +206,27 @@
                         <td class="px-4 py-4 text-sm text-slate-900 text-center">
                             {{ (classCurrentPage - 1) * classItemsPerPage + i + 1 }}
                         </td>
-                        <td class="px-4 py-4 text-sm font-semibold text-slate-900">{{cc.classCode}}</td>
-                        <td class="px-4 py-4">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold text-slate-900">{{cc.subjectName}}</span>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span
-                                        class="text-[10px] font-bold text-blue-600 uppercase tracking-tight">{{cc.subjectCode}}</span>
-                                    <span class="text-[10px] text-slate-400">|</span>
-                                    <span class="text-[10px] text-slate-500 font-medium">{{ cc.schedules.length > 0 ?
-                                        (cc.schedules[0].sessionType === 'THEORY' ? 'Lý thuyết' : 'Thực hành') : '--'
-                                        }}</span>
-                                </div>
-                            </div>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{cc.classCode}}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{cc.subjectCode}}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900">{{cc.subjectName}}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900 text-center">{{cc.credits}}</td>
+                        <td class="px-4 py-4 text-sm text-slate-900" [title]="cc.majorName">
+                            {{cc.majorName}}
                         </td>
-                        <td class="px-4 py-4 text-sm font-semibold text-slate-900 text-center">{{cc.credits}}</td>
-                        <td class="px-4 py-4">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold text-slate-900">{{ cc.lecturerName || 'Chưa phân
-                                    công'
-                                    }}</span>
-                                <span class="text-[10px] text-slate-400 font-medium" *ngIf="cc.schedules.length > 0">
-                                    {{ formatSchedule(cc.schedules) }}
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-4">
-                            <div class="flex flex-col items-center gap-1.5 min-w-[100px]">
-                                <div class="flex justify-between w-full text-[10px] font-bold text-slate-500 px-1">
-                                    <span>Sĩ số</span>
-                                    <span>{{cc.currentEnrolled}}/{{cc.maxStudents}}</span>
-                                </div>
-                                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-blue-500 rounded-full transition-all duration-500"
+                        <td class="px-3 py-4 text-sm text-slate-900">{{cc.targetClassName}}</td>
+                        <td class="px-2 py-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span
+                                    class="text-[11px] font-bold text-slate-700">{{cc.currentEnrolled}}/{{cc.maxStudents}}</span>
+                                <div class="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 rounded-full"
                                         [style.width.%]="(cc.currentEnrolled/cc.maxStudents)*100"></div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-4 py-4 text-center">
-                            <span
-                                [class]="'inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full border transition-all ' + getStatusClass(cc.classStatus)">
+                        <td class="px-2 py-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold border"
+                                [ngClass]="getStatusClass(cc.classStatus)">
                                 {{getStatusLabel(cc.classStatus)}}
                             </span>
                         </td>
@@ -267,21 +243,10 @@
                     </tr>
 
                     <tr *ngIf="filteredCourseClasses.length === 0">
-                        <td colspan="8" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <div
-                                    class="w-16 h-16 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-folder-open text-3xl"></i>
-                                </div>
-                                <div class="space-y-1">
-                                    <p class="text-sm font-bold text-slate-800">Không tìm thấy lớp học phần nào</p>
-                                    <p class="text-xs text-slate-400">Thử thay đổi bộ lọc hoặc tìm kiếm để có kết quả
-                                        khác</p>
-                                </div>
-                                <button (click)="resetListFilters()"
-                                    class="mt-2 text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all">
-                                    Xóa tất cả bộ lọc
-                                </button>
+                        <td colspan="10" class="px-4 py-12 text-center text-slate-500">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-inbox text-4xl text-slate-200 mb-4"></i>
+                                <p class="text-sm font-medium">Không tìm thấy lớp học phần nào</p>
                             </div>
                         </td>
                     </tr>
@@ -369,6 +334,7 @@
                             <label class="text-xs font-bold text-slate-500 uppercase ml-1">Giảng viên</label>
                             <select [(ngModel)]="courseClassForm.lecturerId"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-all">
+                                <option [ngValue]="null">Chưa phân công</option>
                                 <option *ngFor="let l of allLecturers" [value]="l.id">{{l.fullName}}</option>
                             </select>
                         </div>

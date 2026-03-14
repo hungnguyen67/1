@@ -109,12 +109,9 @@ public class CourseClassService {
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
 
         List<CourseClass> toSave = new ArrayList<>();
-        List<com.example.demo.model.LecturerProfile> lecturers = lecturerProfileRepository.findAll();
-        if (lecturers.isEmpty())
-            throw new RuntimeException("No lecturers found in database");
 
         for (com.example.demo.dto.CourseClassDemandAnalysisDTO d : demands) {
-            if (d.getAdminClassId() == null)
+            if (d.getAdminClassId() == null || d.getAdminClassId() == 0)
                 continue;
 
             Subject s = subjectRepository.findById(d.getSubjectId())
@@ -134,21 +131,15 @@ public class CourseClassService {
             cc.setTargetClass(ac);
             cc.setMajor(ac.getMajor());
             cc.setCurriculum(ac.getCurriculum());
-            cc.setMaxStudents(d.getTotalNeeded() != null && d.getTotalNeeded() > 0 ? d.getTotalNeeded() : 40);
+            cc.setMaxStudents(40);
             cc.setClassCode(code);
-
-            com.example.demo.model.LecturerProfile l = null;
-            if (ac.getAdvisor() != null)
-                l = ac.getAdvisor();
-            else if (ac.getMajor() != null) {
-                Long majorId = ac.getMajor().getId();
-                l = lecturers.stream()
-                        .filter(lp -> lp.getFaculty() != null && lp.getFaculty().getId().equals(majorId))
-                        .findFirst().orElse(lecturers.get(0));
-            } else {
-                l = lecturers.get(0);
-            }
-            cc.setLecturer(l);
+            cc.setLecturer(null);
+            cc.setAttendanceWeight(0.10);
+            cc.setMidtermWeight(0.30);
+            cc.setFinalWeight(0.60);
+            cc.setClassStatus(CourseClass.ClassStatus.PLANNING);
+            cc.setCurrentEnrolled(0);
+            cc.setAllowRegister(true);
 
             toSave.add(cc);
         }
@@ -161,8 +152,12 @@ public class CourseClassService {
         cc.setClassCode(dto.getClassCode());
         cc.setSubject(subjectRepository.findById(dto.getSubjectId())
                 .orElseThrow(() -> new RuntimeException("Subject not found")));
-        cc.setLecturer(lecturerProfileRepository.findById(dto.getLecturerId())
-                .orElseThrow(() -> new RuntimeException("Lecturer not found")));
+        if (dto.getLecturerId() != null) {
+            cc.setLecturer(lecturerProfileRepository.findById(dto.getLecturerId())
+                    .orElseThrow(() -> new RuntimeException("Lecturer not found")));
+        } else {
+            cc.setLecturer(null);
+        }
         cc.setSemester(semesterRepository.findById(semesterId)
                 .orElseThrow(() -> new RuntimeException("Semester not found")));
         cc.setMaxStudents(dto.getMaxStudents());
@@ -237,10 +232,14 @@ public class CourseClassService {
                     .collect(Collectors.toList()));
         }
 
+        if (cc.getMajor() != null) {
+            dto.setMajorName(cc.getMajor().getMajorName());
+        }
+
         if (cc.getTargetClass() != null) {
             dto.setTargetClassId(cc.getTargetClass().getId());
             dto.setTargetClassName(cc.getTargetClass().getClassCode());
-            if (cc.getTargetClass().getMajor() != null) {
+            if (cc.getTargetClass().getMajor() != null && dto.getMajorName() == null) {
                 dto.setMajorName(cc.getTargetClass().getMajor().getMajorName());
             }
         }
